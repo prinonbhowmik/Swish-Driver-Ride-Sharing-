@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
@@ -22,7 +21,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class PhoneNoActivity extends AppCompatActivity {
 
     private ApiInterface api;
     private List<CheckModel> list;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.phone_no_activity);
 
         init();
 
@@ -51,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
                             list= response.body();
                             status = list.get(0).getStatus();
                             if (status.equals("1")){
-                                startActivity(new Intent(MainActivity.this,PasswordActivity.class)
+                                startActivity(new Intent(PhoneNoActivity.this,PasswordActivity.class)
                                         .putExtra("id",list.get(0).getDriver_id()));
                             }
                             else if(status.equals("0")){
-                                startActivity(new Intent(MainActivity.this,Otp_Activity.class).putExtra("phone",phone)
+                                startActivity(new Intent(PhoneNoActivity.this,Otp_Activity.class)
+                                        .putExtra("phone",phone)
                                         .putExtra("otp",list.get(0).getOtp()));
                             }
                         }

@@ -1,25 +1,47 @@
 package com.example.swishbddriver.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ProfileModel {
+    @SerializedName("id")
     private int id;
+    @SerializedName("driver_id")
     private String driver_id;
+    @SerializedName("car_owner")
     private int car_owner;
+    @SerializedName("details")
     private String details;
+    @SerializedName("date")
     private String date;
+    @SerializedName("full_name")
     private String full_name;
+    @SerializedName("gender")
     private String gender;
+    @SerializedName("email")
     private String email;
+    @SerializedName("driver_address")
     private String driver_address;
+    @SerializedName("phone")
     private String phone;
+    @SerializedName("password")
     private String password;
+    @SerializedName("remember_token")
     private String remember_token;
+    @SerializedName("status")
     private String status;
+    @SerializedName("carType")
     private String carType;
+    @SerializedName("image")
     private String image;
+    @SerializedName("rating")
     private float rating;
+    @SerializedName("ratingCount")
     private int ratingCount;
+    @SerializedName("rideCount")
     private int rideCount;
+    @SerializedName("token")
     private String token;
+    @SerializedName("editable")
     private String editable;
 
     public ProfileModel(int id, String driver_id, int car_owner, String details, String date, String full_name, String gender, String email, String driver_address, String phone, String password, String remember_token, String status, String carType, String image, float rating, int ratingCount, int rideCount, String token, String editable) {

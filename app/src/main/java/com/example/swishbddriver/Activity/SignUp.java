@@ -3,12 +3,9 @@ package com.example.swishbddriver.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,16 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,9 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -180,6 +170,7 @@ public class SignUp extends AppCompatActivity {
                 Log.d("checkError",t.getMessage());
             }
         });*/
+
        logIn.setEnabled(true);
         Call<List<ProfileModel>> call = api.register(0,null,dob,name,gender,email,address,phone,password,null,
                 "Deactive",null,"",0,0,0,null,"true");
@@ -187,9 +178,8 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
               if (response.isSuccessful()){
-                  Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
-                  startActivity(new Intent(SignUp.this, MainActivity.class).putExtra("phone", phone));
-                  finish();
+
+
               }
             }
             @Override
@@ -197,6 +187,9 @@ public class SignUp extends AppCompatActivity {
                 Log.d("checkError",t.getMessage());
             }
         });
+        Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
+        finish();
 
     }
 
