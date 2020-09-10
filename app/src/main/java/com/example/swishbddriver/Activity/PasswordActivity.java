@@ -1,6 +1,7 @@
 package com.example.swishbddriver.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +35,8 @@ public class PasswordActivity extends AppCompatActivity {
 
         init();
 
+
+
         Intent intent = getIntent();
         driver_id = intent.getStringExtra("id");
 
@@ -49,7 +52,14 @@ public class PasswordActivity extends AppCompatActivity {
                             List<ProfileModel> models = response.body();
                             String checkpass = models.get(0).getPassword();
                             if (password.matches(checkpass)){
-                                startActivity(new Intent(PasswordActivity.this,DriverProfile.class)
+
+                                SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("id",driver_id);
+                                editor.putBoolean("loggedIn",true);
+                                editor.commit();
+
+                                startActivity(new Intent(PasswordActivity.this,DriverMapActivity.class)
                                         .putExtra("id",driver_id));
                             }
                             else{
@@ -72,5 +82,6 @@ public class PasswordActivity extends AppCompatActivity {
         verify_Et = findViewById(R.id.verify_Et);
         loginBtn = findViewById(R.id.loginBtn);
         api = ApiUtils.getUserService();
+
     }
 }

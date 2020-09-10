@@ -3,6 +3,7 @@ package com.example.swishbddriver.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,12 +29,25 @@ public class PhoneNoActivity extends AppCompatActivity {
     private EditText editText;
     private Button nextBtn;
     private String phone,status;
+    private SharedPreferences sharedPreferences;
+    private boolean loggedIn=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phone_no_activity);
 
         init();
+
+        loggedIn = sharedPreferences.getBoolean("loggedIn",false);
+
+        if (loggedIn==true){
+            startActivity(new Intent(PhoneNoActivity.this,DriverMapActivity.class));
+            finish();
+        }
+
+        Intent intent = getIntent();
+        phone = intent.getStringExtra("phone");
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +63,7 @@ public class PhoneNoActivity extends AppCompatActivity {
                         if (response.isSuccessful()){
                             list= response.body();
                             status = list.get(0).getStatus();
+
                             if (status.equals("1")){
                                 startActivity(new Intent(PhoneNoActivity.this,PasswordActivity.class)
                                         .putExtra("id",list.get(0).getDriver_id()));
@@ -60,7 +75,6 @@ public class PhoneNoActivity extends AppCompatActivity {
                             }
                         }
                     }
-
                     @Override
                     public void onFailure(Call<List<CheckModel>> call, Throwable t) {
                         Log.d("check",t.getMessage());
@@ -69,7 +83,6 @@ public class PhoneNoActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     private void init() {
@@ -77,5 +90,6 @@ public class PhoneNoActivity extends AppCompatActivity {
         nextBtn=findViewById(R.id.nextBtn);
         api = ApiUtils.getUserService();
         list= new ArrayList<>();
+        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
     }
 }
