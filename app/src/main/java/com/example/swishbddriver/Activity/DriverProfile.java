@@ -1,0 +1,93 @@
+package com.example.swishbddriver.Activity;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.ProfileModel;
+import com.example.swishbddriver.R;
+import com.example.swishbddriver.Utils.Config;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class DriverProfile extends AppCompatActivity {
+
+    private String userId, name, email, phone, image, gender, dob, driver_id;
+    private TextView nametv, emailtv, phonetv, genderTv, dobTv;
+    private CircleImageView userImage;
+    private List<ProfileModel> list;
+    private ApiInterface api;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_driver_profile);
+
+        init();
+
+        Intent intent = getIntent();
+        driver_id = intent.getStringExtra("id");
+
+        Call<List<ProfileModel>> call = api.getData(driver_id);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                if (response.isSuccessful()) {
+                    list = response.body();
+
+                    Picasso.get().load(Config.IMAGE_LINE+list.get(0).getImage()).into(userImage, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {}
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d("kiKahini", e.getMessage());
+                        }
+                    });
+                    nametv.setText(list.get(0).getFull_name());
+                    emailtv.setText(list.get(0).getEmail());
+                    phonetv.setText(list.get(0).getPhone());
+                    genderTv.setText(list.get(0).getGender());
+                    dobTv.setText(list.get(0).getDate());
+
+                    Log.d("name", list.get(0).getFull_name());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                Log.d("kahiniKi", t.getMessage());
+            }
+        });
+
+    }
+
+    private void init() {
+        nametv = findViewById(R.id.nameTv);
+        emailtv = findViewById(R.id.emailTv);
+        phonetv = findViewById(R.id.phoneTv);
+        dobTv = findViewById(R.id.dateobTv);
+        genderTv = findViewById(R.id.genderTv);
+        userImage = findViewById(R.id.profileIV);
+        list = new ArrayList<>();
+        api = ApiUtils.getUserService();
+    }
+
+    public void backPress(View view) {
+
+    }
+}
