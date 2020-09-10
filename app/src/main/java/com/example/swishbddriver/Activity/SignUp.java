@@ -180,13 +180,12 @@ public class SignUp extends AppCompatActivity {
                 Log.d("checkError",t.getMessage());
             }
         });*/
-
+       logIn.setEnabled(true);
         Call<List<ProfileModel>> call = api.register(0,null,dob,name,gender,email,address,phone,password,null,
-                "Deactive",null,imageUri.getPath(),0,0,0,null,"true");
+                "Deactive",null,"",0,0,0,null,"true");
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-
               if (response.isSuccessful()){
                   Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
                   startActivity(new Intent(SignUp.this, MainActivity.class).putExtra("phone", phone));
@@ -259,8 +258,10 @@ public class SignUp extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
                 Uri resultUri = result.getUri();
-                imageUri = resultUri;
-                driverImage.setImageURI(imageUri);
+                if (resultUri!=null) {
+                    imageUri = resultUri;
+                    driverImage.setImageURI(imageUri);
+                }
               /*  try {
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
                     driverImage.setImageBitmap(bitmap);

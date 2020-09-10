@@ -24,12 +24,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<List<CheckModel>> checkNo(@Field("phone_no") String phone_no);
 
-    @Multipart
-    @POST("driverall")
-    Call<ResponseBody> uploadImage(@Part RequestBody file,
-                                   @Part("title") RequestBody requestBody);
-
-    @POST("driverall")
+    @POST("driversave")
     @FormUrlEncoded
     Call<List<ProfileModel>> register(@Field("car_owner") int car_owner,
                                       @Field("details") String details,
