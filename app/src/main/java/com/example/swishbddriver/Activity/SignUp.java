@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +29,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +39,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -146,54 +155,37 @@ public class SignUp extends AppCompatActivity {
 
     private void signUp(String name, String email, String dob, String address, final String phone, String password) {
 
-       /* ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
-        image = Base64.encodeToString(imgByte,Base64.DEFAULT);*/
+        image = Base64.encodeToString(imgByte, Base64.DEFAULT);
 
-       /* File file = new File(imageUri.getPath());
+        File file = new File(image);
 
-        RequestBody fbody = RequestBody.create(MediaType.parse("image/*"),
-                file);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
-        RequestBody title = RequestBody.create(MediaType.parse("text/plain"),file.getName());
+// MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        Call<ResponseBody> call1 = api.uploadImage(fbody,title);
-        call1.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(SignUp.this, "Complete", Toast.LENGTH_SHORT).show();
-            }
+        logIn.setEnabled(true);
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("checkError",t.getMessage());
-            }
-        });*/
+       Call<ResponseBody> call = api.register(0,"",dob,name,gender,email,address,
+                phone,password,"","Deactive","",body,0,0,
+                0,"","false");
+       call.enqueue(new Callback<ResponseBody>() {
+           @Override
+           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-       logIn.setEnabled(true);
-        Call<List<ProfileModel>> call = api.register(0,null,dob,name,gender,email,address,phone,password,null,
-                "Deactive",null,"",0,0,0,null,"true");
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-              if (response.isSuccessful()){
+           }
 
+           @Override
+           public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-              }
-            }
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-                Log.d("checkError",t.getMessage());
-            }
-        });
+           }
+       });
         Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
         finish();
-
-    }
-
-    private void uploadImage() {
 
 
     }
@@ -252,17 +244,15 @@ public class SignUp extends AppCompatActivity {
 
                 Uri resultUri = result.getUri();
                 if (resultUri!=null) {
-                    imageUri = resultUri;
-                    driverImage.setImageURI(imageUri);
-                }
-              /*  try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
-                    driverImage.setImageBitmap(bitmap);
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
+                        driverImage.setImageBitmap(bitmap);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-*/
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_SHORT).show();

@@ -1,5 +1,7 @@
 package com.example.swishbddriver.Api;
 
+import android.database.Observable;
+
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.ProfileModel;
 
@@ -24,26 +26,26 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<List<CheckModel>> checkNo(@Field("phone_no") String phone_no);
 
+    @Multipart
     @POST("driversave")
-    @FormUrlEncoded
-    Call<List<ProfileModel>> register(@Field("car_owner") int car_owner,
-                                      @Field("details") String details,
-                                      @Field("date")String date,
-                                      @Field("full_name") String name,
-                                      @Field("gender")String gender,
-                                      @Field("email")String email,
-                                      @Field("driver_address")String driver_address,
-                                      @Field("phone")String phone,
-                                      @Field("password")String password,
-                                      @Field("remember_token")String remember_token,
-                                      @Field("status")String status,
-                                      @Field("carType")String carType,
-                                      @Field("image") String image,
-                                      @Field("rating")float rating,
-                                      @Field("ratingCount")int ratingCount,
-                                      @Field("rideCount")int rideCount,
-                                      @Field("token")String token,
-                                      @Field("editable")String editable);
+    Call<ResponseBody> register(@Part("car_owner") int  car_owner,
+                                      @Part("details") String  details,
+                                      @Part("date")String  date,
+                                      @Part("full_name") String  name,
+                                      @Part("gender")String  gender,
+                                      @Part("email")String  email,
+                                      @Part("driver_address")String  driver_address,
+                                      @Part("phone")String  phone,
+                                      @Part("password")String  password,
+                                      @Part("remember_token")String  remember_token,
+                                      @Part("status")String  status,
+                                      @Part("carType")String  carType,
+                                      @Part MultipartBody.Part image,
+                                      @Part("rating")float  rating,
+                                      @Part("ratingCount")int  ratingCount,
+                                      @Part("rideCount")int  rideCount,
+                                      @Part("token")String  token,
+                                      @Part("editable")String  editable);
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
