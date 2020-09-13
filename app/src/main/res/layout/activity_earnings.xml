@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neomorph_background_color"
+    tools:context=".Activity.EarningsActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/neomorph_background_color">
+
+        <View
+            android:id="@+id/mainView"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:background="@drawable/profile_back" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="22dp"
+            android:onClick="backPress"
+            android:src="@drawable/ic_white_arrow_back_24"/>
+
+        <TextView
+            android:id="@+id/headTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="Earnings"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/history"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="22dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_history" />
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/headTitle"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="#000"
+            app:neomorph_shadow_color="#000"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/todayEarnRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/todayEarnTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#000"
+                    android:textSize="24sp" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_below="@+id/todayEarnTV"
+                    android:background="#888686"/>
+
+                <TextView
+                    android:id="@+id/todayEarnTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/view"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Today's Earn"
+                    android:textColor="@color/green1"
+                    android:textSize="18sp" />
+
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mainView"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/totalEarnRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/totalEarnTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_below="@+id/totalEarnTV"
+                    android:background="#888686"/>
+
+                <TextView
+                    android:id="@+id/totalEarnTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/view2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Total Earn"
+                    android:textColor="#0798C8"
+                    android:textSize="18sp" />
+
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/NFL2"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/totalPayableRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/totalPayableTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_below="@+id/totalPayableTV"
+                    android:background="#888686"/>
+
+                <TextView
+                    android:id="@+id/totalPayableTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/view3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Total Payable"
+                    android:textColor="#973CC5"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/NFL3"
+            android:layerType="software"
+            android:visibility="gone"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/todayDueRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/todayDueTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/todayDueTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/todayDueTV"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Today's Due"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/NFL4"
+            android:layout_marginBottom="20dp"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/totalDueRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/totalDueTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#F44336"
+                    android:textSize="24sp" />
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_below="@+id/totalDueTV"
+                    android:background="#888686"/>
+                <TextView
+                    android:id="@+id/totalDueTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/view4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Total Due"
+                    android:textColor="#F44336"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/NFL3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NFL8"
+            android:layerType="software"
+            android:visibility="gone"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="8dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="rectangular">
+
+            <RelativeLayout
+                android:id="@+id/todayPayableRelative"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/details_btn_design">
+
+                <TextView
+                    android:id="@+id/todayPayableTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/todayPayableTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/todayPayableTv"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Payable"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+
+            </RelativeLayout>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    </RelativeLayout>
+</ScrollView>

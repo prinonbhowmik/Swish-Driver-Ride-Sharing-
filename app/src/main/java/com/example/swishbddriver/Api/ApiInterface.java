@@ -29,24 +29,25 @@ public interface ApiInterface {
     @Multipart
     @POST("driversave")
     Call<ResponseBody> register(@Part("car_owner") int  car_owner,
-                                      @Part("details") String  details,
-                                      @Part("date")String  date,
-                                      @Part("full_name") String  name,
-                                      @Part("gender")String  gender,
-                                      @Part("email")String  email,
-                                      @Part("driver_address")String  driver_address,
-                                      @Part("phone")String  phone,
-                                      @Part("password")String  password,
-                                      @Part("remember_token")String  remember_token,
-                                      @Part("status")String  status,
-                                      @Part("carType")String  carType,
+                                      @Part("details") RequestBody   details,
+                                      @Part("date")RequestBody   date,
+                                      @Part("full_name") RequestBody   name,
+                                      @Part("gender")RequestBody   gender,
+                                      @Part("email")RequestBody   email,
+                                      @Part("driver_address")RequestBody   driver_address,
+                                      @Part("phone")RequestBody   phone,
+                                      @Part("password")RequestBody   password,
+                                      @Part("remember_token")RequestBody   remember_token,
+                                      @Part("status")RequestBody   status,
+                                      @Part("carType") RequestBody  carType,
                                       @Part MultipartBody.Part image,
-                                      @Part("rating")float  rating,
-                                      @Part("ratingCount")int  ratingCount,
-                                      @Part("rideCount")int  rideCount,
-                                      @Part("token")String  token,
-                                      @Part("editable")String  editable);
+                                      @Part("rating") int rating,
+                                      @Part("ratingCount") int ratingCount,
+                                      @Part("rideCount") int rideCount,
+                                      @Part("token") RequestBody  token,
+                                      @Part("editable") RequestBody  editable);
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
+
 }

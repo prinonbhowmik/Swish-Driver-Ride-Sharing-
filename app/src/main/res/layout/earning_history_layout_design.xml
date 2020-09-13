@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/card_view1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_corner_radius="10dp"
+        app:neomorph_elevation="6dp"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_view_type="rectangular">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/stroke">
+            <ImageView
+                android:id="@+id/fromTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="13dp"
+                android:src="@drawable/ic_map"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/pickup_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_toEndOf="@+id/fromTv"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/toTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="13dp"
+                android:layout_below="@+id/pickup_TV"
+                android:src="@drawable/ic_flags"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/destination_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_below="@+id/pickup_TV"
+                android:layout_toEndOf="@+id/toTv"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/pick_dateTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/destination_TV"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:text="10/10/2020"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/themColor"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/coma"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/destination_TV"
+                android:layout_marginStart="2dp"
+                android:text=","
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/pick_dateTv"
+                android:textColor="@color/themColor"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/pickup_timeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/destination_TV"
+                android:layout_marginStart="2dp"
+                android:text="10:00:00AM"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/coma"
+                android:textColor="@color/themColor"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/earnTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/destination_TV"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="25dp"
+                android:text="500"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/red"
+                android:textSize="18sp" />
+
+
+
+        </RelativeLayout>
+
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+    <TextView
+        android:id="@+id/unavailableTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="21sp"
+        android:textColor="@color/themColor"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:text="No booking request available."/>
+</RelativeLayout>

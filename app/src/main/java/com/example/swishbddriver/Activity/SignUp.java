@@ -167,22 +167,27 @@ public class SignUp extends AppCompatActivity {
 // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
+        RequestBody  fullName = RequestBody .create(MediaType.parse("multipart/form-data"), name);
+        RequestBody  details = RequestBody .create(MediaType.parse("multipart/form-data"), "");
+        RequestBody  genderbody = RequestBody .create(MediaType.parse("multipart/form-data"), gender);
+        RequestBody  emailBody = RequestBody .create(MediaType.parse("multipart/form-data"), email);
+        RequestBody  addressBody = RequestBody .create(MediaType.parse("multipart/form-data"), address);
+        RequestBody  phoneBody = RequestBody .create(MediaType.parse("multipart/form-data"), phone);
+        RequestBody  passBody = RequestBody .create(MediaType.parse("multipart/form-data"), password);
+        RequestBody  rem_tokenBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
+        RequestBody  status = RequestBody .create(MediaType.parse("multipart/form-data"), "Deactive");
+        RequestBody  dobBody = RequestBody .create(MediaType.parse("multipart/form-data"), dob);
+        RequestBody  tokenBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
+        RequestBody  editBody = RequestBody .create(MediaType.parse("multipart/form-data"), "false");
+        RequestBody  carTypeBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
+
         logIn.setEnabled(true);
 
-       Call<ResponseBody> call = api.register(0,"",dob,name,gender,email,address,
-                phone,password,"","Deactive","",body,0,0,
-                0,"","false");
-       call.enqueue(new Callback<ResponseBody>() {
-           @Override
-           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+      Call<ResponseBody> call = api.register(0,details,dobBody,fullName,genderbody,emailBody,addressBody,
+               phoneBody,passBody,rem_tokenBody,status,carTypeBody,body,0,0,
+               0,tokenBody,editBody);
 
-           }
 
-           @Override
-           public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-           }
-       });
         Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
         finish();
