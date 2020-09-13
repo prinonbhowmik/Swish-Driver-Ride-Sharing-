@@ -108,7 +108,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
     private ApiInterface apiInterface;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
