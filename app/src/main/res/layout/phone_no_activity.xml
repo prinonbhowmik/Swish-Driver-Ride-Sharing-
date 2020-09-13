@@ -4,32 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/neomorph_background_color"
-    android:orientation="vertical"
+    android:focusableInTouchMode="true"
     tools:context=".Activity.PhoneNoActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-145dp"
+        android:src="@drawable/ic_wave2"/>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logocircle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phn_LT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Phone number"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        android:textColorHint="#000"
+        app:boxBackgroundMode="outline">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/phnNoEt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Phone number"
-            android:padding="10dp"
-            android:background="#00FFFFFF"
-            android:textAlignment="center"
-            android:layout_centerInParent="true"
-            android:gravity="center_horizontal" />
+            android:layout_height="match_parent"
+            android:inputType="textEmailAddress"
+            android:textColor="#000"
+            android:drawableStart="@drawable/ic_phone_24"
+            android:drawablePadding="10dp"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textSize="21sp"
+            android:drawableLeft="@drawable/ic_phone_24" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/nextBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="Next"
         android:textSize="20sp"
+        android:background="@drawable/btn_background"
         android:textAllCaps="false"
-        android:textColor="#000"
         android:padding="10dp"
-        android:layout_below="@+id/phnNoEt"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/phn_LT"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/progrssbar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="car_moving.json" />
 </RelativeLayout>

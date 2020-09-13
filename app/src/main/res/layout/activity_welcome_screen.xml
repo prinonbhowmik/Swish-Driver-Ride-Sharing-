@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/neomorph_background_color"
+    android:layout_height="match_parent"
+    tools:context=".Activity.WelcomeScreen">
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/NFl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="45dp"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_corner_radius="10dp"
+        app:neomorph_elevation="6dp"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_view_type="rectangular">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonOnboardingAction"
+            android:background="@drawable/details_btn_design"
+            android:textColor="@color/blue1"
+            android:textSize="15sp"
+            />
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/onboardingViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/NFl"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutOnboardingIndicators"
+        tools:layout_editor_absoluteX="127dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutOnboardingIndicators"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="75dp"
+        android:layout_toStartOf="@id/NFl"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:theme="@style/AppTheme2"
+    android:layout_height="wrap_content"
+    android:background="@drawable/customer_details_bottom_sheet_design"
+    tools:context=".Activity.CustomerDetailsBottomSheet">
+
+    <ImageView
+        android:id="@+id/personIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="34dp"
+        android:src="@drawable/ic_person"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/customerTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="30dp"
+        android:layout_toEndOf="@id/personIV"
+        android:text="Customer Name"
+        android:textColor="@android:color/black"
+        android:textSize="21sp" />
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/card_view1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:neomorph_view_type="rectangular"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_elevation="8dp"
+        app:neomorph_corner_radius="10dp"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        android:layout_below="@+id/customerTxt"
+        android:layout_marginTop="-5dp">
+
+        <TextView
+            android:id="@+id/customerNameTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@drawable/stroke"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    <ImageView
+        android:id="@+id/phoneIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_view1"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_phone2"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/phoneTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/card_view1"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/phoneIV"
+        android:text="Phone Number"
+        android:textColor="@android:color/black"
+        android:textSize="21sp" />
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/card_view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:neomorph_view_type="rectangular"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_elevation="8dp"
+        app:neomorph_corner_radius="10dp"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        android:layout_below="@+id/phoneTxt"
+        android:layout_marginTop="-5dp">
+
+        <TextView
+            android:id="@+id/customer_PhoneTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@drawable/stroke"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/detailsNFL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_corner_radius="10dp"
+        app:neomorph_elevation="8dp"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_view_type="rectangular"
+        android:layout_below="@id/card_view2">
+        <Button
+            android:id="@+id/callCustomerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/details_btn_design"
+            android:text="Call"
+            android:textColor="@color/green1"
+            android:textAllCaps="false"
+            android:textSize="18sp" />
+
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+
+
+</RelativeLayout>
