@@ -116,7 +116,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                     gender_Et.setError("Enter Gender");
                     gender_Et.requestFocus();
                 }else{
-                    updateInformation(name,email,address);
+                    updateInformation(name,email,gender);
                 }
             }
         });

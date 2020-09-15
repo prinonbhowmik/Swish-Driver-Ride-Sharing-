@@ -25,7 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChangePassword extends AppCompatActivity {
-    private String userId, pass1, pass2, pass3;
+    private String driverID, pass1, pass2, pass3;
     private EditText currentPassword, changePass1, changePass2;
     private Button savePassword;
     private List<ProfileModel> list;
@@ -39,7 +39,7 @@ public class ChangePassword extends AppCompatActivity {
         init();
 
         Intent intent = getIntent();
-        userId = intent.getStringExtra("id");
+        driverID = intent.getStringExtra("id");
 
         savePassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,27 +67,38 @@ public class ChangePassword extends AppCompatActivity {
                 } else if (changePass2.length() < 6) {
                     changePass2.setError("At least 6 characters!", null);
                     changePass2.requestFocus();
-                } else {
+                }  else if (!changePass2.getText().toString().equals(changePass1.getText().toString())) {
+                    changePass2.setError("New password doesn't matched!", null);
+                }else {
                     changePassword(pass1, pass2, pass3);
                 }
             }
         });
-    }
-
-    private void changePassword(final String pass1,final String pass2,final String pass3) {
-        Call<List<ProfileModel>> call = api.getData(userId);
+    }private void changePassword(final String pass1, String pass2, final String pass3) {
+        Call<List<ProfileModel>> call = api.getData(driverID);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 if (response.isSuccessful()) {
+
                     list = response.body();
 
                     String matchPassword = list.get(0).getPassword();
 
                     if (pass1.matches(matchPassword)) {
+                        Call<List<ProfileModel>> call1 = api.changePassword(driverID,pass3);
+                        call1.enqueue(new Callback<List<ProfileModel>>() {
+                            @Override
+                            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
 
+                            }
+                            @Override
+                            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                        //startActivity(new Intent(ChangePassword.this, EditProfile.class));
+                            }
+                        });
+                        Toast.makeText(ChangePassword.this, "Password change successful!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(ChangePassword.this, DriverProfile.class));
                     } else {
                         Toast.makeText(ChangePassword.this, "Password doesn't matched!", Toast.LENGTH_SHORT).show();
                     }

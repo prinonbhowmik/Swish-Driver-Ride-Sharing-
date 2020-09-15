@@ -59,5 +59,9 @@ public interface ApiInterface {
                                          @Field("full_name") String full_name,
                                          @Field("email") String email,
                                          @Field("gender") String gender);
+    @FormUrlEncoded
+    @PUT("driverpassword/{driver_id}")
+    Call<List<ProfileModel>> changePassword(@Path("driver_id") String driver_idv,
+                                       @Field("password") String password);
 
 }
