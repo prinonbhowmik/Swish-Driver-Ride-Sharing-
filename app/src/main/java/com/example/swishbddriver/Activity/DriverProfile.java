@@ -1,10 +1,12 @@
 package com.example.swishbddriver.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.Config;
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,19 +32,35 @@ public class DriverProfile extends AppCompatActivity {
 
     private String userId, name, email, phone, image, gender, dob, driver_id;
     private TextView nametv, emailtv, phonetv, genderTv, dobTv;
-    private CircleImageView userImage;
+    private CircleImageView userImage,editBtn;
     private List<ProfileModel> list;
     private ApiInterface api;
+    private Button changePassword;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_profile);
-
         init();
+        driver_id = sharedPreferences.getString("id","");
 
-        Intent intent = getIntent();
-        driver_id = intent.getStringExtra("id");
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DriverProfile.this, ChangePassword.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
 
         Call<List<ProfileModel>> call = api.getData(driver_id);
         call.enqueue(new Callback<List<ProfileModel>>() {
@@ -83,11 +102,24 @@ public class DriverProfile extends AppCompatActivity {
         dobTv = findViewById(R.id.dateobTv);
         genderTv = findViewById(R.id.genderTv);
         userImage = findViewById(R.id.profileIV);
+        editBtn=findViewById(R.id.editBtn);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
+        changePassword=findViewById(R.id.changePassBtn);
     }
 
     public void backPress(View view) {
+        startActivity(new Intent(DriverProfile.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(DriverProfile.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
     }
 }

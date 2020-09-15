@@ -8,6 +8,13 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
+    <style name="Edittext" parent="Theme.MaterialComponents.NoActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">#020B3E</item>
+    <item name="colorPrimaryDark">#010002</item>
+    <item name="colorAccent">#000</item>
+    </style>
+
     <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>

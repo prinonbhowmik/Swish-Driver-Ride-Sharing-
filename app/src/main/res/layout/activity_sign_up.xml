@@ -26,6 +26,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_LT"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/driverImage"
@@ -53,6 +54,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_LT"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/name_LT"
@@ -80,6 +82,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/date_LT"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/email_LT"
@@ -109,6 +112,7 @@
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/address_LT"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date_LT"
@@ -136,6 +140,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/phone_Lt"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/address_LT"
@@ -165,6 +170,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/password_LT"
+                style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/phone_Lt"

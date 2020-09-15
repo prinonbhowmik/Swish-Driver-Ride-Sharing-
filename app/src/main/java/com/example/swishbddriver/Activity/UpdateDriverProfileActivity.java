@@ -1,5 +1,7 @@
 package com.example.swishbddriver.Activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,24 +43,21 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
     private String driverId, name, email, phone, image,address,gender;
-    private TextView name_Et, email_Et, phone_Et,gender_Et,address_Et;
-    private CircleImageView driverProfileIV;
+    private TextView name_Et, email_Et, gender_Et;
+    private CircleImageView driverProfileIV,updateBtn;
     private StorageReference storageReference;
     private FirebaseStorage storage;
-    private TextView updateBtn;
+
     private FrameLayout frameLayout;
     private Uri imageUri;
-    private String i_name,i_email,i_address;
+    private String i_name,i_email,i_gender;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_driver_profile);
         init();
-        Intent intent=getIntent();
-        i_name=intent.getStringExtra("name");
-        i_email=intent.getStringExtra("email");
-        i_address=intent.getStringExtra("address");
-        getDriverInformation();
+        hideKeyboardFrom(getApplicationContext());
+        //getDriverInformation();
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,14 +70,14 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         });
         name_Et.addTextChangedListener(textWatcher);
         email_Et.addTextChangedListener(textWatcher);
-        address_Et.addTextChangedListener(textWatcher);
+        gender_Et.addTextChangedListener(textWatcher);
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 name = name_Et.getText().toString();
                 email = email_Et.getText().toString();
-                address = address_Et.getText().toString();
+                gender = gender_Et.getText().toString();
 
                 if (TextUtils.isEmpty(name)){
                     name_Et.setError("Enter name");
@@ -89,6 +89,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     email_Et.setError("Enter valid email");
                     email_Et.requestFocus();
+                }else if (TextUtils.isEmpty(gender)) {
+                    gender_Et.setError("Enter Gender");
+                    gender_Et.requestFocus();
                 }else{
                     updateInformation(name,email,address);
                 }
@@ -106,8 +109,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String updateName=name_Et.getText().toString().trim();
             String updateEmail=email_Et.getText().toString().trim();
-            String updateAddress=address_Et.getText().toString().trim();
-            updateBtn.setEnabled(!updateName.equals(i_name) || !updateEmail.equals(i_email) || !updateAddress.equals(i_address));
+            String updateGender=gender_Et.getText().toString().trim();
+            updateBtn.setEnabled(!updateName.equals(i_name) || !updateEmail.equals(i_email) || !updateGender.equals(i_gender));
         }
 
         @Override
@@ -131,23 +134,19 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
     private void init() {
         auth= FirebaseAuth.getInstance();
-        driverId=auth.getCurrentUser().getUid();
         databaseReference= FirebaseDatabase.getInstance().getReference();
         storage= FirebaseStorage.getInstance();
         storageReference=storage.getReference();
         name_Et=findViewById(R.id.updateNameET);
         email_Et=findViewById(R.id.updateEmailET);
 
-        address_Et=findViewById(R.id.updateAddressET);
+        gender_Et=findViewById(R.id.updateGenderET);
 
         driverProfileIV=findViewById(R.id.driverProfileIV);
-        updateBtn=findViewById(R.id.update);
+        updateBtn=findViewById(R.id.updateBtn);
         frameLayout=findViewById(R.id.frame_layout1);
     }
 
-    public void backPress2(View view) {
-        finish();
-    }
 
     private void getDriverInformation() {
         try {
@@ -265,6 +264,17 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void hideKeyboardFrom(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.getWindow().getDecorView().getRootView().getWindowToken(), 0);
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
     }
 
 }

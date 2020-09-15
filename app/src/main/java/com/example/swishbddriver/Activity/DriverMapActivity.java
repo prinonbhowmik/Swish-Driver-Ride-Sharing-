@@ -125,7 +125,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 isGPS = isGPSEnable;
             }
         });
-
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DriverMapActivity.this, DriverProfile.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                drawerLayout.closeDrawers();
+            }
+        });
         locationCallback = new LocationCallback() {
 
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -347,8 +354,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.profile:
-                startActivity(new Intent(DriverMapActivity.this, DriverProfile.class).putExtra("id",driverId));
-                //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(new Intent(DriverMapActivity.this, DriverProfile.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
                 break;
             case R.id.advance_book:
