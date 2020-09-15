@@ -30,7 +30,7 @@ import retrofit2.Response;
 
 public class DriverProfile extends AppCompatActivity {
 
-    private String userId, name, email, phone, image, gender, dob, driver_id;
+    private String userId, name, email, phone, image, gender, dob, driverId;
     private TextView nametv, emailtv, phonetv, genderTv, dobTv;
     private CircleImageView userImage,editBtn;
     private List<ProfileModel> list;
@@ -43,12 +43,15 @@ public class DriverProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_profile);
         init();
-        driver_id = sharedPreferences.getString("id","");
+        driverId = sharedPreferences.getString("id","");
 
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class));
+                startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class)
+                .putExtra("name",nametv.getText())
+                .putExtra("email",emailtv.getText())
+                .putExtra("gender",genderTv.getText()));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
             }
@@ -62,7 +65,7 @@ public class DriverProfile extends AppCompatActivity {
             }
         });
 
-        Call<List<ProfileModel>> call = api.getData(driver_id);
+        Call<List<ProfileModel>> call = api.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {

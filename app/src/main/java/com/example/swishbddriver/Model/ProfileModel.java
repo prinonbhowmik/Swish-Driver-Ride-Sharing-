@@ -149,4 +149,85 @@ public class ProfileModel {
     public String getEditable() {
         return editable;
     }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDriver_id(String driver_id) {
+        this.driver_id = driver_id;
+    }
+
+    public void setCar_owner(int car_owner) {
+        this.car_owner = car_owner;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDriver_address(String driver_address) {
+        this.driver_address = driver_address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRemember_token(String remember_token) {
+        this.remember_token = remember_token;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setCarType(String carType) {
+        this.carType = carType;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public void setRideCount(int rideCount) {
+        this.rideCount = rideCount;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setEditable(String editable) {
+        this.editable = editable;
+    }
 }

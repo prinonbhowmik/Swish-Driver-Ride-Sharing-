@@ -2,6 +2,7 @@ package com.example.swishbddriver.Api;
 
 import android.database.Observable;
 
+import com.example.swishbddriver.Activity.DriverProfile;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.ProfileModel;
 
@@ -17,7 +18,9 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
@@ -49,5 +52,12 @@ public interface ApiInterface {
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
+
+    @FormUrlEncoded
+    @PUT("driverupdate/{driver_id}")
+    Call<List<ProfileModel>> updateData(@Path("driver_id") String driver_id,
+                                         @Field("full_name") String full_name,
+                                         @Field("email") String email,
+                                         @Field("gender") String gender);
 
 }

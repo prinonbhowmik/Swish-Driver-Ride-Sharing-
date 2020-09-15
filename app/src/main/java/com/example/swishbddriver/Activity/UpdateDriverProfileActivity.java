@@ -3,11 +3,13 @@ package com.example.swishbddriver.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
@@ -19,8 +21,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
+import com.example.swishbddriver.Utils.Config;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,11 +38,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UpdateDriverProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -47,17 +59,28 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     private CircleImageView driverProfileIV,updateBtn;
     private StorageReference storageReference;
     private FirebaseStorage storage;
-
+    private String name1, email1, gender1;
+    private SharedPreferences sharedPreferences;
     private FrameLayout frameLayout;
     private Uri imageUri;
-    private String i_name,i_email,i_gender;
+    private List<ProfileModel> list;
+    private ApiInterface api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_driver_profile);
         init();
         hideKeyboardFrom(getApplicationContext());
-        //getDriverInformation();
+
+        driverId = sharedPreferences.getString("id","");
+        Intent intent = getIntent();
+        name1 = intent.getStringExtra("name");
+        email1 = intent.getStringExtra("email");
+        gender1 = intent.getStringExtra("gender");
+        name_Et.setText(name1);
+        email_Et.setText(email1);
+        gender_Et.setText(gender1);
+        getDriverInformation();
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,7 +133,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
             String updateName=name_Et.getText().toString().trim();
             String updateEmail=email_Et.getText().toString().trim();
             String updateGender=gender_Et.getText().toString().trim();
-            updateBtn.setEnabled(!updateName.equals(i_name) || !updateEmail.equals(i_email) || !updateGender.equals(i_gender));
+            if (!updateName.equals(name1) || !updateEmail.equals(email1) || !updateGender.equals(gender1)) {
+                updateBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_tick_green));
+            }
         }
 
         @Override
@@ -119,12 +144,19 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         }
     };
 
-    private void updateInformation(String name, String email, String address) {
-        driverId = auth.getCurrentUser().getUid();
-        DatabaseReference updateRef = databaseReference.child("DriversProfile").child(driverId);
-        updateRef.child("name").setValue(name);
-        updateRef.child("email").setValue(email);
-        updateRef.child("address").setValue(address);
+    private void updateInformation(String name, String email, String gender) {
+        Call<List<ProfileModel>> call = api.updateData(driverId,name,email,gender);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                Log.d("Dekhbo", t.getMessage());
+            }
+        });
         Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
         startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -139,43 +171,42 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         storageReference=storage.getReference();
         name_Et=findViewById(R.id.updateNameET);
         email_Et=findViewById(R.id.updateEmailET);
-
         gender_Et=findViewById(R.id.updateGenderET);
-
+        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
         driverProfileIV=findViewById(R.id.driverProfileIV);
-        updateBtn=findViewById(R.id.updateBtn);
+        updateBtn=findViewById(R.id.updateBtnCIV);
         frameLayout=findViewById(R.id.frame_layout1);
+        list = new ArrayList<>();
+        api = ApiUtils.getUserService();
     }
 
 
     private void getDriverInformation() {
-        try {
-            DatabaseReference driverRef = databaseReference.child("DriversProfile").child(driverId);
-            driverRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ProfileModel model = snapshot.getValue(ProfileModel.class);
-                    name = model.getFull_name();
-                    image = model.getImage();
-                    email = model.getEmail();
-                    name_Et.setText(name);
-                    email_Et.setText(email);
-                    if (!image.isEmpty() || !image.matches("")) {
-                        Glide.with(UpdateDriverProfileActivity.this)
-                                .load(image)
-                                .fitCenter()
-                                .into(driverProfileIV);
-                    }
+
+
+        Call<List<ProfileModel>> call = api.getData(driverId);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                if (response.isSuccessful()) {
+                    list = response.body();
+
+                    Picasso.get().load(Config.IMAGE_LINE+list.get(0).getImage()).into(driverProfileIV, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {}
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d("kiKahini", e.getMessage());
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                }
-            });
-        }catch (Exception ignored){
-
-        }
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

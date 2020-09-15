@@ -37,7 +37,7 @@
                 app:neomorph_view_type="circular">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/updateBtn"
+                    android:id="@+id/updateBtnCIV"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
@@ -57,8 +57,6 @@
                     android:id="@+id/profileNFL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginBottom="5dp"
                     android:layerType="software"
                     app:neomorph_background_color="@color/neomorph_background_color"
                     app:neomorph_corner_radius="10dp"
@@ -103,6 +101,7 @@
                 </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
             </FrameLayout>
+
         </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -174,6 +173,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="60dp"
             android:hint="Gender"
             android:textColorHint="#000"
             app:boxBackgroundMode="outline"
