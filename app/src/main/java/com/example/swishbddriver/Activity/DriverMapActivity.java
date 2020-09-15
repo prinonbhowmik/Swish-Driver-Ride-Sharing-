@@ -376,7 +376,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 break;*/
             case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("loggedIn",false);
+                editor.commit();
                 Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

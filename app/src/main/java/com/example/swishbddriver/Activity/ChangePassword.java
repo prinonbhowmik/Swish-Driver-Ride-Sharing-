@@ -1,6 +1,7 @@
 package com.example.swishbddriver.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ public class ChangePassword extends AppCompatActivity {
     private Button savePassword;
     private List<ProfileModel> list;
     private ApiInterface api;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -38,8 +40,8 @@ public class ChangePassword extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
         init();
 
-        Intent intent = getIntent();
-        driverID = intent.getStringExtra("id");
+
+        driverID = sharedPreferences.getString("id","");
 
         savePassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,10 +54,10 @@ public class ChangePassword extends AppCompatActivity {
                 if (TextUtils.isEmpty(pass1)) {
                     currentPassword.setError("Enter Current Password!");
                     currentPassword.requestFocus();
-                } else if (currentPassword.length() < 6) {
+                } /*else if (currentPassword.length() < 6) {
                     currentPassword.setError("At least 6 characters!", null);
                     currentPassword.requestFocus();
-                } else if (TextUtils.isEmpty(pass2)) {
+                }*/ else if (TextUtils.isEmpty(pass2)) {
                     changePass1.setError("Enter New Password!");
                     changePass1.requestFocus();
                 } else if (changePass1.length() < 6) {
@@ -74,7 +76,9 @@ public class ChangePassword extends AppCompatActivity {
                 }
             }
         });
-    }private void changePassword(final String pass1, String pass2, final String pass3) {
+    }
+
+    private void changePassword(final String pass1, String pass2, final String pass3) {
         Call<List<ProfileModel>> call = api.getData(driverID);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -119,6 +123,7 @@ public class ChangePassword extends AppCompatActivity {
         changePass2 = findViewById(R.id.pass3);
         savePassword = findViewById(R.id.savePassBtn);
         list = new ArrayList<>();
+        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         api = ApiUtils.getUserService();
     }
 
