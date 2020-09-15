@@ -28,6 +28,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.chinodev.androidneomorphframelayout.NeomorphFrameLayout;
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.ForApi.DistanceApiClient;
 import com.example.swishbddriver.ForApi.DistanceResponse;
 import com.example.swishbddriver.ForApi.Element;
@@ -57,6 +59,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,7 +85,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private boolean hasDateMatch = false,startRide=false;
     private ScrollView scrollLayout;
     private double currentLat, currentLon;
-    private NeomorphFrameLayout neomorphFrameLayoutStart,details;
+    private NeomorphFrameLayout neomorphFrameLayoutStart,details,coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -91,6 +94,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private float rating,rat;
     private int ratingCount;
     private int ride;
+    private List<ProfileModel> list;
+    private ApiInterface api;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -99,13 +104,30 @@ public class BookingDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking_details);
 
         init();
+        getDriverRat();
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //checkDate();
+                if(rat<2){
+                    blockAlert();
+                }else {
+                    if (hasDateMatch) {
+                        Toasty.info(BookingDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
+                    } else {
+                        confirmAlertDialog();
+                    }
+
+                }
+            }
+        });
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
         getData();
-        getDriverInformation();
-        getDriverRat();
+        //getDriverInformation();
+
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -115,22 +137,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
 
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //checkDate();
-                //confirmAlertDialog();
-                if(rat<2){
-                    blockAlert();
-                }else {
-                    if (hasDateMatch) {
-                        Toasty.info(BookingDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
-                    } else {
-                        confirmAlertDialog();
-                    }
-                }
-            }
-        });
+
+
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,20 +241,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
     public  void getDriverRide(){
-        DatabaseReference rideAddRef = FirebaseDatabase.getInstance().getReference("DriversProfile").child(driverId);
-        rideAddRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ProfileModel model = snapshot.getValue(ProfileModel.class);
-                ride = model.getRideCount();
 
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void confirmEndTrip() {
@@ -575,7 +571,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void getData() {
 
-        DatabaseReference reference = databaseReference.child("BookForLater").child(car_type).child(id);
+        DatabaseReference reference = databaseReference.child("BookForLater").child("Sedan").child(id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -661,8 +657,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void init() {
-        auth = FirebaseAuth.getInstance();
-        driverId = auth.getCurrentUser().getUid();
+        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
+        driverId = sharedPreferences.getString("id","");
         databaseReference = FirebaseDatabase.getInstance().getReference();
         pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
         destinationTV = findViewById(R.id.destinationTV);
@@ -680,6 +676,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         neomorphFrameLayoutEnd = findViewById(R.id.endTripNFL);
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         details=findViewById(R.id.detailsNFL);
+        list = new ArrayList<>();
+        api = ApiUtils.getUserService();
     }
 
 
@@ -860,27 +858,43 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("driverId").setValue("");
     }
     private void getDriverRat() {
-        DatabaseReference ratRef=databaseReference.child("DriversProfile").child(driverId);
-        ratRef.addValueEventListener(new ValueEventListener() {
+        Call<List<ProfileModel>> call = api.getData("D3819");
+        call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ProfileModel model=snapshot.getValue(ProfileModel.class);
-                rating=model.getRating();
-                ratingCount=model.getRatingCount();
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+
+                list= response.body();
+                rating=list.get(0).getRating();
+                ratingCount=list.get(0).getRatingCount();
                 rat=rating/ratingCount;
+
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
             }
         });
+
     }
 
     private void addRating() {
-        DatabaseReference ratRef2=databaseReference.child("DriversProfile").child(driverId);
-        float rating2= (float) (rating+2.5);
-        int ratingCount2=ratingCount+1;
-        ratRef2.child("rating").setValue(rating2);
-        ratRef2.child("ratingCount").setValue(ratingCount2);
+
+        float rating2 = (float) (rating + 2.5);
+        int ratingCount2 = ratingCount + 1;
+        Call<List<ProfileModel>> call1 = api.updateRating(driverID, rating2,ratingCount2);
+        call1.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.swishbddriver.Activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     private RecyclerView recyclerView;
     private TextView moreTv,titleTv,notificationCount,emptyText;
     private BookForLaterAdapter bookForLaterAdapter;
-    private FirebaseAuth auth;
     private String driverId;
     private String bookingStatus,driverCarType;
     private CardView cardView;
@@ -42,13 +42,16 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     private String carType;
     private int count=0;
     private RelativeLayout moreRelative;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advance_booking);
         init();
-        getData();
+
+        driverId = sharedPreferences.getString("id","");
+        getList();
 
         moreRelative.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +69,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     }
 
     private void init() {
-        auth = FirebaseAuth.getInstance();
-        driverId = auth.getCurrentUser().getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         bookForLaterModelList = new ArrayList<>();
         recyclerView = findViewById(R.id.bookingRecyclerView);
@@ -81,6 +82,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
         notificationCount=findViewById(R.id.notificationCount);
         moreRelative=findViewById(R.id.moreRelative);
         emptyText=findViewById(R.id.emptyText);
+        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
 
     }
 
@@ -101,7 +103,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
         });
     }
     private void getList() {
-        DatabaseReference bookingRef = databaseReference.child("BookForLater").child(driverCarType);
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -132,7 +134,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
         });
     }
     public void counter(){
-        DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child(carType);
+        DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child("Sedan");
         bookingRef2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -201,7 +203,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                 titleTv.setText("My Rides List");
                 return false;
             case R.id.all_rides:
-                getData();
+                getList();
                 counter();
                 titleTv.setText("Advance Booking List");
                 return false;

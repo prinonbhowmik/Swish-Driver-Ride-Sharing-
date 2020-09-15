@@ -359,6 +359,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 break;
             case R.id.advance_book:
+                startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
                 //driverRegisterCheck2();
                 break;

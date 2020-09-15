@@ -61,7 +61,13 @@ public interface ApiInterface {
                                          @Field("gender") String gender);
     @FormUrlEncoded
     @PUT("driverpassword/{driver_id}")
-    Call<List<ProfileModel>> changePassword(@Path("driver_id") String driver_idv,
+    Call<List<ProfileModel>> changePassword(@Path("driver_id") String driver_id,
                                        @Field("password") String password);
+
+    @FormUrlEncoded
+    @PUT("rating/{driver_id}")
+    Call<List<ProfileModel>> updateRating(@Path("driver_id") String driver_id,
+                                            @Field("rating") float rating,
+                                            @Field("ratingCount") int ratingCount);
 
 }
