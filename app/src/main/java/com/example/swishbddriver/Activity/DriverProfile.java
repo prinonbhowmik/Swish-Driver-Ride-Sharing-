@@ -31,8 +31,8 @@ import retrofit2.Response;
 
 public class DriverProfile extends AppCompatActivity {
 
-    private String userId, name, email, phone, image, gender, dob, driverId;
-    private TextView nametv, emailtv, phonetv, genderTv, dobTv,rideCount;
+    private String userId, name, email, phone, image, gender, dob,bio, driverId;
+    private TextView nametv, emailtv, phonetv, genderTv, dobTv,rideCount,bioTv,edit_bioTv;
     private CircleImageView userImage,editBtn;
     private float rating;
     private int ratingCount;
@@ -49,7 +49,14 @@ public class DriverProfile extends AppCompatActivity {
         setContentView(R.layout.activity_driver_profile);
         init();
         driverId = sharedPreferences.getString("id","");
-
+        edit_bioTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DriverProfile.this,EditDriverBio.class).putExtra("bio",bio));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +83,7 @@ public class DriverProfile extends AppCompatActivity {
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 if (response.isSuccessful()) {
                     list = response.body();
-
+                    if (!list.get(0).getImage().equals("")){
                     Picasso.get().load(Config.IMAGE_LINE+list.get(0).getImage()).into(userImage, new com.squareup.picasso.Callback() {
                         @Override
                         public void onSuccess() {}
@@ -85,6 +92,7 @@ public class DriverProfile extends AppCompatActivity {
                             Log.d("kiKahini", e.getMessage());
                         }
                     });
+                    }
                     nametv.setText(list.get(0).getFull_name());
                     emailtv.setText(list.get(0).getEmail());
                     phonetv.setText(list.get(0).getPhone());
@@ -92,9 +100,16 @@ public class DriverProfile extends AppCompatActivity {
                     dobTv.setText(list.get(0).getDate());
                     ratingCount=list.get(0).getRatingCount();
                     rating=list.get(0).getRating();
+                    bio=list.get(0).getDetails();
+
                     float rat=rating/ratingCount;
                     ratingBar.setRating(rat);
                     rideCount.setText("Ride : "+list.get(0).getRideCount());
+                    if(!bio.equals("")){
+                        bioTv.setVisibility(View.VISIBLE);
+                        bioTv.setText(bio);
+                        edit_bioTv.setText("Edit Bio");
+                    }
                     Log.d("name", list.get(0).getFull_name());
                 }
             }
@@ -119,6 +134,8 @@ public class DriverProfile extends AppCompatActivity {
         rideCount = findViewById(R.id.rideCount);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+        bioTv=findViewById(R.id.bioTv);
+        edit_bioTv=findViewById(R.id.edit_bioTv);
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
         changePassword=findViewById(R.id.changePassBtn);
     }

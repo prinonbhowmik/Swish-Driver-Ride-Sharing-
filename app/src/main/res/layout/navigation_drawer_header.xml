@@ -71,7 +71,7 @@
                android:numStars="5"
                android:rating="0"
                android:stepSize=".5"
-               android:theme="@style/RatingBar"/>
+               android:theme="@style/RatingBarLight"/>
 
 
 

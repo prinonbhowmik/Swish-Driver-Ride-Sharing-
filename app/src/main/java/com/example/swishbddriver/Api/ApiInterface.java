@@ -114,5 +114,10 @@ public interface ApiInterface {
     Call<List<ProfileModel>> rideCountUpdate(@Path("driver_id") String driver_id,
                                               @Field("rideCount") int rideCount);
 
+    @FormUrlEncoded
+    @PUT("detailsupdate/{driver_id}")
+    Call<List<ProfileModel>> updateBio(@Path("driver_id") String driver_id,
+                                            @Field("details") String details);
+
 
 }

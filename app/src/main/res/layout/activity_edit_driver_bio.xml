@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neomorph_background_color"
+    tools:context=".Activity.EditDriverBio">
+
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/backNFL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:neomorph_view_type="circular"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_elevation="5dp"
+        app:neomorph_corner_radius="10dp"
+        android:layout_marginStart="10dp"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
+        android:layout_marginBottom="5dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="backPressBio"
+            android:padding="7dp"
+            android:background="@drawable/round_stroke2"
+            android:src="@drawable/ic_arrow_gray"/>
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/editNFL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        app:neomorph_view_type="circular"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_elevation="5dp"
+        app:neomorph_corner_radius="10dp"
+        android:layerType="software"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/editBioBtn"
+            android:background="@drawable/round_stroke2"
+            android:padding="6dp"
+            android:src="@drawable/ic_tick_gray"
+            android:layout_alignParentTop="true"/>
+    </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/referral_LT"
+        style="@style/Edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Bio"
+        app:helperText="Max 40"
+        app:counterEnabled="true"
+        app:counterMaxLength="40"
+        app:helperTextEnabled="true"
+        android:textColorHint="#000"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxBackgroundMode="outline"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/updateBio_Et"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#000"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textSize="21sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+</RelativeLayout>
