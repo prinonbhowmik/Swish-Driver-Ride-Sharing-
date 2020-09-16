@@ -75,9 +75,20 @@ public interface ApiInterface {
     Call<List<ProfileModel>> updateRating(@Path("driver_id") String driver_id,
                                           @Field("rating") float rating,
                                           @Field("ratingCount") int ratingCount);
+
     @FormUrlEncoded
     @PUT("bookingconfirm/{bookingId}")
     Call<List<BookForLaterModel>> confirmRide(@Path("bookingId") String bookingId,
                                               @Field("bookingStatus") String bookingStatus,
                                               @Field("driverId") String driverId);
+
+    @FormUrlEncoded
+    @PUT("bookingtripstart/{bookingId}")
+    Call<List<BookForLaterModel>> startTripData(@Path("bookingId") String bookingId,
+                                                @Field("pickupTime") String pickupTime,
+                                                @Field("pickupLat") String pickupLat,
+                                                @Field("pickupPlace") String pickupPlace,
+                                                @Field("rideStatus") String rideStatus);
+
+
 }

@@ -3,6 +3,7 @@ package com.example.swishbddriver.Activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -74,6 +75,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
     private Polyline currentPolyline;
     private MarkerOptions place1, place2;
     private Button passengerNav;
+    private SharedPreferences sharedPreferences;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -83,7 +85,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
 
         init();
 
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userId = sharedPreferences.getString("id","");
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -195,6 +197,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
         geocoder = new Geocoder(this,locale);
         placeNameTV = findViewById(R.id.placeNameTV);
         passengerNav = findViewById(R.id.passengerNav);
+        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
