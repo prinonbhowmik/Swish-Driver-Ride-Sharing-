@@ -167,7 +167,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()){
             case R.id.my_rides:
-                DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
+                DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
                 bookingRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

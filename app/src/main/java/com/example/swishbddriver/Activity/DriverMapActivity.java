@@ -260,6 +260,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     rating=list.get(0).getRating();
                     ratingCount=list.get(0).getRatingCount();
 
+
                     float rat=rating/ratingCount;
                     ratingBar.setRating(rat);
                     profileImageLoading.setVisibility(View.GONE);

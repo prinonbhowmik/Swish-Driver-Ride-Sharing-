@@ -51,6 +51,7 @@ public class PasswordActivity extends AppCompatActivity {
                         if (response.isSuccessful()){
                             List<ProfileModel> models = response.body();
                             String checkpass = models.get(0).getPassword();
+
                             if (password.matches(checkpass)){
 
                                 SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);

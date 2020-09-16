@@ -33,10 +33,13 @@ public class ProfileModel {
     private String carType;
     @SerializedName("image")
     private String image;
+
     @SerializedName("rating")
     private float rating;
+
     @SerializedName("ratingCount")
     private int ratingCount;
+
     @SerializedName("rideCount")
     private int rideCount;
     @SerializedName("token")

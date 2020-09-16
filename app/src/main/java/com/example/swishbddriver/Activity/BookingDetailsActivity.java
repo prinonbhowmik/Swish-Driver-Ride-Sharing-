@@ -74,14 +74,16 @@ import retrofit2.Response;
 
 public class BookingDetailsActivity extends AppCompatActivity {
     private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV;
+
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,
-            currentDate,rideStatus,pickUpCity,destinationCity,apiKey = "AIzaSyDy8NWL5x_v5AyQkcM9-4wqAWBp27pe9Bk";
+            currentDate,rideStatus,pickUpCity,destinationCity,apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
+
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn,endTripBtn;
     private int kmdistance, travelduration;
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
-    private String driver_name, driver_phone,driverID;
+    private String driver_name, driver_phone;
     private boolean hasDateMatch = false,startRide=false;
     private ScrollView scrollLayout;
     private double currentLat, currentLon;
@@ -104,7 +106,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking_details);
 
         init();
-        getDriverRat();
+        getData();
+        //getDriverInformation();
+        Intent intent = getIntent();
+        id = intent.getStringExtra("bookingId");
+        customerID = intent.getStringExtra("userId");
+        car_type = intent.getStringExtra("carType");
+
+
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,23 +130,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        Intent intent = getIntent();
-        id = intent.getStringExtra("bookingId");
-        customerID = intent.getStringExtra("userId");
-        car_type = intent.getStringExtra("carType");
-        getData();
-        //getDriverInformation();
-
-
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
-
-
 
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -200,6 +192,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 endAlert();
             }
         });
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
     }
 
     private void blockAlert() {
@@ -589,7 +589,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 destinationLon = book.getDestinationLon();
                 bookingStatus = book.getBookingStatus();
                 rideStatus = book.getRideStatus();
-                driverID=book.getDriverId();
+
 
                 pickupPlaceTV.setText(pickupPlace);
                 destinationTV.setText(destinationPlace);
@@ -598,8 +598,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 carTypeTV.setText(carType);
                 takaTV.setText(taka);
 
-                if(!driverID.equals("")){
-                    if(!driverID.equals(driverId)){
+                if(!driverId.equals("")){
+                    if(!driverId.equals(driverId)){
                         confirmBtn.setVisibility(View.GONE);
                         cancelBtn.setVisibility(View.GONE);
                         customerDetailsBtn.setVisibility(View.GONE);
@@ -678,6 +678,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         details=findViewById(R.id.detailsNFL);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+
+        getDriverRat();
     }
 
 
@@ -797,12 +799,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                 }
                             });
-
                 }
-
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -845,9 +843,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     customerDetailsBtn.setVisibility(View.GONE);
                     Snackbar snackbar = Snackbar.make(scrollLayout, "You are cancel this ride", Snackbar.LENGTH_SHORT);
                     snackbar.show();
+                    addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
                     sendNotification(id,"Driver Canceled Your Trip!","Driver has canceled your trip request!","my_ride_details");
-                    addRating();
+
 
                 }
             }
@@ -858,16 +857,17 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("driverId").setValue("");
     }
     private void getDriverRat() {
-        Call<List<ProfileModel>> call = api.getData("D3819");
+        Call<List<ProfileModel>> call = api.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+               if (response.isSuccessful()){
+                   list= response.body();
+                   rating=list.get(0).getRating();
+                   ratingCount=list.get(0).getRatingCount();
+                   rat=rating/ratingCount;
 
-                list= response.body();
-                rating=list.get(0).getRating();
-                ratingCount=list.get(0).getRatingCount();
-                rat=rating/ratingCount;
-
+               }
             }
 
             @Override
@@ -882,7 +882,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         float rating2 = (float) (rating + 2.5);
         int ratingCount2 = ratingCount + 1;
-        Call<List<ProfileModel>> call1 = api.updateRating(driverID, rating2,ratingCount2);
+        Call<List<ProfileModel>> call1 = api.updateRating(driverId, rating2,ratingCount2);
         call1.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {

@@ -31,24 +31,24 @@ public interface ApiInterface {
 
     @Multipart
     @POST("driversave")
-    Call<ResponseBody> register(@Part("car_owner") int  car_owner,
-                                      @Part("details") RequestBody   details,
-                                      @Part("date")RequestBody   date,
-                                      @Part("full_name") RequestBody   name,
-                                      @Part("gender")RequestBody   gender,
-                                      @Part("email")RequestBody   email,
-                                      @Part("driver_address")RequestBody   driver_address,
-                                      @Part("phone")RequestBody   phone,
-                                      @Part("password")RequestBody   password,
-                                      @Part("remember_token")RequestBody   remember_token,
-                                      @Part("status")RequestBody   status,
-                                      @Part("carType") RequestBody  carType,
-                                      @Part MultipartBody.Part image,
-                                      @Part("rating") int rating,
-                                      @Part("ratingCount") int ratingCount,
-                                      @Part("rideCount") int rideCount,
-                                      @Part("token") RequestBody  token,
-                                      @Part("editable") RequestBody  editable);
+    Call<ResponseBody> register(@Part("car_owner") int car_owner,
+                                @Part("details") RequestBody details,
+                                @Part("date") RequestBody date,
+                                @Part("full_name") RequestBody name,
+                                @Part("gender") RequestBody gender,
+                                @Part("email") RequestBody email,
+                                @Part("driver_address") RequestBody driver_address,
+                                @Part("phone") RequestBody phone,
+                                @Part("password") RequestBody password,
+                                @Part("remember_token") RequestBody remember_token,
+                                @Part("status") RequestBody status,
+                                @Part("carType") RequestBody carType,
+                                @Part MultipartBody.Part image,
+                                @Part("rating") int rating,
+                                @Part("ratingCount") int ratingCount,
+                                @Part("rideCount") int rideCount,
+                                @Part("token") RequestBody token,
+                                @Part("editable") RequestBody editable);
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
@@ -56,18 +56,19 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("driverupdate/{driver_id}")
     Call<List<ProfileModel>> updateData(@Path("driver_id") String driver_id,
-                                         @Field("full_name") String full_name,
-                                         @Field("email") String email,
-                                         @Field("gender") String gender);
+                                        @Field("full_name") String full_name,
+                                        @Field("email") String email,
+                                        @Field("gender") String gender);
+
     @FormUrlEncoded
     @PUT("driverpassword/{driver_id}")
     Call<List<ProfileModel>> changePassword(@Path("driver_id") String driver_id,
-                                       @Field("password") String password);
+                                            @Field("password") String password);
 
     @FormUrlEncoded
     @PUT("rating/{driver_id}")
     Call<List<ProfileModel>> updateRating(@Path("driver_id") String driver_id,
-                                            @Field("rating") float rating,
-                                            @Field("ratingCount") int ratingCount);
+                                          @Field("rating") float rating,
+                                          @Field("ratingCount") int ratingCount);
 
 }
