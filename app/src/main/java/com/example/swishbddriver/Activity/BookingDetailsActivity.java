@@ -106,14 +106,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking_details);
 
         init();
-        getData();
+
         //getDriverInformation();
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
 
-
+        getData();
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -571,7 +571,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void getData() {
 
-        DatabaseReference reference = databaseReference.child("BookForLater").child("Sedan").child(id);
+        DatabaseReference reference = databaseReference.child("BookForLater").child(car_type).child(id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -767,6 +767,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
         DatabaseReference ref2 = databaseReference.child("CustomerRides").child(customerID).child(id);
         ref2.child("bookingStatus").setValue("Booked");
         ref2.child("driverId").setValue(driverId);
+
+        Call<List<BookForLaterModel>> call = api.confirmRide(id,"Booked",driverId);
+        call.enqueue(new Callback<List<BookForLaterModel>>() {
+            @Override
+            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void sendNotification(final String id, final String title, final String message, final String toActivity) {

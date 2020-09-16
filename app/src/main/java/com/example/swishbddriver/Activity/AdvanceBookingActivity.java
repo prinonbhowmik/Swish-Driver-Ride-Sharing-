@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Adapter.BookForLaterAdapter;
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdvanceBookingActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     private DatabaseReference databaseReference;
@@ -43,15 +50,34 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     private int count=0;
     private RelativeLayout moreRelative;
     private SharedPreferences sharedPreferences;
+    private ApiInterface apiInterface;
+    private List<ProfileModel> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advance_booking);
-        init();
 
-        driverId = sharedPreferences.getString("id","");
-        getList();
+        init();
+        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                if (response.isSuccessful()){
+                    list = response.body();
+                    carType = list.get(0).getCarType();
+                    getList(carType);
+                    Toast.makeText(AdvanceBookingActivity.this, ""+carType, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+
+
 
         moreRelative.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,12 +109,14 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
         moreRelative=findViewById(R.id.moreRelative);
         emptyText=findViewById(R.id.emptyText);
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
+        driverId = sharedPreferences.getString("id","");
+        apiInterface = ApiUtils.getUserService();
+        list= new ArrayList<>();
 
     }
 
-
-    private void getData() {
-        DatabaseReference driverRef=databaseReference.child("RegisteredDrivers").child(driverId).child("carType");
+    /*private void getData() {
+        DatabaseReference driverRef=databaseReference.child("RegisteredDrivers").child(driverId).child(carType);
         driverRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -101,9 +129,10 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
-    private void getList() {
-        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
+    }*/
+    private void getList(final String carType) {
+
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -116,7 +145,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                             bookForLaterModelList.add(book);
                         }
                     }
-                    counter();
+                    counter(carType);
                     Collections.reverse(bookForLaterModelList);
                     bookForLaterAdapter.notifyDataSetChanged();
                 }
@@ -133,8 +162,8 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
             }
         });
     }
-    public void counter(){
-        DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child("Sedan");
+    public void counter(String carType){
+        DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child(carType);
         bookingRef2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -167,7 +196,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()){
             case R.id.my_rides:
-                DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
+                DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
                 bookingRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -203,8 +232,8 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                 titleTv.setText("My Rides List");
                 return false;
             case R.id.all_rides:
-                getList();
-                counter();
+                getList(carType);
+                counter(carType);
                 titleTv.setText("Advance Booking List");
                 return false;
             case  R.id.history:
@@ -233,7 +262,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                         Toast.makeText(AdvanceBookingActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                counter();
+                counter(carType);
                 titleTv.setText("History");
                 return false;
         }

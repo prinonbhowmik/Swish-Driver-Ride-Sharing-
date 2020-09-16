@@ -3,6 +3,7 @@ package com.example.swishbddriver.Api;
 import android.database.Observable;
 
 import com.example.swishbddriver.Activity.DriverProfile;
+import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -74,5 +75,9 @@ public interface ApiInterface {
     Call<List<ProfileModel>> updateRating(@Path("driver_id") String driver_id,
                                           @Field("rating") float rating,
                                           @Field("ratingCount") int ratingCount);
-
+    @FormUrlEncoded
+    @PUT("bookingconfirm/{bookingId}")
+    Call<List<BookForLaterModel>> confirmRide(@Path("bookingId") String bookingId,
+                                              @Field("bookingStatus") String bookingStatus,
+                                              @Field("driverId") String driverId);
 }
