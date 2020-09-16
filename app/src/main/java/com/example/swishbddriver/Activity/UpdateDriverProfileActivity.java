@@ -1,6 +1,7 @@
 package com.example.swishbddriver.Activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +44,11 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,12 +60,12 @@ import retrofit2.Response;
 public class UpdateDriverProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
-    private String driverId, name, email, phone, image,address,gender;
-    private TextView name_Et, email_Et, gender_Et;
+    private String driverId, name, email, phone, image,address,gender,dob;
+    private TextView name_Et, email_Et, gender_Et,date_Et;
     private CircleImageView driverProfileIV,updateBtn;
     private StorageReference storageReference;
     private FirebaseStorage storage;
-    private String name1, email1, gender1;
+    private String name1, email1, gender1,dob1;
     private SharedPreferences sharedPreferences;
     private FrameLayout frameLayout;
     private Uri imageUri;
@@ -77,9 +83,12 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         name1 = intent.getStringExtra("name");
         email1 = intent.getStringExtra("email");
         gender1 = intent.getStringExtra("gender");
+        dob1 = intent.getStringExtra("dob");
         name_Et.setText(name1);
         email_Et.setText(email1);
         gender_Et.setText(gender1);
+        date_Et.setText(dob1);
+
         getDriverInformation();
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,9 +100,18 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                         .start(UpdateDriverProfileActivity.this);
             }
         });
+
+        date_Et.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDate();
+            }
+        });
+
         name_Et.addTextChangedListener(textWatcher);
         email_Et.addTextChangedListener(textWatcher);
         gender_Et.addTextChangedListener(textWatcher);
+        date_Et.addTextChangedListener(textWatcher);
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +119,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 name = name_Et.getText().toString();
                 email = email_Et.getText().toString();
                 gender = gender_Et.getText().toString();
+                dob = date_Et.getText().toString();
 
                 if (TextUtils.isEmpty(name)){
                     name_Et.setError("Enter name");
@@ -115,8 +134,11 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 }else if (TextUtils.isEmpty(gender)) {
                     gender_Et.setError("Enter Gender");
                     gender_Et.requestFocus();
+                }else if (TextUtils.isEmpty(dob)) {
+                    date_Et.setError("Select Date Of Birth");
+                    date_Et.requestFocus();
                 }else{
-                    updateInformation(name,email,gender);
+                    updateInformation(name,email,gender,dob);
                 }
             }
         });
@@ -133,7 +155,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
             String updateName=name_Et.getText().toString().trim();
             String updateEmail=email_Et.getText().toString().trim();
             String updateGender=gender_Et.getText().toString().trim();
-            if (!updateName.equals(name1) || !updateEmail.equals(email1) || !updateGender.equals(gender1)) {
+            String updateDate=date_Et.getText().toString().trim();
+            if (!updateName.equals(name1) || !updateEmail.equals(email1) || !updateGender.equals(gender1) || !updateDate.equals(dob1)) {
                 updateBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_tick_green));
             }
         }
@@ -144,8 +167,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         }
     };
 
-    private void updateInformation(String name, String email, String gender) {
-        Call<List<ProfileModel>> call = api.updateData(driverId,name,email,gender);
+    private void updateInformation(String name, String email, String gender, String dob) {
+        Call<List<ProfileModel>> call = api.updateData(driverId,name,email,gender,dob);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
@@ -163,7 +186,33 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    private void getDate() {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                String currentDate = day + "/" + month + "/" + year;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                Date date = null;
 
+                try {
+                    date = dateFormat.parse(currentDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                date_Et.setText(dateFormat.format(date));
+            }
+        };
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
+
+        datePickerDialog.show();
+    }
     private void init() {
         auth= FirebaseAuth.getInstance();
         databaseReference= FirebaseDatabase.getInstance().getReference();
@@ -172,6 +221,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         name_Et=findViewById(R.id.updateNameET);
         email_Et=findViewById(R.id.updateEmailET);
         gender_Et=findViewById(R.id.updateGenderET);
+        date_Et=findViewById(R.id.UpdateDateET);
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
         driverProfileIV=findViewById(R.id.driverProfileIV);
         updateBtn=findViewById(R.id.updateBtnCIV);
@@ -307,4 +357,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    public void backPressUp(View view) {
+        startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 }

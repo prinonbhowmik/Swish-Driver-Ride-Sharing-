@@ -19,6 +19,29 @@
             android:layout_marginBottom="20dp"
             android:background="@color/neomorph_background_color"
             app:layout_collapseMode="parallax">
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/backNFL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:neomorph_view_type="circular"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_elevation="5dp"
+                app:neomorph_corner_radius="10dp"
+                android:layout_marginStart="10dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                android:layout_marginBottom="5dp">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:onClick="backPressUp"
+                    android:padding="7dp"
+                    android:background="@drawable/round_stroke2"
+                    android:src="@drawable/ic_arrow_gray"/>
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
             <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
                 android:id="@+id/editNFL"
@@ -161,10 +184,8 @@
                 android:textColor="#000"
                 android:textSize="21sp" />
         </com.google.android.material.textfield.TextInputLayout>
-
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/gender_LT"
+            android:id="@+id/date_LT"
             style="@style/Edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -173,7 +194,39 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="60dp"
+            android:hint="Date Of Birth"
+            android:textColorHint="#000"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/UpdateDateET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableEnd="@drawable/ic_baseline_date_range_24"
+                android:drawableRight="@drawable/ic_baseline_date_range_24"
+                android:focusable="false"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="#000"
+                android:textSize="21sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/gender_LT"
+            style="@style/Edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date_LT"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="40dp"
             android:hint="Gender"
             android:textColorHint="#000"
             app:boxBackgroundMode="outline"

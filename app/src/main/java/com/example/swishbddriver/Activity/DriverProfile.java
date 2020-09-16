@@ -19,6 +19,7 @@ import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.Config;
 import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -63,7 +64,8 @@ public class DriverProfile extends AppCompatActivity {
                 startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class)
                 .putExtra("name",nametv.getText())
                 .putExtra("email",emailtv.getText())
-                .putExtra("gender",genderTv.getText()));
+                .putExtra("gender",genderTv.getText())
+                .putExtra("dob",dobTv.getText()));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
             }

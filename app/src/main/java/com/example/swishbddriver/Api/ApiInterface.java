@@ -64,7 +64,8 @@ public interface ApiInterface {
     Call<List<ProfileModel>> updateData(@Path("driver_id") String driver_id,
                                         @Field("full_name") String full_name,
                                         @Field("email") String email,
-                                        @Field("gender") String gender);
+                                        @Field("gender") String gender,
+                                        @Field("date") String date);
 
     @FormUrlEncoded
     @PUT("driverpassword/{driver_id}")
