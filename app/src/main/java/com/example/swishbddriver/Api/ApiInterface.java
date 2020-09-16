@@ -7,6 +7,7 @@ import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
+import com.example.swishbddriver.Model.RidingRate;
 
 import java.util.List;
 
@@ -87,8 +88,31 @@ public interface ApiInterface {
     Call<List<BookForLaterModel>> startTripData(@Path("bookingId") String bookingId,
                                                 @Field("pickupTime") String pickupTime,
                                                 @Field("pickupLat") String pickupLat,
+                                                @Field("pickupLon") String pickupLon,
                                                 @Field("pickupPlace") String pickupPlace,
                                                 @Field("rideStatus") String rideStatus);
+
+    @FormUrlEncoded
+    @PUT("bookingtripend/{bookingId}")
+    Call<List<BookForLaterModel>> endTripData(@Path("bookingId") String bookingId,
+                                              @Field("rideStatus") String rideStatus,
+                                              @Field("destinationLat") String destinationLat,
+                                              @Field("destinationLon") String destinationLon,
+                                              @Field("destinationPlace") String destinationPlace,
+                                              @Field("endTime") String endTime);
+
+    @GET("bookingrate?")
+    Call<List<RidingRate>> getPrice(@Query("id") String car_type);
+
+    @FormUrlEncoded
+    @PUT("priceupdate/{bookingId}")
+    Call<List<BookForLaterModel>> priceUpdate(@Path("bookingId") String bookingId,
+                                              @Field("price") String price);
+
+    @FormUrlEncoded
+    @PUT("rideCountUpdate/{driver_id}")
+    Call<List<ProfileModel>> rideCountUpdate(@Path("driver_id") String driver_id,
+                                              @Field("rideCount") int rideCount);
 
 
 }

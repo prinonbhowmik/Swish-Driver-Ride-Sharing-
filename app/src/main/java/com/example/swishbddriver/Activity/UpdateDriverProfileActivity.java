@@ -183,7 +183,6 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
     private void getDriverInformation() {
 
-
         Call<List<ProfileModel>> call = api.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override

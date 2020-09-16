@@ -36,7 +36,7 @@ import com.example.swishbddriver.ForApi.Element;
 import com.example.swishbddriver.ForApi.RestUtil;
 import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.ProfileModel;
-import com.example.swishbddriver.Model.Rate;
+import com.example.swishbddriver.Model.RidingRate;
 import com.example.swishbddriver.Notification.APIService;
 import com.example.swishbddriver.Notification.Client;
 import com.example.swishbddriver.Notification.Data;
@@ -77,27 +77,28 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,
-            currentDate,rideStatus,pickUpCity,destinationCity,apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
+            currentDate, rideStatus, pickUpCity, destinationCity, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
 
-    private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn,endTripBtn;
+    private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
     private int kmdistance, travelduration;
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private String driver_name, driver_phone;
-    private boolean hasDateMatch = false,startRide=false;
+    private boolean hasDateMatch = false, startRide = false;
     private ScrollView scrollLayout;
     private double currentLat, currentLon;
-    private NeomorphFrameLayout neomorphFrameLayoutStart,details,coNFL;
+    private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private APIService apiService;
-    private int distance,trduration;
-    private float rating,rat;
+    private int distance, trduration;
+    private float rating, rat;
     private int ratingCount;
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
+    private int price;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -114,13 +115,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
         car_type = intent.getStringExtra("carType");
 
         getData();
+
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //checkDate();
-                if(rat<2){
+                if (rat < 2) {
                     blockAlert();
-                }else {
+                } else {
                     if (hasDateMatch) {
                         Toasty.info(BookingDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
                     } else {
@@ -182,8 +184,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
         startTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkDriverOnLine();
-               }
+               // checkDriverOnLine();
+                startTripAlert();
+            }
         });
 
         endTripBtn.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +231,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id,"End Trip","Your trip has Ended.","show_cash");
+                sendNotification(id, "End Trip", "Your trip has Ended.", "show_cash");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -240,15 +243,42 @@ public class BookingDetailsActivity extends AppCompatActivity {
         AlertDialog alertDialog = dialog.create();
         alertDialog.show();
     }
-    public  void getDriverRide(){
+
+    public void getDriverRide() {
 
 
     }
 
     private void confirmEndTrip() {
 
-        DatabaseReference rideAddRef = FirebaseDatabase.getInstance().getReference("DriversProfile").child(driverId);
-        rideAddRef.child("rideCount").setValue(ride+1);
+        /*DatabaseReference rideAddRef = FirebaseDatabase.getInstance().getReference("DriversProfile").child(driverId);
+        rideAddRef.child("rideCount").setValue(ride + 1);*/
+        Call<List<ProfileModel>> call2 = api.getData(driverId);
+        call2.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
+                list = response.body();
+                int rideCount = list.get(0).getRideCount();
+                int totalRide = rideCount+1;
+                Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId,totalRide);
+                call1.enqueue(new Callback<List<ProfileModel>>() {
+                    @Override
+                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
+
+            }
+        });
 
         Locale locale = new Locale("en");
         Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
@@ -258,6 +288,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         String currentTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
@@ -273,12 +304,24 @@ public class BookingDetailsActivity extends AppCompatActivity {
         userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
         userRef.child("endTime").setValue(currentTime);
 
+        Call<List<BookForLaterModel>> call = api.endTripData(id,"End",destinationLat,destinationLon,destinationPlace,currentTime);
+        call.enqueue(new Callback<List<BookForLaterModel>>() {
+            @Override
+            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+            }
+        });
 
         rideRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String rideStatus = snapshot.child("rideStatus").getValue().toString();
-                if (rideStatus.equals("End")){
+                if (rideStatus.equals("End")) {
                     getCashData();
                 }
             }
@@ -298,7 +341,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     if (!snapshot.hasChild(driverId)) {
                         onlineAlert();
-                    }else{
+                    } else {
                         startTripAlert();
                     }
                 }
@@ -321,20 +364,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
         dialog.setPositiveButton("Go OnLine", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                    DatabaseReference dRef = databaseReference.child("OnLineDrivers").child(driverId);
-                    HashMap<String, Object> userInfo = new HashMap<>();
-                    userInfo.put("id", driverId);
-                    userInfo.put("lat", String.valueOf(currentLat));
-                    userInfo.put("lon", String.valueOf(currentLon));
-                    userInfo.put("carType",carType);
-                    userInfo.put("status", "enable");
-                    dRef.setValue(userInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            startTripAlert();
-                        }
-                    });
-
+                DatabaseReference dRef = databaseReference.child("OnLineDrivers").child(driverId);
+                HashMap<String, Object> userInfo = new HashMap<>();
+                userInfo.put("id", driverId);
+                userInfo.put("lat", String.valueOf(currentLat));
+                userInfo.put("lon", String.valueOf(currentLon));
+                userInfo.put("carType", carType);
+                userInfo.put("status", "enable");
+                dRef.setValue(userInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        startTripAlert();
+                    }
+                });
 
 
             }
@@ -359,14 +401,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Locale locale = new Locale("en");
-                Geocoder geocoder = new Geocoder(BookingDetailsActivity.this,locale);
+                Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
                 try {
                     List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
                     pickupPlace = addresses.get(0).getAddressLine(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String currentTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
+                String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
                 rideRef.child("rideStatus").setValue("Start");
                 rideRef.child("pickupLat").setValue(String.valueOf(currentLat));
@@ -381,6 +423,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 userRef.child("pickupPlace").setValue(String.valueOf(pickupPlace));
                 userRef.child("pickupTime").setValue(currentTime);
 
+                Call<List<BookForLaterModel>> call = api.startTripData(id,pickupTime,pickUpLat,pickUpLon,pickupPlace,"Start");
+                call.enqueue(new Callback<List<BookForLaterModel>>() {
+                    @Override
+                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+                    }
+                });
+
                 neomorphFrameLayoutStart.setVisibility(View.GONE);
 
                 neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
@@ -390,7 +445,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
                 navigationIntent.setPackage("com.google.android.apps.maps");
                 startActivity(navigationIntent);
-                sendNotification(id,"Start Trip","Your trip has started.","running_trip");
+                sendNotification(id, "Start Trip", "Your trip has started.", "running_trip");
 
             }
         });
@@ -416,14 +471,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 destinationLon = book.getDestinationLon();
                 pickupPlace = book.getPickupPlace();
                 destinationPlace = book.getDestinationPlace();
-                
+
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
                 rideRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String rideStatus = snapshot.child("rideStatus").getValue().toString();
-                        if (rideStatus.equals("End")){
-                            calculate(pickUpLat, pickUpLon, destinationLat, destinationLon,pickupPlace,destinationPlace);
+                        if (rideStatus.equals("End")) {
+                            calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace);
                         }
                     }
 
@@ -490,7 +545,57 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     kmdistance = distance / 1000;
                     travelduration = trduration / 60;
 
-                    DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("RidingRate").child(car_type);
+                    Call<List<RidingRate>> call1 = api.getPrice(carType);
+                    call1.enqueue(new Callback<List<RidingRate>>() {
+                        @Override
+                        public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
+                            if (response.isSuccessful()){
+                                List<RidingRate> rate = new ArrayList<>();
+                                rate = response.body();
+                                int kmRate = rate.get(0).getKm_charge();
+                                int minRate =rate.get(0).getMin_charge();
+                                int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
+
+                                int kmPrice = kmRate * kmdistance;
+                                int minPrice = minRate * travelduration;
+
+                                Log.d("kmPrice", kmPrice + "," + minPrice);
+                                Log.d("minf", String.valueOf(minimumRate));
+
+                                Log.d("checkCity", pickUpCity + "," + destinationCity);
+
+                                price = kmPrice + minPrice + minimumRate;
+
+                                takaTV.setText("৳ "+price);
+                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
+                                        .child(customerID).child(id);
+                                updateRef.child("price").setValue(String.valueOf(price));
+
+                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
+                                        .child(carType).child(id);
+                                newRef.child("price").setValue(String.valueOf(price));
+
+                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price));
+                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                                    @Override
+                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+                                    }
+                                    @Override
+                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+                                    }
+                                });
+                                addAmount(price, trduration, distance);
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<List<RidingRate>> call, Throwable t) {
+
+                        }
+                    });
+
+                   /* DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("RidingRate").child(car_type);
                     amountRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -500,9 +605,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             String min = rate.getMin();              //3
                             String minfare = rate.getMinimumfare();  //40
 
-                           int kmRate = Integer.parseInt(km);
-                           int  minRate = Integer.parseInt(min);
-                           int  minimumRate = Integer.parseInt(minfare);
+                            int kmRate = Integer.parseInt(km);
+                            int minRate = Integer.parseInt(min);
+                            int minimumRate = Integer.parseInt(minfare);
 
                             int price = (kmdistance * kmRate) + (minRate * travelduration) + minimumRate;
                             DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
@@ -510,13 +615,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
                             userRef.child("price").setValue(String.valueOf(price));
 
-                            addAmount(price,trduration,distance);
+                            addAmount(price, trduration, distance);
                         }
+
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
 
                         }
-                    });
+                    });*/
                 }
             }
 
@@ -531,9 +637,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
         currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
         DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("Earnings")
-                                        .child(driverId).child("Earn").child(id);
+                .child(driverId).child("Earn").child(id);
         HashMap<String, Object> userInfo = new HashMap<>();
-        int due = (price*15)/100;
+        int due = (price * 15) / 100;
         userInfo.put("date", currentDate);
         userInfo.put("due", due);
         userInfo.put("price", price);
@@ -541,12 +647,12 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                Intent intent = new Intent(BookingDetailsActivity.this,ShowCash.class);
-                intent.putExtra("price",price);
-                intent.putExtra("pPlace",pickupPlace);
-                intent.putExtra("dPlace",destinationPlace);
-                intent.putExtra("distance",distance);
-                intent.putExtra("duration",trduration);
+                Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
+                intent.putExtra("price", price);
+                intent.putExtra("pPlace", pickupPlace);
+                intent.putExtra("dPlace", destinationPlace);
+                intent.putExtra("distance", distance);
+                intent.putExtra("duration", trduration);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
@@ -563,6 +669,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 d_name = model.getFull_name();
                 d_phone = model.getPhone();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -590,7 +697,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 bookingStatus = book.getBookingStatus();
                 rideStatus = book.getRideStatus();
 
-
                 pickupPlaceTV.setText(pickupPlace);
                 destinationTV.setText(destinationPlace);
                 pickupDateTV.setText(pickupDate);
@@ -598,8 +704,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 carTypeTV.setText(carType);
                 takaTV.setText(taka);
 
-                if(!driverId.equals("")){
-                    if(!driverId.equals(driverId)){
+                if (!driverId.equals("")) {
+                    if (!driverId.equals(driverId)) {
                         confirmBtn.setVisibility(View.GONE);
                         cancelBtn.setVisibility(View.GONE);
                         customerDetailsBtn.setVisibility(View.GONE);
@@ -607,19 +713,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         finish();
                     }
                 }
-
-                checkBookingConfirm();
                 checkDate();
+                checkBookingConfirm(bookingStatus);
+
                 getDriverRide();
 
-                if (rideStatus.equals("Start")){
+                if (rideStatus.equals("Start")) {
                     startTripBtn.setVisibility(View.GONE);
                     neomorphFrameLayoutStart.setVisibility(View.GONE);
                     neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
                     endTripBtn.setVisibility(View.VISIBLE);
                     cancelBtn.setVisibility(View.GONE);
-                }
-                else if (rideStatus.equals("End")){
+                } else if (rideStatus.equals("End")) {
                     startTripBtn.setVisibility(View.GONE);
                     neomorphFrameLayoutStart.setVisibility(View.GONE);
                     neomorphFrameLayoutEnd.setVisibility(View.GONE);
@@ -635,7 +740,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void checkBookingConfirm() {
+    private void checkBookingConfirm(String bookingStatus) {
         if (!bookingStatus.equals("Booked")) {
             confirmBtn.setVisibility(View.VISIBLE);
             cancelBtn.setVisibility(View.GONE);
@@ -645,9 +750,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
-            currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            String todayDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
-            if (currentDate.equals(pickupDate) && rideStatus.equals("pending")){
+            if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
                 startTripBtn.setVisibility(View.VISIBLE);
                 endTripBtn.setVisibility(View.GONE);
@@ -657,8 +762,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void init() {
-        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
-        driverId = sharedPreferences.getString("id","");
+        sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+        driverId = sharedPreferences.getString("id", "");
         databaseReference = FirebaseDatabase.getInstance().getReference();
         pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
         destinationTV = findViewById(R.id.destinationTV);
@@ -675,7 +780,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         neomorphFrameLayoutStart = findViewById(R.id.startTripNFL);
         neomorphFrameLayoutEnd = findViewById(R.id.endTripNFL);
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
-        details=findViewById(R.id.detailsNFL);
+        details = findViewById(R.id.detailsNFL);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
 
@@ -759,7 +864,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(BookingDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id,"Driver found!","Your Ride request has confirmed","my_ride_details");
+                    sendNotification(id, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
                 }
             }
         });
@@ -768,7 +873,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("bookingStatus").setValue("Booked");
         ref2.child("driverId").setValue(driverId);
 
-        Call<List<BookForLaterModel>> call = api.confirmRide(id,"Booked",driverId);
+        Call<List<BookForLaterModel>> call = api.confirmRide(id, "Booked", driverId);
         call.enqueue(new Callback<List<BookForLaterModel>>() {
             @Override
             public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
@@ -792,7 +897,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(id, R.drawable.ic_car, message, title, customerID,toActivity);
+                    Data data = new Data(id, R.drawable.ic_car, message, title, customerID, toActivity);
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -814,6 +919,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -858,7 +964,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     snackbar.show();
                     addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
-                    sendNotification(id,"Driver Canceled Your Trip!","Driver has canceled your trip request!","my_ride_details");
+                    sendNotification(id, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
 
 
                 }
@@ -869,18 +975,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("bookingStatus").setValue("Pending");
         ref2.child("driverId").setValue("");
     }
+
     private void getDriverRat() {
         Call<List<ProfileModel>> call = api.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-               if (response.isSuccessful()){
-                   list= response.body();
-                   rating=list.get(0).getRating();
-                   ratingCount=list.get(0).getRatingCount();
-                   rat=rating/ratingCount;
+                if (response.isSuccessful()) {
+                    list = response.body();
+                    rating = list.get(0).getRating();
+                    ratingCount = list.get(0).getRatingCount();
+                    rat = rating / ratingCount;
 
-               }
+                }
             }
 
             @Override
@@ -895,7 +1002,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         float rating2 = (float) (rating + 2.5);
         int ratingCount2 = ratingCount + 1;
-        Call<List<ProfileModel>> call1 = api.updateRating(driverId, rating2,ratingCount2);
+        Call<List<ProfileModel>> call1 = api.updateRating(driverId, rating2, ratingCount2);
         call1.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
