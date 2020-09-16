@@ -5,7 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.Otp_Activity">
-
+    <ImageView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="-155dp"
+    android:src="@drawable/ic_wave2"/>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logocircle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"/>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/verify_LT"
         android:layout_width="match_parent"
@@ -25,7 +36,7 @@
             android:id="@+id/verify_Et"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPassword"
+            android:inputType="number"
             android:textColor="#000"
             android:maxLines="1"
             android:paddingStart="20dp"

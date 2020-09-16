@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,8 +32,12 @@ import retrofit2.Response;
 public class DriverProfile extends AppCompatActivity {
 
     private String userId, name, email, phone, image, gender, dob, driverId;
-    private TextView nametv, emailtv, phonetv, genderTv, dobTv;
+    private TextView nametv, emailtv, phonetv, genderTv, dobTv,rideCount;
     private CircleImageView userImage,editBtn;
+    private float rating;
+    private int ratingCount;
+    private RatingBar ratingBar;
+    private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
     private Button changePassword;
@@ -85,7 +90,11 @@ public class DriverProfile extends AppCompatActivity {
                     phonetv.setText(list.get(0).getPhone());
                     genderTv.setText(list.get(0).getGender());
                     dobTv.setText(list.get(0).getDate());
-
+                    ratingCount=list.get(0).getRatingCount();
+                    rating=list.get(0).getRating();
+                    float rat=rating/ratingCount;
+                    ratingBar.setRating(rat);
+                    rideCount.setText("Ride : "+list.get(0).getRideCount());
                     Log.d("name", list.get(0).getFull_name());
                 }
             }
@@ -106,6 +115,8 @@ public class DriverProfile extends AppCompatActivity {
         genderTv = findViewById(R.id.genderTv);
         userImage = findViewById(R.id.profileIV);
         editBtn=findViewById(R.id.editBtn);
+        ratingBar=findViewById(R.id.ratingBar);
+        rideCount = findViewById(R.id.rideCount);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);

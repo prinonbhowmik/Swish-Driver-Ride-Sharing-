@@ -12,7 +12,7 @@
     <RelativeLayout
         android:id="@+id/r1"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_marginBottom="20dp"
         app:layout_collapseMode="parallax"
         android:background="@color/neomorph_background_color">
@@ -89,6 +89,28 @@
                 android:background="@drawable/round_stroke"
                 android:src="@drawable/ic_person_24" />
         </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profileNFL"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5"
+            android:theme="@style/RatingBar" />
+
+        <TextView
+            android:id="@+id/rideCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ratingBar"
+            android:layout_marginTop="5dp"
+            android:text="Rides : "
+            android:textAlignment="center"
+            android:textColor="#676262" />
 
     </RelativeLayout>
     <RelativeLayout

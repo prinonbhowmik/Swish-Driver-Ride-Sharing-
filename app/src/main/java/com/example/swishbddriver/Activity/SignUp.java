@@ -49,7 +49,7 @@ import retrofit2.Response;
 
 public class SignUp extends AppCompatActivity {
 
-    private TextInputEditText nameEt, emailEt, dobEt, addressEt, phoneEt, passwordEt;
+    private TextInputEditText nameEt, emailEt, dobEt, addressEt,passwordEt;
     private ImageView driverImage;
     private Button logIn;
     private RadioGroup radioGroup;
@@ -71,8 +71,6 @@ public class SignUp extends AppCompatActivity {
         phone = intent.getStringExtra("phone");
 
         init();
-
-        phoneEt.setText(phone);
 
         dobEt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +111,6 @@ public class SignUp extends AppCompatActivity {
 
                 name = nameEt.getText().toString();
                 dob = dobEt.getText().toString();
-                phone = phoneEt.getText().toString();
                 email = emailEt.getText().toString();
                 password = passwordEt.getText().toString();
                 address = addressEt.getText().toString();
@@ -133,9 +130,6 @@ public class SignUp extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(address)) {
                     addressEt.setError("Enter address");
                     addressEt.requestFocus();
-                } else if (TextUtils.isEmpty(phone)) {
-                    phoneEt.setError("Enter phone");
-                    phoneEt.requestFocus();
                 } else if (TextUtils.isEmpty(password)) {
                     passwordEt.setError("Enter Password!");
                     passwordEt.requestFocus();
@@ -228,7 +222,6 @@ public class SignUp extends AppCompatActivity {
         passwordEt = findViewById(R.id.password_Et);
         radioGroup = findViewById(R.id.radio);
         emailEt = findViewById(R.id.email_Et);
-        phoneEt = findViewById(R.id.phone_Et);
         addressEt = findViewById(R.id.address_Et);
         dobEt = findViewById(R.id.dob_Et);
         driverImage = findViewById(R.id.driverImage);

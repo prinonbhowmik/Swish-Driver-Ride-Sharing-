@@ -29,6 +29,10 @@
     <color name="semi_white">#F8F7F7</color>
 
 
+
+    <color name="gray">#6b7583</color>
+
+
     <!-- dark UI-->
     <color name="dark">#191a1e</color>
     <color name="blue1">#4285F4</color>

@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-145dp"
+        android:layout_marginTop="-155dp"
         android:src="@drawable/ic_wave2"/>
     <ImageView
         android:id="@+id/logo"
@@ -17,7 +17,7 @@
         android:layout_height="150dp"
         android:src="@drawable/logocircle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"/>
+        android:layout_marginTop="100dp"/>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phn_LT"
         android:layout_width="match_parent"
@@ -37,15 +37,14 @@
             android:id="@+id/phnNoEt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:textColor="#000"
             android:drawableStart="@drawable/ic_phone_24"
             android:drawablePadding="10dp"
             android:maxLines="1"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textSize="21sp"
-            android:drawableLeft="@drawable/ic_phone_24" />
+            android:textSize="21sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
