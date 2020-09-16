@@ -4,6 +4,7 @@ import android.database.Observable;
 
 import com.example.swishbddriver.Activity.DriverProfile;
 import com.example.swishbddriver.Model.CheckModel;
+import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
 
 import java.util.List;
@@ -52,6 +53,9 @@ public interface ApiInterface {
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
+
+    @GET("customer?")
+    Call<List<CustomerProfile>> getCustomerData(@Query("id") String customer_id);
 
     @FormUrlEncoded
     @PUT("driverupdate/{driver_id}")

@@ -14,15 +14,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.CustomerProfile;
+import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
+import com.example.swishbddriver.Utils.Config;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
     private View view;
@@ -30,6 +42,9 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
     private Button callCustomer;
     private DatabaseReference databaseReference;
     private String bookingId,carType,custName,custPhone,customerId;
+
+    private List<CustomerProfile> list;
+    private ApiInterface api;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_customer_details_bottom_sheet, container, false);
@@ -57,9 +72,28 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
 
         return view;
     }
-
     private void getData() {
-        DatabaseReference ref=databaseReference.child("profile").child(customerId);
+        Call<List<CustomerProfile>> call = api.getCustomerData(customerId);
+        call.enqueue(new Callback<List<CustomerProfile>>() {
+            @Override
+            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                if (response.isSuccessful()){
+                    list = response.body();
+
+                    customerName.setText(list.get(0).getName());
+                    customerPhone.setText(list.get(0).getPhone());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+            }
+        });
+
+
+
+        /*DatabaseReference ref=databaseReference.child("profile").child(customerId);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -75,7 +109,7 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
     }
 
     private void init(View view) {
@@ -83,5 +117,7 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
         customerName=view.findViewById(R.id.customerNameTV);
         customerPhone=view.findViewById(R.id.customer_PhoneTV);
         callCustomer=view.findViewById(R.id.callCustomerBtn);
+        list = new ArrayList<>();
+        api = ApiUtils.getUserService();
     }
 }
