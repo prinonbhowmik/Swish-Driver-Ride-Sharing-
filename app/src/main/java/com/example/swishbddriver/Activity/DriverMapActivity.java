@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +54,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -367,7 +365,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;
             case R.id.registration:
                 drawerLayout.closeDrawers();
-                startActivity(new Intent(DriverMapActivity.this, DriverInformationActivity.class));
+                startActivity(new Intent(DriverMapActivity.this, Registration1Activity.class));
 
                 break;
             /*case R.id.about:

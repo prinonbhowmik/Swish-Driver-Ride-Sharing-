@@ -34,45 +34,49 @@ import com.google.firebase.storage.UploadTask;
 
 import es.dmoral.toasty.Toasty;
 
-public class DriverInformationActivity extends AppCompatActivity {
-    private Button driverLicenceBtn, nidFrontBtn, nidBackBtn, nextBtn;
+public class Registration2Activity extends AppCompatActivity {
+    private Button  nidFrontBtn, nidBackBtn,driverLicenceFrontBtn,driverLicenceBackBtn,selfieBtn, lastStepBtn;
     private Uri driverLicenseUri, nidFrontUti, nidBackUri;
-    private ImageView driverLicenceIv, nidFrontIv, nidBackIv;
+    private ImageView  nidFrontIv, nidBackIv,driverLicenceFrontIv,driverLicenceBackIv,selfieIv;
     private static final int pic_id = 123;
     private LinearLayout linearLayout;
     private RelativeLayout relativeLayout;
     private TextView registrationNumber;
-    private FirebaseAuth auth;
-    private DatabaseReference databaseReference;
     private String driverId;
-    private Uri licence, front, back;
+    private Uri  front, back,licenceFront,licenceBack,selfie;
     String getId;
-    private FirebaseStorage storage;
-    private StorageReference storageReference;
-
-
-
+    private String Car_Name;
+    private String Car_Model;
+    private String productionYear;
+    private String plateNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_information);
+        setContentView(R.layout.activity_registration2);
         init();
         hideKeyBoard(getApplicationContext());
-        registrationCheck();
-        registrationNumber.setText(driverId);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
+        //registrationCheck();
+
+
+        /*Intent intent = getIntent();
+        Car_Name=intent.getStringExtra("carName");
+        Car_Model=intent.getStringExtra("carModel");
+        productionYear=intent.getStringExtra("proYear");
+        plateNumber=intent.getStringExtra("pateNumber");*/
+
+        lastStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (licence == null) {
-                    Toasty.info(DriverInformationActivity.this, "Take License photo", Toasty.LENGTH_SHORT).show();
-                } else if (front == null) {
-                    Toasty.info(DriverInformationActivity.this, "Take NID front photo", Toasty.LENGTH_SHORT).show();
+                    if (front == null) {
+                    Toasty.info(Registration2Activity.this, "Take NID front photo", Toasty.LENGTH_SHORT).show();
                 } else if (back == null) {
-                    Toasty.info(DriverInformationActivity.this, "Take NID back photo", Toasty.LENGTH_SHORT).show();
-                } else {
-                    startActivity(new Intent(DriverInformationActivity.this, CarInfoActivity.class)
-                            .putExtra("licence", licence.toString())
+                    Toasty.info(Registration2Activity.this, "Take NID back photo", Toasty.LENGTH_SHORT).show();
+                } else if (licenceFront == null) {
+                    Toasty.info(Registration2Activity.this, "Take License photo", Toasty.LENGTH_SHORT).show();
+                }else {
+                    startActivity(new Intent(Registration2Activity.this, Registration3Activity.class)
+                            .putExtra("licence", licenceFront.toString())
                             .putExtra("front", front.toString())
                             .putExtra("back", back.toString()));
 
@@ -82,24 +86,14 @@ public class DriverInformationActivity extends AppCompatActivity {
             }
         });
 
-        driverLicenceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
-
-
-            }
-        });
         nidFrontBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, 1);
 
             }
         });
@@ -109,40 +103,65 @@ public class DriverInformationActivity extends AppCompatActivity {
 
                 //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 3);
+                startActivityForResult(intent, 2);
 
             }
         });
-        registrationNumber.setOnClickListener(new View.OnClickListener() {
+        driverLicenceFrontBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ClipboardManager cm = (ClipboardManager) DriverInformationActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
-                cm.setText(registrationNumber.getText());
+                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 3);
             }
         });
+        driverLicenceBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 4);
+            }
+        });
+        selfieBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 5);
+            }
+        });
+
+       /* registrationNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager cm = (ClipboardManager) Registration2Activity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(registrationNumber.getText());
+            }
+        });*/
     }
 
-    private void uploadImage() {
+    /*private void uploadImage() {
         StorageReference ref = storageReference.child("DriversRegistrationPaperImage/" + driverId+"/");
         ref.child("LicenceNumber").putFile(licence);
         ref.child("NIDFront").putFile(front);
         ref.child("NIDBack").putFile(back).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toasty.success(DriverInformationActivity.this,"Driver information upload successfully", Toasty.LENGTH_SHORT).show();
-                    startActivity(new Intent(DriverInformationActivity.this,CarInfoActivity.class));
+                    Toasty.success(Registration2Activity.this,"Driver information upload successfully", Toasty.LENGTH_SHORT).show();
+                    startActivity(new Intent(Registration2Activity.this, Registration1Activity.class));
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toasty.success(DriverInformationActivity.this,""+e.getMessage(), Toasty.LENGTH_SHORT).show();
+                Toasty.success(Registration2Activity.this,""+e.getMessage(), Toasty.LENGTH_SHORT).show();
             }
         });
-    }
+    }*/
 
-    private void registrationCheck() {
+    /*private void registrationCheck() {
         DatabaseReference checkRef = databaseReference.child("RegisteredDrivers");
         checkRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -163,25 +182,22 @@ public class DriverInformationActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
+    }*/
 
     private void init() {
-        nextBtn = findViewById(R.id.nextBtn);
-        driverLicenceBtn = findViewById(R.id.driverLicenceBtn);
         nidFrontBtn = findViewById(R.id.nidFrontBtn);
         nidBackBtn = findViewById(R.id.nidBackBtn);
-        driverLicenceIv = findViewById(R.id.driverLicenceIV);
+        driverLicenceFrontBtn = findViewById(R.id.driverLicenceFrontBtn);
+        driverLicenceBackBtn=findViewById(R.id.driverLicenceBackBtn);
+        selfieBtn = findViewById(R.id.selfieBtn);
         nidFrontIv = findViewById(R.id.nidFrontIV);
         nidBackIv = findViewById(R.id.nidBackIV);
+        driverLicenceFrontIv = findViewById(R.id.driverLicenceFrontIV);
+        driverLicenceBackIv = findViewById(R.id.driverLicenceBackIV);
+        selfieIv = findViewById(R.id.selfieIV);
+        lastStepBtn = findViewById(R.id.lastStepBtn);
         linearLayout = findViewById(R.id.linear);
         relativeLayout = findViewById(R.id.relative);
-        registrationNumber = findViewById(R.id.registrationNumber);
-        auth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        driverId = auth.getCurrentUser().getUid();
-        storage= FirebaseStorage.getInstance();
-        storageReference=storage.getReference();
-        registrationNumber=findViewById(R.id.registrationNumber);
     }
 
     @Override
@@ -189,17 +205,6 @@ public class DriverInformationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            //licence = (Bitmap) data.getExtras().get("data");
-            //driverLicenceIv.setImageBitmap(licence);
-            licence=data.getData();
-            driverLicenceIv.setImageURI(licence);
-            driverLicenceIv.setVisibility(View.VISIBLE);
-
-
-        }
-
-
-        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
 //            front = (Bitmap) data.getExtras().get("data");
 //            nidFrontIv.setImageBitmap(front);
             front=data.getData();
@@ -208,13 +213,36 @@ public class DriverInformationActivity extends AppCompatActivity {
 
 
         }
-        if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
 //            back = (Bitmap) data.getExtras().get("data");
 //            nidBackIv.setImageBitmap(back);
             back=data.getData();
             nidBackIv.setImageURI(back);
             nidBackIv.setVisibility(View.VISIBLE);
 
+        }
+        if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
+            //licence = (Bitmap) data.getExtras().get("data");
+            //driverLicenceIv.setImageBitmap(licence);
+            licenceFront=data.getData();
+            driverLicenceFrontIv.setImageURI(licenceFront);
+            driverLicenceFrontIv.setVisibility(View.VISIBLE);
+
+        }
+        if (requestCode == 4 && resultCode == Activity.RESULT_OK) {
+            //licence = (Bitmap) data.getExtras().get("data");
+            //driverLicenceIv.setImageBitmap(licence);
+            licenceBack=data.getData();
+            driverLicenceBackIv.setImageURI(licenceBack);
+            driverLicenceBackIv.setVisibility(View.VISIBLE);
+
+        }
+        if (requestCode == 5 && resultCode == Activity.RESULT_OK) {
+            //licence = (Bitmap) data.getExtras().get("data");
+            //driverLicenceIv.setImageBitmap(licence);
+            selfie=data.getData();
+            selfieIv.setImageURI(licenceBack);
+            selfieIv.setVisibility(View.VISIBLE);
         }
 
     }

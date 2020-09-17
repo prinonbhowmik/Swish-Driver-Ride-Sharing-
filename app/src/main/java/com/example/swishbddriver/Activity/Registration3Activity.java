@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 import es.dmoral.toasty.Toasty;
 
-public class CarInfo2Activity extends AppCompatActivity {
+public class Registration3Activity extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
@@ -53,7 +53,7 @@ public class CarInfo2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_car_info2);
+        setContentView(R.layout.activity_registration3);
         init();
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Uploading.....");
@@ -72,16 +72,12 @@ public class CarInfo2Activity extends AppCompatActivity {
 
         }
 
-        Car_Name=intent.getStringExtra("carName");
-        Car_Model=intent.getStringExtra("carModel");
-        productionYear=intent.getStringExtra("proYear");
-        plateNumber=intent.getStringExtra("pateNumber");
 
         finishRegistrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
-                Toasty.success(CarInfo2Activity.this,"Registration Complete", Toasty.LENGTH_SHORT).show();
+                Toasty.success(Registration3Activity.this,"Registration Complete", Toasty.LENGTH_SHORT).show();
 
 
             }
@@ -217,8 +213,8 @@ public class CarInfo2Activity extends AppCompatActivity {
             }
             if(upload){
             progressDialog.dismiss();
-            Toasty.success(CarInfo2Activity.this, "Registration Complete.", Toasty.LENGTH_SHORT).show();
-            startActivity(new Intent(CarInfo2Activity.this, DriverMapActivity.class));
+            Toasty.success(Registration3Activity.this, "Registration Complete.", Toasty.LENGTH_SHORT).show();
+            startActivity(new Intent(Registration3Activity.this, DriverMapActivity.class));
 
             }
         }catch (Exception e){
@@ -358,7 +354,7 @@ public class CarInfo2Activity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(CarInfo2Activity.this,CarInfoActivity.class));
+        startActivity(new Intent(Registration3Activity.this, Registration1Activity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

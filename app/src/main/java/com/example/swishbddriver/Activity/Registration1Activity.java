@@ -11,7 +11,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,46 +30,49 @@ import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
-public class CarInfoActivity extends AppCompatActivity {
+public class Registration1Activity extends AppCompatActivity {
     private Spinner carNameSpinner, carModelSpinner,productionYearSpinner;
     private TextInputEditText plateNumberET;
+    private String carOwner="";
     private String Car_Name;
     private String Car_Model;
     private String productionYear;
     private String plateNumber;
+    private RadioGroup ownerRadioGp;
     private DatabaseReference databaseReference;
     private ArrayList<String> carNameList = new ArrayList<>();
     private ArrayList<String> carModelList = new ArrayList<>();
     private ArrayList<String> carYearList = new ArrayList<>();
-    private Button lastStepBtn;
-    private Uri licence,front,back;
+    private Button nextBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_car_info);
+        setContentView(R.layout.activity_registration1);
         init();
         hideKeyBoard(getApplicationContext());
         ShowCarNameInSpinner();
-        Intent intent = getIntent();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey("licence")) {
-            licence= Uri.parse(extras.getString("licence"));
-        }
-        Bundle extras2 = getIntent().getExtras();
-        if (extras2 != null && extras2.containsKey("front")) {
-            front= Uri.parse(extras2.getString("front"));
-        }
-        Bundle extras3 = getIntent().getExtras();
-        if (extras3 != null && extras3.containsKey("back")) {
-            back= Uri.parse(extras3.getString("back"));
-        }
 
 
         /*carNames=getResources().getStringArray(R.array.Car_name);
         ArrayAdapter<String> carNameAdapter=new ArrayAdapter<>(this,R.layout.spinner_item_design,R.id.simpleSpinner,carNames);
         //arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         carNameSpinner.setAdapter(carNameAdapter);*/
+
+
+        ownerRadioGp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.ownerRb:
+                        carOwner = "yes";
+                        break;
+                    case R.id.notOwnerRb:
+                        carOwner = "no";
+                        break;
+                }
+            }
+        });
 
         carNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -84,26 +89,32 @@ public class CarInfoActivity extends AppCompatActivity {
             }
         });
 
-        lastStepBtn.setOnClickListener(new View.OnClickListener() {
+        nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Car_Name = carNameSpinner.getSelectedItem().toString();
+                /*Car_Name = carNameSpinner.getSelectedItem().toString();
                 Car_Model = carModelSpinner.getSelectedItem().toString();
                 productionYear=productionYearSpinner.getSelectedItem().toString();
                 plateNumber=plateNumberET.getText().toString();
                 if(TextUtils.isEmpty(plateNumber)){
-                    Toasty.info(CarInfoActivity.this,"Enter Car Plate Number.", Toasty.LENGTH_SHORT).show();
+                    Toasty.info(Registration1Activity.this,"Enter Car Plate Number.", Toasty.LENGTH_SHORT).show();
                 }else {
-                startActivity(new Intent(CarInfoActivity.this,CarInfo2Activity.class)
-                        .putExtra("licence", licence.toString())
-                        .putExtra("front", front.toString())
-                        .putExtra("back", back.toString())
+                startActivity(new Intent(Registration1Activity.this, Registration2Activity.class)
                         .putExtra("carName", Car_Name)
                         .putExtra("carModel", Car_Model)
                         .putExtra("proYear", productionYear)
                         .putExtra("pateNumber", plateNumber));
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 finish();
+                }*/
+                if(carOwner.equals("")){
+                    Toast.makeText(Registration1Activity.this, "Please select owner info.", Toast.LENGTH_SHORT).show();
+                }else {
+                    if(carOwner.equals("yes")){
+                        startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
+                    }else {
+                        startActivity(new Intent(Registration1Activity.this, Registration4Activity.class));
+                    }
                 }
             }
         });
@@ -115,9 +126,10 @@ public class CarInfoActivity extends AppCompatActivity {
             carNameSpinner=findViewById(R.id.carNameSpinner);
             carModelSpinner=findViewById(R.id.carModelSpinner);
             productionYearSpinner=findViewById(R.id.productionYearSpinner);
-            lastStepBtn=findViewById(R.id.lastStepBtn);
+            nextBtn=findViewById(R.id.nextBtn);
             plateNumberET=findViewById(R.id.plateNumber_Et);
             databaseReference= FirebaseDatabase.getInstance().getReference();
+            ownerRadioGp=findViewById(R.id.ownerRg);
     }
 
     private void ShowCarNameInSpinner() {
@@ -131,7 +143,7 @@ public class CarInfoActivity extends AppCompatActivity {
                         carNameList.add(snapshot.getKey());
                     }
                     //carNameSpinner.setItem(carNameList);
-                    ArrayAdapter<String> carNameAdapter = new ArrayAdapter<String>(CarInfoActivity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carNameList);
+                    ArrayAdapter<String> carNameAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carNameList);
                     carNameSpinner.setAdapter(carNameAdapter);
                 }
 
@@ -162,7 +174,7 @@ public class CarInfoActivity extends AppCompatActivity {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         carModelList.add(snapshot.getKey());
                     }
-                    ArrayAdapter<String> ModelAdapter = new ArrayAdapter<String>(CarInfoActivity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carModelList);
+                    ArrayAdapter<String> ModelAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carModelList);
                     carModelSpinner.setAdapter(ModelAdapter);
                 }
             }
@@ -182,7 +194,7 @@ public class CarInfoActivity extends AppCompatActivity {
                         carYearList.add(snapshot.getKey());
                     }
                     //carNameSpinner.setItem(carNameList);
-                    ArrayAdapter<String> YearAdapter = new ArrayAdapter<String>(CarInfoActivity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carYearList);
+                    ArrayAdapter<String> YearAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carYearList);
                     productionYearSpinner.setAdapter(YearAdapter);
                 }
             }

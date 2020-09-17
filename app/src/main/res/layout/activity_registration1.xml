@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    tools:context=".Activity.Registration1Activity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/relative1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/infoTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="3 Step Process"
+                android:textColor="@color/themColor"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/infoTitle1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="(Step 1) Car Information"
+                android:textColor="@color/themColor"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/spinner1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text"
+                android:layout_marginStart="25dp"
+                android:layout_marginBottom="5dp"
+                android:text="Car Name" />
+
+            <Spinner
+                android:id="@+id/carNameSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/spinner1"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/spinner_bg_design" />
+
+
+            <TextView
+                android:id="@+id/spinner2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/carNameSpinner"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Model" />
+
+            <Spinner
+                android:id="@+id/carModelSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/spinner2"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/spinner_bg_design" />
+
+            <TextView
+                android:id="@+id/spinner3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/carModelSpinner"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Car Production Year" />
+
+            <Spinner
+                android:id="@+id/productionYearSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/spinner3"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/spinner_bg_design" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carNumberLT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/productionYearSpinner"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:hint="Plate Number"
+                android:textColorHint="#000"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/plateNumber_Et"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textColor="#000"
+                    android:textSize="21sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carChassisNumberLT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/carNumberLT"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:hint="Chassis Number"
+                android:textColorHint="#000"
+                android:visibility="gone"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/carChassisNumber_Et"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textColor="#000"
+                    android:textSize="21sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carEngineNumberLT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/carChassisNumberLT"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:hint="Engine Number"
+                android:textColorHint="#000"
+                android:visibility="gone"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/carEngineNumber_Et"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textColor="#000"
+                    android:textSize="21sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <RadioGroup
+                android:id="@+id/ownerRg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/carEngineNumberLT">
+                <RadioButton
+                    android:id="@+id/ownerRb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="I am owner of the car."/>
+                <RadioButton
+                    android:id="@+id/notOwnerRb"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="18sp"
+                    android:layout_height="wrap_content"
+                    android:text="I am not owner of the car."/>
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/nextBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/ownerRg"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/btn_background"
+                android:padding="10dp"
+                android:text="Next"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="150dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="You are already Registered Member"
+                android:textColor="@color/themColor"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/title2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:text="Your Registration Number Is"
+                android:textColor="@color/themColor"
+                android:textSize="21sp" />
+
+            <TextView
+                android:id="@+id/registrationNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:text="123456"
+                android:textColor="@color/themColor"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
