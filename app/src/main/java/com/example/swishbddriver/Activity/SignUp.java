@@ -158,7 +158,6 @@ public class SignUp extends AppCompatActivity {
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
 
-
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 

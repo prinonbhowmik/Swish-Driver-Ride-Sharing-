@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -168,7 +172,22 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     };
 
     private void updateInformation(String name, String email, String gender, String dob) {
-        Call<List<ProfileModel>> call = api.updateData(driverId,name,email,gender,dob);
+
+        File file = new File(imageUri.getPath());
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+        RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
+        RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+        RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+        RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
+
+
+        Call<List<ProfileModel>> call = api.updateData(idbody,body,fullName,emailBody,genderbody,dobBody);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
@@ -265,11 +284,12 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 imageUri = resultUri;
-                if (!image.isEmpty()) {
+                driverProfileIV.setImageURI(imageUri);
+              /*  if (!image.isEmpty()) {
                     deleteImage();
                 } else {
                     uploadImage();
-                }
+                }*/
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                // progressBar.setVisibility(View.INVISIBLE);

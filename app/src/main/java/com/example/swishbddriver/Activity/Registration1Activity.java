@@ -3,6 +3,7 @@ package com.example.swishbddriver.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +19,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.Car;
+import com.example.swishbddriver.Model.CarModel;
+import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
@@ -26,39 +32,44 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Registration1Activity extends AppCompatActivity {
-    private Spinner carNameSpinner, carModelSpinner,productionYearSpinner;
+    private Spinner carNameSpinner, carModelSpinner, productionYearSpinner;
     private TextInputEditText plateNumberET;
-    private String carOwner="";
-    private String Car_Name;
+    private String carOwner = "";
+    private String Car_Name,driverId;
     private String Car_Model;
     private String productionYear;
     private String plateNumber;
     private RadioGroup ownerRadioGp;
     private DatabaseReference databaseReference;
-    private ArrayList<String> carNameList = new ArrayList<>();
-    private ArrayList<String> carModelList = new ArrayList<>();
-    private ArrayList<String> carYearList = new ArrayList<>();
+    private ArrayList<String> carNameList = new ArrayList<String>();
+    private ArrayList<String> carModelList = new ArrayList<String>();
+    private ArrayList<String> carYearList = new ArrayList<String>();
     private Button nextBtn;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration1);
+
         init();
         hideKeyBoard(getApplicationContext());
-        ShowCarNameInSpinner();
 
 
-        /*carNames=getResources().getStringArray(R.array.Car_name);
-        ArrayAdapter<String> carNameAdapter=new ArrayAdapter<>(this,R.layout.spinner_item_design,R.id.simpleSpinner,carNames);
-        //arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        carNameSpinner.setAdapter(carNameAdapter);*/
 
+        ShowModelYear();
 
         ownerRadioGp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -74,147 +85,132 @@ public class Registration1Activity extends AppCompatActivity {
             }
         });
 
+        ShowCarNameInSpinner();
+
         carNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-
                 Car_Name = carNameSpinner.getSelectedItem().toString();
-                modelShow();
+                getcarmodelList(Car_Name);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Car_Name = carNameSpinner.getSelectedItem().toString();
+                Car_Name = carNameSpinner.getSelectedItem().toString();
                 Car_Model = carModelSpinner.getSelectedItem().toString();
-                productionYear=productionYearSpinner.getSelectedItem().toString();
-                plateNumber=plateNumberET.getText().toString();
-                if(TextUtils.isEmpty(plateNumber)){
-                    Toasty.info(Registration1Activity.this,"Enter Car Plate Number.", Toasty.LENGTH_SHORT).show();
+                productionYear = productionYearSpinner.getSelectedItem().toString();
+                plateNumber = plateNumberET.getText().toString();
+
+                if (carOwner.equals("")) {
+                    Toast.makeText(Registration1Activity.this, "Please select owner info.", Toast.LENGTH_LONG).show();
+                }  else if(plateNumber.equals("")){
+                    Toast.makeText(Registration1Activity.this, "Please Provide car plate number!", Toast.LENGTH_LONG).show();
                 }else {
-                startActivity(new Intent(Registration1Activity.this, Registration2Activity.class)
-                        .putExtra("carName", Car_Name)
-                        .putExtra("carModel", Car_Model)
-                        .putExtra("proYear", productionYear)
-                        .putExtra("pateNumber", plateNumber));
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                finish();
-                }*/
-                if(carOwner.equals("")){
-                    Toast.makeText(Registration1Activity.this, "Please select owner info.", Toast.LENGTH_SHORT).show();
-                }else {
-                    if(carOwner.equals("yes")){
+                    if (carOwner.equals("yes")) {
                         startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
-                    }else {
+                    }
+
+                    else {
                         startActivity(new Intent(Registration1Activity.this, Registration4Activity.class));
                     }
                 }
             }
         });
+    }
 
+    private void getcarmodelList(String Car_Name) {
+        Call<List<CarModel>> call = ApiUtils.getUserService().getCarModel(Car_Name);
+        call.enqueue(new Callback<List<CarModel>>() {
+            @Override
+            public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
+                if (response.isSuccessful()) {
+                    carModelList.clear();
+                    for (int i = 0; i < response.body().size(); i++){
+                        carModelList.add(response.body().get(i).getModel_name());
+                    }
+                    ArrayAdapter<String> carModelAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carModelList);
+                    carModelSpinner.setAdapter(carModelAdapter);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<CarModel>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void ShowModelYear() {
+        Call<List<CarModleYear>> call = ApiUtils.getUserService().getCarYear();
+        call.enqueue(new Callback<List<CarModleYear>>() {
+            @Override
+            public void onResponse(Call<List<CarModleYear>> call, Response<List<CarModleYear>> response) {
+                if (response.isSuccessful()) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        //Car_Name = response.body().get(i).getCar_name();
+                        carYearList.add(response.body().get(i).getModel_year());
+                    }
+                    ArrayAdapter<String> carYearAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carYearList);
+                    productionYearSpinner.setAdapter(carYearAdapter);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<CarModleYear>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void init() {
-            carNameSpinner=findViewById(R.id.carNameSpinner);
-            carModelSpinner=findViewById(R.id.carModelSpinner);
-            productionYearSpinner=findViewById(R.id.productionYearSpinner);
-            nextBtn=findViewById(R.id.nextBtn);
-            plateNumberET=findViewById(R.id.plateNumber_Et);
-            databaseReference= FirebaseDatabase.getInstance().getReference();
-            ownerRadioGp=findViewById(R.id.ownerRg);
+        carNameSpinner = findViewById(R.id.carNameSpinner);
+        carModelSpinner = findViewById(R.id.carModelSpinner);
+        productionYearSpinner = findViewById(R.id.productionYearSpinner);
+        nextBtn = findViewById(R.id.nextBtn);
+        plateNumberET = findViewById(R.id.plateNumber_Et);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        ownerRadioGp = findViewById(R.id.ownerRg);
+        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+        driverId = sharedPreferences.getString("id","");
     }
 
     private void ShowCarNameInSpinner() {
-        DatabaseReference carNameRef = databaseReference.child("carName");
-        carNameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        Call<List<Car>> call = ApiUtils.getUserService().getCar();
+        call.enqueue(new Callback<List<Car>>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                carNameList.clear();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        carNameList.add(snapshot.getKey());
+            public void onResponse(Call<List<Car>> call, Response<List<Car>> response) {
+                if (response.isSuccessful()) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        //Car_Name = response.body().get(i).getCar_name();
+                        carNameList.add(response.body().get(i).getCar_name());
                     }
-                    //carNameSpinner.setItem(carNameList);
                     ArrayAdapter<String> carNameAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carNameList);
                     carNameSpinner.setAdapter(carNameAdapter);
                 }
-
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onFailure(Call<List<Car>> call, Throwable t) {
 
             }
         });
     }
 
 
-    private void modelShow() {
-      /*  if(car_name==0){
-            carModels=getResources().getStringArray(R.array.Null_model);
-            ArrayAdapter<String> carModelAdapter=new ArrayAdapter<>(this,R.layout.spinner_item_design,R.id.simpleSpinner,carModels);
-            carModelSpinner.setAdapter(carModelAdapter);
-            Toast.makeText(this, "Please Select Car Name"+Car_Name, Toast.LENGTH_SHORT).show();
-        }*/
-
-        DatabaseReference carModelRef = databaseReference.child("carName").child(Car_Name).child("Model");
-        carModelRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                carModelList.clear();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        carModelList.add(snapshot.getKey());
-                    }
-                    ArrayAdapter<String> ModelAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carModelList);
-                    carModelSpinner.setAdapter(ModelAdapter);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        DatabaseReference yearRef=databaseReference.child("CarModelYear");
-        yearRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                carYearList.clear();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        carYearList.add(snapshot.getKey());
-                    }
-                    //carNameSpinner.setItem(carNameList);
-                    ArrayAdapter<String> YearAdapter = new ArrayAdapter<String>(Registration1Activity.this, R.layout.spinner_item_design, R.id.simpleSpinner, carYearList);
-                    productionYearSpinner.setAdapter(YearAdapter);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
     @Override
     public void onBackPressed() {
         /*startActivity(new Intent(CarInfoActivity.this,DriverInformationActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
         finish();
     }
-    public void hideKeyBoard(Context context){
-        InputMethodManager manager=(InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
+
+    public void hideKeyBoard(Context context) {
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
     }
 
 }
