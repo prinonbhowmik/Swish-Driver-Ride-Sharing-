@@ -4,6 +4,7 @@ import android.database.Observable;
 
 import com.example.swishbddriver.Activity.DriverProfile;
 import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -121,5 +122,8 @@ public interface ApiInterface {
                                             @Field("details") String details);
     @GET("customerbookinglist?")
     Call<List<BookForLaterModel>> rideHistory(@Query("id")String customer_id);
+
+    @GET("car")
+    Call<List<Car>> getCar();
 
 }

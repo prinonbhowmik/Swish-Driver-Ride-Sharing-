@@ -102,16 +102,16 @@ public class DriverProfile extends AppCompatActivity {
                     dobTv.setText(list.get(0).getDate());
                     ratingCount=list.get(0).getRatingCount();
                     rating=list.get(0).getRating();
-                    if (list.get(0).getDetails()!=null) {
-                        bio = list.get(0).getDetails();
-                    }
+                    bio = list.get(0).getDetails();
                     float rat=rating/ratingCount;
                     ratingBar.setRating(rat);
                     rideCount.setText("Ride : "+list.get(0).getRideCount());
-                    if(!bio.equals("")){
+                    if(!bio.equals(null)){
                         bioTv.setVisibility(View.VISIBLE);
                         bioTv.setText(bio);
                         edit_bioTv.setText("Edit Bio");
+                    }else if (bio.equals("")){
+                        bioTv.setVisibility(View.GONE);
                     }
                     Log.d("name", list.get(0).getFull_name());
                 }

@@ -77,8 +77,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
             }
         });
 
-
-
         moreRelative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,6 +128,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
             }
         });
     }*/
+
     private void getList(final String carType) {
 
         DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);

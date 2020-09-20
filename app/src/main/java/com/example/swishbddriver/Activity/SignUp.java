@@ -163,7 +163,7 @@ public class SignUp extends AppCompatActivity {
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
         RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
-        RequestBody  details = RequestBody .create(MediaType.parse("text/plain"), "");
+        RequestBody  details = RequestBody .create(MediaType.parse("text/plain"), "No bio!");
         RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
         RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
         RequestBody  addressBody = RequestBody .create(MediaType.parse("text/plain"), address);
