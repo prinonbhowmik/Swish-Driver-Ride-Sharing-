@@ -149,41 +149,53 @@ public class SignUp extends AppCompatActivity {
 
     private void signUp(String name, String email, String dob, String address, final String phone, String password) {
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+       /* ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
-        image = Base64.encodeToString(imgByte, Base64.DEFAULT);
+        image = Base64.encodeToString(imgByte, Base64.DEFAULT);*/
 
-        File file = new File(image);
+        File file = new File(imageUri.getPath());
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
 
-// MultipartBody.Part is used to send also the actual file name
+
+        // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        RequestBody  fullName = RequestBody .create(MediaType.parse("multipart/form-data"), name);
-        RequestBody  details = RequestBody .create(MediaType.parse("multipart/form-data"), "");
-        RequestBody  genderbody = RequestBody .create(MediaType.parse("multipart/form-data"), gender);
-        RequestBody  emailBody = RequestBody .create(MediaType.parse("multipart/form-data"), email);
-        RequestBody  addressBody = RequestBody .create(MediaType.parse("multipart/form-data"), address);
-        RequestBody  phoneBody = RequestBody .create(MediaType.parse("multipart/form-data"), phone);
-        RequestBody  passBody = RequestBody .create(MediaType.parse("multipart/form-data"), password);
-        RequestBody  rem_tokenBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
-        RequestBody  status = RequestBody .create(MediaType.parse("multipart/form-data"), "Deactive");
-        RequestBody  dobBody = RequestBody .create(MediaType.parse("multipart/form-data"), dob);
-        RequestBody  tokenBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
-        RequestBody  editBody = RequestBody .create(MediaType.parse("multipart/form-data"), "false");
-        RequestBody  carTypeBody = RequestBody .create(MediaType.parse("multipart/form-data"), "");
+        RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+        RequestBody  details = RequestBody .create(MediaType.parse("text/plain"), "");
+        RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+        RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+        RequestBody  addressBody = RequestBody .create(MediaType.parse("text/plain"), address);
+        RequestBody  phoneBody = RequestBody .create(MediaType.parse("text/plain"), phone);
+        RequestBody  passBody = RequestBody .create(MediaType.parse("text/plain"), password);
+        RequestBody  rem_tokenBody = RequestBody .create(MediaType.parse("text/plain"), "");
+        RequestBody  status = RequestBody .create(MediaType.parse("text/plain"), "Deactive");
+        RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
+        RequestBody  tokenBody = RequestBody .create(MediaType.parse("text/plain"), "");
+        RequestBody  editBody = RequestBody .create(MediaType.parse("text/plain"), "false");
+        RequestBody  carTypeBody = RequestBody .create(MediaType.parse("text/plain"), "");
 
         logIn.setEnabled(true);
 
-      Call<ResponseBody> call = api.register(0,details,dobBody,fullName,genderbody,emailBody,addressBody,
-               phoneBody,passBody,rem_tokenBody,status,carTypeBody,body,0,0,
-               0,tokenBody,editBody);
+        Call<List<ProfileModel>> call =  api.register(0,details,dobBody,fullName,genderbody,emailBody,addressBody,phoneBody,passBody,rem_tokenBody,status,carTypeBody,body,
+                0,0,0,tokenBody,editBody);
 
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
 
-        Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+
+        //Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_LONG).show();
         startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
+        Log.d("phone",phone);
         finish();
 
 
@@ -242,13 +254,15 @@ public class SignUp extends AppCompatActivity {
 
                 Uri resultUri = result.getUri();
                 if (resultUri!=null) {
-                    try {
+                    imageUri = resultUri;
+                    driverImage.setImageURI(imageUri);
+                   /* try {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
                         driverImage.setImageBitmap(bitmap);
 
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }
+                    }*/
                 }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

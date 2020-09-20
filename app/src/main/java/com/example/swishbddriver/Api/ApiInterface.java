@@ -34,7 +34,7 @@ public interface ApiInterface {
 
     @Multipart
     @POST("driversave")
-    Call<ResponseBody> register(@Part("car_owner") int car_owner,
+    Call<List<ProfileModel>> register(@Part("car_owner") int car_owner,
                                 @Part("details") RequestBody details,
                                 @Part("date") RequestBody date,
                                 @Part("full_name") RequestBody name,
@@ -47,7 +47,7 @@ public interface ApiInterface {
                                 @Part("status") RequestBody status,
                                 @Part("carType") RequestBody carType,
                                 @Part MultipartBody.Part image,
-                                @Part("rating") int rating,
+                                @Part("rating") float rating,
                                 @Part("ratingCount") int ratingCount,
                                 @Part("rideCount") int rideCount,
                                 @Part("token") RequestBody token,
@@ -119,6 +119,7 @@ public interface ApiInterface {
     @PUT("detailsupdate/{driver_id}")
     Call<List<ProfileModel>> updateBio(@Path("driver_id") String driver_id,
                                             @Field("details") String details);
-
+    @GET("customerbookinglist?")
+    Call<List<BookForLaterModel>> rideHistory(@Query("id")String customer_id);
 
 }

@@ -49,6 +49,8 @@ public class PhoneNoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         phone = intent.getStringExtra("phone");
 
+        editText.setText(phone);
+
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

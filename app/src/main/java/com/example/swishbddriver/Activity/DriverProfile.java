@@ -102,8 +102,9 @@ public class DriverProfile extends AppCompatActivity {
                     dobTv.setText(list.get(0).getDate());
                     ratingCount=list.get(0).getRatingCount();
                     rating=list.get(0).getRating();
-                    bio=list.get(0).getDetails();
-
+                    if (list.get(0).getDetails()!=null) {
+                        bio = list.get(0).getDetails();
+                    }
                     float rat=rating/ratingCount;
                     ratingBar.setRating(rat);
                     rideCount.setText("Ride : "+list.get(0).getRideCount());
