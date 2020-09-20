@@ -5,6 +5,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -173,36 +175,66 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
     private void updateInformation(String name, String email, String gender, String dob) {
 
-        File file = new File(imageUri.getPath());
+       if (imageUri!=null){
+           File file = new File(imageUri.getPath());
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+           RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
 
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
-        RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
-        RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
-        RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
-        RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
-        RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
+           // MultipartBody.Part is used to send also the actual file name
+           MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
 
-        Call<List<ProfileModel>> call = api.updateData(idbody,body,fullName,emailBody,genderbody,dobBody);
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+           RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+           RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
+           RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+           RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+           RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
 
-            }
+           Call<List<ProfileModel>> call = api.updateData(idbody,body,fullName,emailBody,genderbody,dobBody);
+           call.enqueue(new Callback<List<ProfileModel>>() {
+               @Override
+               public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                   finish();
+               }
 
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-                Log.d("Dekhbo", t.getMessage());
-            }
-        });
-        Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
-        startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        finish();
+               @Override
+               public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                   Log.d("Dekhbo", t.getMessage());
+               }
+           });
+
+
+       }
+       else if (imageUri==null){
+           RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+           RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
+           RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+           RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+           RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
+
+           Call<List<ProfileModel>> call = api.updateDatawithoutimage(idbody,fullName,emailBody,genderbody,dobBody);
+           call.enqueue(new Callback<List<ProfileModel>>() {
+               @Override
+               public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                   finish();
+               }
+
+               @Override
+               public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+               }
+           });
+       }
+
+
+
+
     }
 
     private void getDate() {

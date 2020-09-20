@@ -73,6 +73,14 @@ public interface ApiInterface {
                                         @Part("gender") RequestBody gender,
                                         @Part("date") RequestBody date);
 
+    @Multipart
+    @POST("driverupdate")
+    Call<List<ProfileModel>> updateDatawithoutimage(@Part("driver_id") RequestBody driver_id,
+                                                    @Part("full_name") RequestBody full_name,
+                                                    @Part("email") RequestBody email,
+                                                    @Part("gender") RequestBody gender,
+                                                    @Part("date") RequestBody date);
+
     @FormUrlEncoded
     @PUT("driverpassword/{driver_id}")
     Call<List<ProfileModel>> changePassword(@Path("driver_id") String driver_id,
@@ -133,7 +141,7 @@ public interface ApiInterface {
     Call<List<Car>> getCar();
 
     @GET("carmodelsearch?car_name=")
-    Call<List<CarModel>> getCarModel(@Query("car_name")String car_name);
+    Call<List<CarModel>> getCarModel(@Query("car_name") String car_name);
 
 
     @GET("carmodelyear")
