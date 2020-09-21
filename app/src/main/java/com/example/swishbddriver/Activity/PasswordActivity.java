@@ -1,14 +1,18 @@
 package com.example.swishbddriver.Activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -27,6 +31,7 @@ public class PasswordActivity extends AppCompatActivity {
     private Button loginBtn;
     private ApiInterface api;
     private String driver_id,password;
+    private LottieAnimationView progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +40,6 @@ public class PasswordActivity extends AppCompatActivity {
 
         init();
 
-
-
         Intent intent = getIntent();
         driver_id = intent.getStringExtra("id");
 
@@ -44,6 +47,8 @@ public class PasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 password = verify_Et.getText().toString();
+                hideKeyBoard(getApplicationContext());
+                progressBar.setVisibility(View.VISIBLE);
                 Call<List<ProfileModel>> call = api.getData(driver_id);
                 call.enqueue(new Callback<List<ProfileModel>>() {
                     @Override
@@ -83,6 +88,13 @@ public class PasswordActivity extends AppCompatActivity {
         verify_Et = findViewById(R.id.verify_Et);
         loginBtn = findViewById(R.id.loginBtn);
         api = ApiUtils.getUserService();
+        progressBar = findViewById(R.id.progrssbar);
 
     }
+
+    public void hideKeyBoard(Context context) {
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
+    }
+
 }

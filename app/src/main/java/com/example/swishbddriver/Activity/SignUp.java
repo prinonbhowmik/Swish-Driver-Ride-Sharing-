@@ -1,6 +1,8 @@
 package com.example.swishbddriver.Activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -61,6 +65,7 @@ public class SignUp extends AppCompatActivity {
     private TextView conditions;
     private ApiInterface api;
     private List<ProfileModel> list;
+    private LottieAnimationView progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +159,9 @@ public class SignUp extends AppCompatActivity {
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         image = Base64.encodeToString(imgByte, Base64.DEFAULT);*/
 
+       progressBar.setVisibility(View.VISIBLE);
+       hideKeyBoard(getApplicationContext());
+
         File file = new File(imageUri.getPath());
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
@@ -183,7 +191,10 @@ public class SignUp extends AppCompatActivity {
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-
+                //Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
+                Log.d("phone",phone);
+                finish();
             }
 
             @Override
@@ -192,10 +203,7 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        //Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_LONG).show();
-        startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
-        Log.d("phone",phone);
-        finish();
+
 
 
     }
@@ -241,6 +249,8 @@ public class SignUp extends AppCompatActivity {
         conditions = findViewById(R.id.conditions);
         api = ApiUtils.getUserService();
         list = new ArrayList<>();
+        progressBar = findViewById(R.id.progrssbar);
+
     }
 
     @Override
@@ -270,4 +280,10 @@ public class SignUp extends AppCompatActivity {
             }
         }
     }
+
+    public void hideKeyBoard(Context context) {
+        InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
+    }
+
 }

@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -16,29 +14,21 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
 import com.example.swishbddriver.Model.CarModleYear;
+import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -111,11 +101,24 @@ public class Registration1Activity extends AppCompatActivity {
                 }  else if(plateNumber.equals("")){
                     Toast.makeText(Registration1Activity.this, "Please Provide car plate number!", Toast.LENGTH_LONG).show();
                 }else {
+                    Call<List<DriverInfo>> call = ApiUtils.getUserService().driverCarInfo(driverId,Car_Name,Car_Model,productionYear,plateNumber,carOwner);
+                    call.enqueue(new Callback<List<DriverInfo>>() {
+                        @Override
+                        public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
+
+                        }
+                    });
+
                     if (carOwner.equals("yes")) {
                         startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
                     }
-
                     else {
+
                         startActivity(new Intent(Registration1Activity.this, Registration4Activity.class));
                     }
                 }

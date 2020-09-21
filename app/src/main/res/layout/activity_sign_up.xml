@@ -239,7 +239,17 @@
                 android:textColor="@android:color/white"/>
         </RelativeLayout>
 
-
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/progrssbar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="car_moving.json" />
     </RelativeLayout>
 
 </ScrollView>

@@ -9,6 +9,7 @@ import com.example.swishbddriver.Model.CarModel;
 import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
+import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
 
@@ -146,5 +147,23 @@ public interface ApiInterface {
 
     @GET("carmodelyear")
     Call<List<CarModleYear>> getCarYear();
+
+    @FormUrlEncoded
+    @PUT("drivercarinfo/{driver_id}")
+    Call<List<DriverInfo>> driverCarInfo(@Path("driver_id") String driver_id,
+                                         @Field("car_name") String car_name,
+                                         @Field("car_model") String car_model,
+                                         @Field("production_year") String production_year,
+                                         @Field("plate_number") String plate_number,
+                                         @Field("car_owner") String car_owner);
+
+    @Multipart
+    @POST("drivernid")
+    Call<List<DriverInfo>> drivernid(@Part("driver_id") RequestBody driver_id,
+                                     @Part MultipartBody.Part nid_front,
+                                     @Part MultipartBody.Part nid_back,
+                                     @Part MultipartBody.Part driving_license_photosF,
+                                     @Part MultipartBody.Part driving_license_photosB,
+                                     @Part MultipartBody.Part selfie);
 
 }

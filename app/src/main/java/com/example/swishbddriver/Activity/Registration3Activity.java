@@ -247,7 +247,6 @@ public class Registration3Activity extends AppCompatActivity {
         auth= FirebaseAuth.getInstance();
         storage= FirebaseStorage.getInstance();
         storageReference=storage.getReference();
-        driverId=auth.getCurrentUser().getUid();
         carPhotoBtn=findViewById(R.id.carPhotoBtn);
         carInsiderPhotoBtn=findViewById(R.id.carInsidePhotoBtn);
         carPhoto1=findViewById(R.id.carPhoto1IV);

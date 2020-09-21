@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
@@ -76,7 +78,11 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     private FrameLayout frameLayout;
     private Uri imageUri;
     private List<ProfileModel> list;
+    private LottieAnimationView progressBar;
     private ApiInterface api;
+    private static int SPLASH_TIME_OUT2=5000;
+    private static int SPLASH_TIME_OUT=1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +181,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
     private void updateInformation(String name, String email, String gender, String dob) {
 
+        progressBar.setVisibility(View.VISIBLE);
+        hideKeyboardFrom(getApplicationContext());
        if (imageUri!=null){
            File file = new File(imageUri.getPath());
 
@@ -194,10 +202,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
            call.enqueue(new Callback<List<ProfileModel>>() {
                @Override
                public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
-                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
-                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                   finish();
+                  if (response.isSuccessful()){
+
+                  }
                }
 
                @Override
@@ -206,6 +213,15 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                }
            });
 
+           new Handler().postDelayed(new Runnable() {
+               @Override
+               public void run() {
+                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                   finish();
+               }
+           },SPLASH_TIME_OUT2);
 
        }
        else if (imageUri==null){
@@ -219,10 +235,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
            call.enqueue(new Callback<List<ProfileModel>>() {
                @Override
                public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
-                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
-                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                   finish();
+                   if (response.isSuccessful()){
+
+                   }
                }
 
                @Override
@@ -230,6 +245,18 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
                }
            });
+
+
+           new Handler().postDelayed(new Runnable() {
+               @Override
+               public void run() {
+                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                   finish();
+               }
+           },SPLASH_TIME_OUT);
+
        }
 
 
@@ -279,6 +306,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         frameLayout=findViewById(R.id.frame_layout1);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+        progressBar = findViewById(R.id.progrssbar);
     }
 
 
