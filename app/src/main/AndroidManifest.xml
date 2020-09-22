@@ -47,7 +47,7 @@
         <activity android:name=".Activity.EarningsActivity" />
         <activity android:name=".Activity.RideRequestActivity" />
         <activity android:name=".Activity.Settings" />
-        <activity android:name=".Activity.SplashActivity" />
+        <activity android:name=".Activity.PhoneNoActivity" />
         <activity android:name=".Activity.TermsAndConditions" />
         <activity android:name=".Activity.ShowCash" />
         <activity android:name=".Activity.ChangePassword" />
@@ -58,7 +58,8 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".Activity.PhoneNoActivity">
+        <activity android:name=".Activity.SplashActivity"
+            android:theme="@style/AppThemeSplash">
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
