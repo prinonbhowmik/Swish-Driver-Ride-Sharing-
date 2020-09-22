@@ -345,6 +345,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 Uri resultUri = result.getUri();
                 imageUri = resultUri;
                 driverProfileIV.setImageURI(imageUri);
+                updateBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_tick_green));
+
               /*  if (!image.isEmpty()) {
                     deleteImage();
                 } else {
