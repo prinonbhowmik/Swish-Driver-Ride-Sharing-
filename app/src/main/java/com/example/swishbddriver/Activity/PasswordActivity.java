@@ -30,7 +30,7 @@ public class PasswordActivity extends AppCompatActivity {
     private TextInputEditText verify_Et;
     private Button loginBtn;
     private ApiInterface api;
-    private String driver_id,password;
+    private String driver_id,password,status;
     private LottieAnimationView progressBar;
 
     @Override
@@ -42,6 +42,7 @@ public class PasswordActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         driver_id = intent.getStringExtra("id");
+        status = intent.getStringExtra("status");
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +64,7 @@ public class PasswordActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("id",driver_id);
                                 editor.putBoolean("loggedIn",true);
+                                editor.putString("status",status);
                                 editor.commit();
 
                                 startActivity(new Intent(PasswordActivity.this,DriverMapActivity.class)

@@ -119,6 +119,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         init();
         carType = sharedPreferences.getString("carType","");
+        Toast.makeText(this, carType, Toast.LENGTH_SHORT).show();
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
         navHeaderData();
@@ -501,9 +502,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 break;
             case R.id.advance_book:
-                startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
+               if (!carType.equals("")){
+                   startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                   overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                   drawerLayout.closeDrawers();
+               }else{
+                   Toast.makeText(this, "Please Complete your registration!", Toast.LENGTH_SHORT).show();
+
+               }
                 //driverRegisterCheck2();
                 break;
             case R.id.registration:
@@ -522,6 +529,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             case R.id.logout:
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("loggedIn", false);
+                editor.putString("id", "");
+                editor.putString("carType", "");
                 editor.commit();
                 Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
