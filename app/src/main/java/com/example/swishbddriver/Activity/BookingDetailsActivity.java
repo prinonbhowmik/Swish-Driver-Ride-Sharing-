@@ -44,6 +44,8 @@ import com.example.swishbddriver.Notification.MyResponse;
 import com.example.swishbddriver.Notification.Sender;
 import com.example.swishbddriver.Notification.Token;
 import com.example.swishbddriver.R;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -114,6 +116,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
 
+
         getData();
 
         confirmBtn.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +125,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 //checkDate();
                 if (rat < 2) {
                     blockAlert();
-                } else {
+                }else {
                     if (hasDateMatch) {
                         Toasty.info(BookingDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
                     } else {
@@ -184,8 +187,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         startTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // checkDriverOnLine();
-                startTripAlert();
+                checkDriverOnLine();
             }
         });
 
@@ -339,7 +341,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    if (!snapshot.hasChild(driverId)) {
+                    if (!snapshot.child(car_type).hasChild(driverId)) {
                         onlineAlert();
                     } else {
                         startTripAlert();
@@ -356,6 +358,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void onlineAlert() {
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("Offline..!!");
         dialog.setIcon(R.drawable.logocircle);
@@ -364,20 +367,11 @@ public class BookingDetailsActivity extends AppCompatActivity {
         dialog.setPositiveButton("Go OnLine", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                DatabaseReference dRef = databaseReference.child("OnLineDrivers").child(driverId);
-                HashMap<String, Object> userInfo = new HashMap<>();
-                userInfo.put("id", driverId);
-                userInfo.put("lat", String.valueOf(currentLat));
-                userInfo.put("lon", String.valueOf(currentLon));
-                userInfo.put("carType", carType);
-                userInfo.put("status", "enable");
-                dRef.setValue(userInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        startTripAlert();
-                    }
-                });
+                DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
+                GeoFire geoFire = new GeoFire(onlineRef);
 
+                geoFire.setLocation(driverId, new GeoLocation(currentLat,currentLon));
+                startTripAlert();
 
             }
         });
@@ -787,7 +781,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         getDriverRat();
     }
 
-
     private void checkDate() {
         DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
         ref.addValueEventListener(new ValueEventListener() {
@@ -797,20 +790,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     String driver_id = String.valueOf(data.child("driverId").getValue());
                     if (driver_id.equals(driverId)) {
                         String pickup_date2 = String.valueOf(data.child("pickupDate").getValue());
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                        Date date2 = null;
-                        try {
-                            date2 = dateFormat.parse(pickup_date2);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        Date date = null;
-                        try {
-                            date = dateFormat.parse(pickupDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        hasDateMatch = date.equals(date2);
+
+                       String date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+
+                        hasDateMatch = date.equals(pickup_date2);
                     } else {
                         hasDateMatch = false;
                     }
