@@ -2,6 +2,7 @@ package com.example.swishbddriver.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
@@ -10,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,6 +39,8 @@ import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.AppConstants;
 import com.example.swishbddriver.Utils.Config;
 import com.example.swishbddriver.Utils.GpsUtils;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -59,6 +63,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -84,7 +90,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private NavigationView navigationView;
     private StringBuilder stringBuilder;
     private AutocompleteSupportFragment autocompleteFragment;
-    private String driverId, navName, navPhone, navImage, carType, getDestinationPlace;
+    private String driverId, navName, navPhone, navImage, carType, getDestinationPlace, status;
     private FusedLocationProviderClient mFusedLocationClient;
     private Geocoder geocoder;
     private FloatingActionButton currentLocationFButton;
@@ -99,7 +105,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private Boolean driverChecked = false;
     private Button buttonOn, buttonOff;
     private SharedPreferences sharedPreferences;
-    private LottieAnimationView progressBar,profileImageLoading;
+    private LottieAnimationView progressBar, profileImageLoading;
     private float rating;
     private int ratingCount;
     private RatingBar ratingBar;
@@ -116,11 +122,19 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         navigationView.setNavigationItemSelectedListener(this);
         navHeaderData();
 
+        checkDriverOnLine();
+
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
             public void gpsStatus(boolean isGPSEnable) {
                 // turn on GPS
                 isGPS = isGPSEnable;
+            }
+        });
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                updateToken(instanceIdResult.getToken());
             }
         });
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -144,15 +158,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
-                        DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers");
+                        DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType).child(driverId);
                         checkRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.child(driverId).exists()) {
-                                    DatabaseReference updtRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(driverId);
+                                if (snapshot.exists()) {
+                                    DatabaseReference updtRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType)
+                                            .child(driverId).child("l");
 
-                                    updtRef.child("lat").setValue(String.valueOf(latitude));
-                                    updtRef.child("lon").setValue(String.valueOf(longitude));
+                                    updtRef.child("0").setValue(String.valueOf(latitude));
+                                    updtRef.child("1").setValue(String.valueOf(longitude));
 
                                 } else {
                                     return;
@@ -164,7 +179,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                             }
                         });
-
                         if (!isContinue) {
                             getCurrentLocation();
                         } else {
@@ -190,6 +204,102 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onClick(View view) {
                 getCurrentLocation();
+            }
+        });
+
+        buttonOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RegistrationCheck();
+            }
+        });
+        buttonOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                dialog.setTitle("Offline!!");
+                dialog.setIcon(R.drawable.ic_leave_24);
+                dialog.setMessage("Do you want to go offline?");
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
+                        dRef.removeValue();
+                        buttonOff.setVisibility(View.VISIBLE);
+                        buttonOn.setVisibility(View.GONE);
+                    }
+                });
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = dialog.create();
+                alertDialog.show();
+            }
+        });
+    }
+
+    private void RegistrationCheck() {
+        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                status = response.body().get(0).getStatus();
+                if (status.equals("Deactive")) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("Alert..!!");
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
+                } else {
+                    DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
+                    GeoFire geoFire = new GeoFire(onlineRef);
+
+                    geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
+                    buttonOff.setVisibility(View.GONE);
+                    buttonOn.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void checkDriverOnLine() {
+
+        carType = sharedPreferences.getString("carType","");
+        DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType);
+        dRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                progressBar.setVisibility(View.GONE);
+                if (snapshot.hasChild(driverId)) {
+                    buttonOn.setVisibility(View.VISIBLE);
+                    buttonOff.setVisibility(View.GONE);
+                } else {
+                    buttonOff.setVisibility(View.VISIBLE);
+                    buttonOn.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -236,13 +346,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     List<ProfileModel> list = new ArrayList<>();
                     list = response.body();
 
-                    Picasso.get().load(Config.IMAGE_LINE+list.get(0).getImage()).into(profileImage, new com.squareup.picasso.Callback() {
+                    Picasso.get().load(Config.IMAGE_LINE + list.get(0).getImage()).into(profileImage, new com.squareup.picasso.Callback() {
                         @Override
-                        public void onSuccess() {}
+                        public void onSuccess() {
+                        }
+
                         @Override
                         public void onError(Exception e) {
                             Log.d("kiKahini", e.getMessage());
@@ -250,16 +362,17 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     });
 
                     UserName.setText(list.get(0).getFull_name());
-                    if (list.get(0).getCarType()!=null) {
-                        userPhone.setText(list.get(0).getCarType());
-                    }else{
+                    if (list.get(0).getCarType() != null) {
+                        carType = list.get(0).getCarType();
+                        userPhone.setText(carType);
+                    } else {
                         userPhone.setText("Not selected yet!");
                     }
-                    rating=list.get(0).getRating();
-                    ratingCount=list.get(0).getRatingCount();
+                    rating = list.get(0).getRating();
+                    ratingCount = list.get(0).getRatingCount();
 
 
-                    float rat=rating/ratingCount;
+                    float rat = rating / ratingCount;
                     ratingBar.setRating(rat);
                     profileImageLoading.setVisibility(View.GONE);
 
@@ -286,16 +399,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         progressBar = findViewById(R.id.progrssbar);
-        profileImageLoading=navigationView.getHeaderView(0).findViewById(R.id.imageLoading);
+        profileImageLoading = navigationView.getHeaderView(0).findViewById(R.id.imageLoading);
         buttonOn = findViewById(R.id.buttonOn);
         buttonOff = findViewById(R.id.buttonOff);
         //databaseReference = FirebaseDatabase.getInstance().getReference();
         profileImage = navigationView.getHeaderView(0).findViewById(R.id.navProfileImage);
         UserName = navigationView.getHeaderView(0).findViewById(R.id.namefromNavigation);
         userPhone = navigationView.getHeaderView(0).findViewById(R.id.phone_fromNavigation);
-        ratingBar=navigationView.getHeaderView(0).findViewById(R.id.headerRatingBar);
-        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
-        driverId = sharedPreferences.getString("id","");
+        ratingBar = navigationView.getHeaderView(0).findViewById(R.id.headerRatingBar);
+        sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+        driverId = sharedPreferences.getString("id", "");
         currentLocationFButton = findViewById(R.id.currentLocationBtn);
         menuImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,13 +427,41 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
         autocompleteFragment.setCountry("BD");
+        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                carType = response.body().get(0).getCarType();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("carType",carType);
+                editor.commit();
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+
+    }
+    private void updateToken(String token) {
+        if(!carType.equals("")) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
+            userRef.child("token").setValue(token);
+        }else{
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
+            userRef.child("token").setValue(token);
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        map=googleMap;
+        map = googleMap;
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -328,11 +469,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(false);
 
-        if (dark==true){
-            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this,R.raw.mapstyle_aubergine));
-        }
-        else{
-            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this,R.raw.light));
+        if (dark == true) {
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_aubergine));
+        } else {
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.light));
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -378,7 +518,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;*/
             case R.id.logout:
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("loggedIn",false);
+                editor.putBoolean("loggedIn", false);
                 editor.commit();
                 Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
