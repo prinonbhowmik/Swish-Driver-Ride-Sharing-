@@ -1,5 +1,7 @@
 package com.example.swishbddriver.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,7 @@ public class EarnHistoryFragment extends Fragment {
     private List<BookForLaterModel> list;
     private String driverId;
     private String carType;
-
+    private SharedPreferences sharedPreferences;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,9 +42,9 @@ public class EarnHistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_earn_history, container, false);
 
         init(view);
-        driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        getCarType();
+
+        //getCarType();
 
 
 
@@ -100,5 +102,7 @@ public class EarnHistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new EarningHistoryAdapter(list,getContext());
         recyclerView.setAdapter(adapter);
+        sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
+        driverId=sharedPreferences.getString("id","");
     }
 }

@@ -1,6 +1,8 @@
 package com.example.swishbddriver.Activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +30,7 @@ public class EarningsActivity extends AppCompatActivity {
     private String driverId,currentDate;
     private int todayEarn=0,totalEarn=0,todayPayable=0,totalPayable=0,todayDue=0,totalDue=0;
     private RatingBar ratingBar;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,8 @@ public class EarningsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_earnings);
 
         init();
-
-        driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
+        driverId=sharedPreferences.getString("id","");
         currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
         gatTodayEarn();

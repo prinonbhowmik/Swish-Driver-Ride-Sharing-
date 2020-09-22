@@ -67,7 +67,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                     list = response.body();
                     carType = list.get(0).getCarType();
                     getList(carType);
-                    Toast.makeText(AdvanceBookingActivity.this, ""+carType, Toast.LENGTH_SHORT).show();
                 }
             }
 

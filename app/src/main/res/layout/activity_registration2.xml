@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <LinearLayout
             android:id="@+id/linear"
             android:layout_width="match_parent"
@@ -23,146 +24,165 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
-                android:text="(Step 1) Driver Information"
+                android:text="Driver Information"
                 android:textColor="@color/themColor"
                 android:textSize="24sp"
                 android:textStyle="bold" />
-
-
-            <ImageView
-                android:id="@+id/nidFrontIV"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
-
-            <Button
+            <RelativeLayout
                 android:id="@+id/nidFrontBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_background"
-                android:padding="10dp"
-                android:text="Take a photo of NID front page"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp" />
-
-            <ImageView
-                android:id="@+id/nidBackIV"
-                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="250dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
-
-            <Button
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nidFrontIV"
+                    android:src="@drawable/nid_front"/>
+                <TextView
+                    android:id="@+id/nidFrontTxt"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Upload Photo"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:background="#45DAE0E1"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nid1Txt"
+                android:text="Nid Front Photo"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"/>
+            <RelativeLayout
                 android:id="@+id/nidBackBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_below="@+id/verify_LT"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_background"
-                android:padding="10dp"
-                android:text="Take a photo of NID back page"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp" />
-
-            <ImageView
-                android:id="@+id/driverLicenceFrontIV"
-                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="250dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/driverLicenceFrontBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_background"
-                android:padding="10dp"
-                android:text="Photo of Driving licence front"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp" />
-
-            <ImageView
-                android:id="@+id/driverLicenceBackIV"
-                android:layout_width="match_parent"
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nidBackIV"
+                    android:src="@drawable/nid_back"/>
+                <TextView
+                    android:id="@+id/nidBackTxt"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Upload Photo"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:background="#45DAE0E1"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nid2Txt"
+                android:text="Nid Back Photo"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"/>
+            <RelativeLayout
+                android:id="@+id/driverLicenseFrontBtn"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="250dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/driverLicenseFrontIV"
+                    android:src="@drawable/license_front"/>
+                <TextView
+                    android:id="@+id/licenseFrontTxt"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Upload Photo"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:background="#45DAE0E1"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/license1Txt"
+                android:text="License Front Photo"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"/>
 
-            <Button
-                android:id="@+id/driverLicenceBackBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_background"
-                android:padding="10dp"
-                android:text="Photo of Driving licence back"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp" />
-
-            <ImageView
-                android:id="@+id/selfieIV"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/driverLicenseBackBtn"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="250dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/driverLicenseBackIV"
+                    android:src="@drawable/license_back"/>
+                <TextView
+                    android:id="@+id/licenseBackTxt"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Upload Photo"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:background="#45DAE0E1"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/license2Txt"
+                android:text="License Back Photo"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"/>
 
-            <Button
+
+            <RelativeLayout
                 android:id="@+id/selfieBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_background"
-                android:padding="10dp"
-                android:text="Take a selfie"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp" />
-
-
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="250dp"
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="240dp"
+                    android:id="@+id/selfieIV"
+                    android:src="@drawable/selfie"/>
+                <TextView
+                    android:id="@+id/selfieTxt"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Take a Selfie"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@android:color/black"
+                    android:background="#45DAE0E1"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/selfie1Txt"
+                android:text="Selfie"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"/>
 
             <Button
                 android:id="@+id/lastStepBtn"

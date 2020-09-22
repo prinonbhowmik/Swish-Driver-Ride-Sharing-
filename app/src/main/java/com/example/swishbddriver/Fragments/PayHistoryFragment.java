@@ -1,5 +1,7 @@
 package com.example.swishbddriver.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +30,13 @@ public class PayHistoryFragment extends Fragment {
     private PayHistoryAdapter adapter;
     private List<PayHistoryModel> model;
     private String driverId;
+    private SharedPreferences sharedPreferences;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_pay_history, container, false);
         init(view);
-        driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         getData();
 
         return view;
@@ -70,5 +72,7 @@ public class PayHistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PayHistoryAdapter(model,getContext());
         recyclerView.setAdapter(adapter);
+        sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
+        driverId=sharedPreferences.getString("id","");
     }
 }

@@ -44,8 +44,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Registration2Activity extends AppCompatActivity {
-    private Button nidFrontBtn, nidBackBtn, driverLicenceFrontBtn, driverLicenceBackBtn, selfieBtn, lastStepBtn;
-    private ImageView nidFrontIv, nidBackIv, driverLicenceFrontIv, driverLicenceBackIv, selfieIv;
+    private Button lastStepBtn;
+    private TextView nidFrontTxt,nid1Txt,nidBackTxt,nid2Txt,licenseFrontTxt,license1Txt,licenseBackTxt,license2Txt,selfieTxt,selfie1Txt;
+    private RelativeLayout nidFrontBtn,nidBackBtn,driverLicenseFrontBtn,driverLicenseBackBtn,selfieBtn;
+    private ImageView nidFrontIv, nidBackIv, driverLicenseFrontIv, driverLicenseBackIv, selfieIv;
     private static final int pic_id = 123;
     private LinearLayout linearLayout;
     private RelativeLayout relativeLayout;
@@ -67,7 +69,6 @@ public class Registration2Activity extends AppCompatActivity {
         init();
         hideKeyBoard(getApplicationContext());
         //registrationCheck();
-        Toast.makeText(Registration2Activity.this, driverId, Toast.LENGTH_SHORT).show();
 
         lastStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,9 +138,10 @@ public class Registration2Activity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent = new Intent();
+                /*Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setAction(Intent.ACTION_GET_CONTENT);*/
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 1);
 
             }
@@ -154,7 +156,7 @@ public class Registration2Activity extends AppCompatActivity {
 
             }
         });
-        driverLicenceFrontBtn.setOnClickListener(new View.OnClickListener() {
+        driverLicenseFrontBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -162,7 +164,7 @@ public class Registration2Activity extends AppCompatActivity {
                 startActivityForResult(intent, 3);
             }
         });
-        driverLicenceBackBtn.setOnClickListener(new View.OnClickListener() {
+        driverLicenseBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -189,17 +191,27 @@ public class Registration2Activity extends AppCompatActivity {
     private void init() {
         nidFrontBtn = findViewById(R.id.nidFrontBtn);
         nidBackBtn = findViewById(R.id.nidBackBtn);
-        driverLicenceFrontBtn = findViewById(R.id.driverLicenceFrontBtn);
-        driverLicenceBackBtn = findViewById(R.id.driverLicenceBackBtn);
+        driverLicenseFrontBtn = findViewById(R.id.driverLicenseFrontBtn);
+        driverLicenseBackBtn = findViewById(R.id.driverLicenseBackBtn);
         selfieBtn = findViewById(R.id.selfieBtn);
         nidFrontIv = findViewById(R.id.nidFrontIV);
         nidBackIv = findViewById(R.id.nidBackIV);
-        driverLicenceFrontIv = findViewById(R.id.driverLicenceFrontIV);
-        driverLicenceBackIv = findViewById(R.id.driverLicenceBackIV);
+        driverLicenseFrontIv = findViewById(R.id.driverLicenseFrontIV);
+        driverLicenseBackIv = findViewById(R.id.driverLicenseBackIV);
         selfieIv = findViewById(R.id.selfieIV);
         lastStepBtn = findViewById(R.id.lastStepBtn);
         linearLayout = findViewById(R.id.linear);
         relativeLayout = findViewById(R.id.relative);
+        nidFrontTxt=findViewById(R.id.nidFrontTxt);
+        nid1Txt=findViewById(R.id.nid1Txt);
+        nidBackTxt=findViewById(R.id.nidBackTxt);
+        nid2Txt=findViewById(R.id.nid2Txt);
+        licenseFrontTxt=findViewById(R.id.licenseFrontTxt);
+        license1Txt=findViewById(R.id.license1Txt);
+        licenseBackTxt=findViewById(R.id.licenseBackTxt);
+        license2Txt=findViewById(R.id.license2Txt);
+        selfieTxt=findViewById(R.id.selfieTxt);
+        selfie1Txt=findViewById(R.id.selfie1Txt);
         sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         driverId = sharedPreferences.getString("id","");
     }
@@ -213,7 +225,8 @@ public class Registration2Activity extends AppCompatActivity {
 //            nidFrontIv.setImageBitmap(front);
             front = data.getData();
             nidFrontIv.setImageURI(front);
-            nidFrontIv.setVisibility(View.VISIBLE);
+            nidFrontTxt.setVisibility(View.GONE);
+            nid1Txt.setVisibility(View.VISIBLE);
 
 
         }
@@ -222,29 +235,33 @@ public class Registration2Activity extends AppCompatActivity {
 //            nidBackIv.setImageBitmap(back);
             back = data.getData();
             nidBackIv.setImageURI(back);
-            nidBackIv.setVisibility(View.VISIBLE);
+            nidBackTxt.setVisibility(View.GONE);
+            nid2Txt.setVisibility(View.VISIBLE);
 
         }
         if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
             //licence = (Bitmap) data.getExtras().get("data");
             //driverLicenceIv.setImageBitmap(licence);
             licenceFront = data.getData();
-            driverLicenceFrontIv.setImageURI(licenceFront);
-            driverLicenceFrontIv.setVisibility(View.VISIBLE);
+            driverLicenseFrontIv.setImageURI(licenceFront);
+            licenseFrontTxt.setVisibility(View.GONE);
+            license1Txt.setVisibility(View.VISIBLE);
 
         }
         if (requestCode == 4 && resultCode == Activity.RESULT_OK) {
             //licence = (Bitmap) data.getExtras().get("data");
             //driverLicenceIv.setImageBitmap(licence);
             licenceBack = data.getData();
-            driverLicenceBackIv.setImageURI(licenceBack);
-            driverLicenceBackIv.setVisibility(View.VISIBLE);
-
+            driverLicenseBackIv.setImageURI(licenceBack);
+            licenseBackTxt.setVisibility(View.GONE);
+            license2Txt.setVisibility(View.VISIBLE);
         }
         if (requestCode == 5 && resultCode == Activity.RESULT_OK) {
             selfieBitmap = (Bitmap) data.getExtras().get("data");
             selfieIv.setVisibility(View.VISIBLE);
             selfieIv.setImageBitmap(selfieBitmap);
+            selfieTxt.setVisibility(View.GONE);
+            selfie1Txt.setVisibility(View.VISIBLE);
         }
 
     }
