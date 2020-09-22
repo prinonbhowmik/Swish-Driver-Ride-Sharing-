@@ -118,6 +118,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_driver_map);
 
         init();
+        carType = sharedPreferences.getString("carType","");
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
         navHeaderData();
@@ -431,12 +432,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                carType = response.body().get(0).getCarType();
+                if (response.body().get(0).getCarType()!=null){
+                    carType = response.body().get(0).getCarType();
 
-                SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("carType",carType);
-                editor.commit();
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("carType",carType);
+                    editor.commit();
+                }
             }
 
             @Override
