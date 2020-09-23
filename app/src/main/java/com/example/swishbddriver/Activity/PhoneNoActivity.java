@@ -75,10 +75,15 @@ public class PhoneNoActivity extends AppCompatActivity {
                             if (status.equals("1")) {
                                 startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
                                         .putExtra("id", list.get(0).getDriver_id()).putExtra("status",list.get(0).getActivationStatus()));
+
+                                progressBar.setVisibility(View.GONE);
+                                nextBtn.setEnabled(true);
                             } else if (status.equals("0")) {
                                 startActivity(new Intent(PhoneNoActivity.this, Otp_Activity.class)
                                         .putExtra("phone", phone)
                                         .putExtra("otp", list.get(0).getOtp()));
+                                progressBar.setVisibility(View.GONE);
+                                nextBtn.setEnabled(true);
                             }
                         }
                     }

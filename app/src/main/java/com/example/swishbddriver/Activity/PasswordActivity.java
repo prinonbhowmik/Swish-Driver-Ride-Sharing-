@@ -50,6 +50,7 @@ public class PasswordActivity extends AppCompatActivity {
                 password = verify_Et.getText().toString();
                 hideKeyBoard(getApplicationContext());
                 progressBar.setVisibility(View.VISIBLE);
+                loginBtn.setEnabled(false);
                 Call<List<ProfileModel>> call = api.getData(driver_id);
                 call.enqueue(new Callback<List<ProfileModel>>() {
                     @Override
@@ -69,6 +70,9 @@ public class PasswordActivity extends AppCompatActivity {
 
                                 startActivity(new Intent(PasswordActivity.this,DriverMapActivity.class)
                                         .putExtra("id",driver_id));
+
+                                progressBar.setVisibility(View.GONE);
+                                loginBtn.setEnabled(true);
                             }
                             else{
                                 Toast.makeText(PasswordActivity.this, "Password doesn't march!", Toast.LENGTH_SHORT).show();

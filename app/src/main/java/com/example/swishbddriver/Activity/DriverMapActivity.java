@@ -119,7 +119,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         init();
         carType = sharedPreferences.getString("carType","");
-        Toast.makeText(this, carType, Toast.LENGTH_SHORT).show();
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
         navHeaderData();

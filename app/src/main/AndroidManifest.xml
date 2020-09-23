@@ -31,7 +31,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.Registration4Activity"></activity>
+        <activity android:name=".Activity.Registration4Activity"/>
         <activity android:name=".Activity.EditDriverBio" />
         <activity android:name=".Activity.DriverMapActivity" />
         <activity android:name=".Activity.AdvanceBookingActivity" />
