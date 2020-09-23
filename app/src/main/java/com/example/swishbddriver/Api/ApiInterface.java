@@ -166,4 +166,8 @@ public interface ApiInterface {
                                      @Part MultipartBody.Part driving_license_photosB,
                                      @Part MultipartBody.Part selfie);
 
+
+    @GET("driverbookinglist?")
+    Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
+
 }

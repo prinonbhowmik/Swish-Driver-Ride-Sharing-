@@ -452,8 +452,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
     private void updateToken(String token) {
         if(!carType.equals("")) {
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
-            userRef.child("token").setValue(token);
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
+            userRef.removeValue();
+            DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
+            tokenRef.child("token").setValue(token);
         }else{
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
             userRef.child("token").setValue(token);

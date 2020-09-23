@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.swishbddriver.Activity.EarningHistory;
 import com.example.swishbddriver.Adapter.EarningHistoryAdapter;
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,14 +31,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class EarnHistoryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EarningHistoryAdapter adapter;
     private List<BookForLaterModel> list;
     private String driverId;
+    private TextView noHistoryTxt;
     private String carType;
     private SharedPreferences sharedPreferences;
+    private ApiInterface api;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -44,7 +54,7 @@ public class EarnHistoryFragment extends Fragment {
         init(view);
 
 
-        //getCarType();
+        getData();
 
 
 
@@ -52,56 +62,41 @@ public class EarnHistoryFragment extends Fragment {
         return view;
     }
 
-    private void getCarType() {
-        DatabaseReference carTypeRef = FirebaseDatabase.getInstance().getReference("DriversProfile");
-        carTypeRef.child(driverId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                carType = snapshot.child("carType").getValue().toString();
-                getData();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void getData() {
-        DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child("BookForLater").child(carType);
-        historyRef.addValueEventListener(new ValueEventListener() {
+        Call<List<BookForLaterModel>> call = api.driverRideHistory(driverId);
+        call.enqueue(new Callback<List<BookForLaterModel>>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
+            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                if (response.isSuccessful()){
                     list.clear();
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        String driver_id=String.valueOf(data.child("driverId").getValue());
-                        if(driver_id.equals(driverId)) {
-                            String rideStatus = (String) data.child("rideStatus").getValue().toString();
-                            if (rideStatus.equals("End")){
-                                BookForLaterModel book = data.getValue(BookForLaterModel.class);
-                                list.add(book);
-                            }
-                        }
+                    list = response.body();
+                    adapter = new EarningHistoryAdapter(list, getContext());
+                    recyclerView.setAdapter(adapter);
+                    if (list.size() == 0) {
+                        noHistoryTxt.setVisibility(View.VISIBLE);
+                        noHistoryTxt.setText("No History");
+                        recyclerView.setVisibility(View.GONE);
                     }
-                    Collections.reverse(list);
-                    adapter.notifyDataSetChanged();
                 }
+
+                adapter.notifyDataSetChanged();
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
             }
         });
     }
 
     private void init(View view) {
         list = new ArrayList<>();
+        api = ApiUtils.getUserService();
         recyclerView = view.findViewById(R.id.historyRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new EarningHistoryAdapter(list,getContext());
         recyclerView.setAdapter(adapter);
+        noHistoryTxt=view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId=sharedPreferences.getString("id","");
     }
