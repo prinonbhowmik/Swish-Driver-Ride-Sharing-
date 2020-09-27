@@ -111,7 +111,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private float rating;
     private int ratingCount;
     private RatingBar ratingBar;
-    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus;
+    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus,customerId;
     private ApiInterface apiInterface;
     private LinearLayout hourRequestLayout;
     private TextView pickupPlaceTV;
@@ -260,6 +260,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         place = data.child("pickPlace").getValue().toString();
                         bookingId = data.child("bookingId").getValue().toString();
                         tripStatus =  data.child("status").getValue().toString();
+                        customerId = data.child("customerId").getValue().toString();
                         pickupPlaceTV.setText(place);
                         hourRequestLayout.setVisibility(View.VISIBLE);
                         final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
@@ -280,7 +281,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             @Override
                             public void onClick(View view) {
                                 mp.stop();
-                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("HourlyInstantRides")
+                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
                                         .child(carType).child(bookingId);
                                 updtref.child("status").setValue("accepted");
                                 hourRequestLayout.setVisibility(View.GONE);

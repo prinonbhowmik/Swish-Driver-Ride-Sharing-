@@ -52,7 +52,6 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
         Bundle mArgs = getArguments();
         customerId = mArgs.getString("customerId");
 
-
         getData();
 
         callCustomer.setOnClickListener(new View.OnClickListener() {
