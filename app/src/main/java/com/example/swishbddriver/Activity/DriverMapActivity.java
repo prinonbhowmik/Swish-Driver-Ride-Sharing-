@@ -164,7 +164,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
-                                    DatabaseReference updtRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child("Sedan").child(carType)
+                                    DatabaseReference updtRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType)
                                             .child(driverId).child("l");
 
                                     updtRef.child("0").setValue(latitude);
@@ -225,7 +225,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child("Sedan").child(carType).child(driverId);
+                        DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
                         dRef.removeValue();
                         buttonOff.setVisibility(View.VISIBLE);
                         buttonOn.setVisibility(View.GONE);
@@ -265,7 +265,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
                 } else {
-                    DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child("Sedan").child(carType);
+                    DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
                     GeoFire geoFire = new GeoFire(onlineRef);
 
                     geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
