@@ -251,7 +251,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void getRequestCall() {
-        DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantConfirmDriver").child(carType);
+        DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
         checkReqRef.orderByChild(driverId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -269,7 +269,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             @Override
                             public void onClick(View view) {
                                 mp.stop();
-                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("HourlyInstantRides")
+                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
                                         .child(carType).child(bookingId);
                                 updtref.child("driverId").setValue("");
                                 hourRequestLayout.setVisibility(View.GONE);
