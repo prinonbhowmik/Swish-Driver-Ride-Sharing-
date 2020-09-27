@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -27,12 +29,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.R;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -44,10 +50,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Registration2Activity extends AppCompatActivity {
-    private Button lastStepBtn;
-    private TextView nidFrontTxt,nid1Txt,nidBackTxt,nid2Txt,licenseFrontTxt,license1Txt,licenseBackTxt,license2Txt,selfieTxt,selfie1Txt;
-    private RelativeLayout nidFrontBtn,nidBackBtn,driverLicenseFrontBtn,driverLicenseBackBtn,selfieBtn;
-    private ImageView nidFrontIv, nidBackIv, driverLicenseFrontIv, driverLicenseBackIv, selfieIv;
+    private Button nextBtn;
+    private TextView nidFrontTxt,nid1Txt;
+    private RelativeLayout nidFrontBtn;
+    private ImageView nidFrontIv;
     private static final int pic_id = 123;
     private LinearLayout linearLayout;
     private RelativeLayout relativeLayout;
@@ -61,6 +67,9 @@ public class Registration2Activity extends AppCompatActivity {
     private String plateNumber;
     private Bitmap selfieBitmap;
     private SharedPreferences sharedPreferences;
+    Bitmap bitmap;
+
+    private ApiInterface api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +79,7 @@ public class Registration2Activity extends AppCompatActivity {
         hideKeyBoard(getApplicationContext());
         //registrationCheck();
 
-        lastStepBtn.setOnClickListener(new View.OnClickListener() {
+      /*  lastStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (front == null) {
@@ -130,147 +139,92 @@ public class Registration2Activity extends AppCompatActivity {
                     //uploadImage();
                 }
             }
-        });
+        });*/
+
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              if (front != null) {
+
+                   File file1 = new File(front.getPath());
+                  RequestBody requestFile1 = RequestBody.create(MediaType.parse("image/*"), file1);
+                  MultipartBody.Part image = MultipartBody.Part.createFormData("nid_front", file1.getName(), requestFile1);
+
+                  RequestBody driverid = RequestBody.create(MediaType.parse("text/plain"), driverId);
+
+                  Call<List<DriverInfo>> call = api.driverNid1(driverid, image);
+                  call.enqueue(new Callback<List<DriverInfo>>() {
+                      @Override
+                      public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
+                      }
+
+                      @Override
+                      public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
+                          Log.d("errorKI", t.getMessage());
+                      }
+                  });
+                  startActivity(new Intent(Registration2Activity.this,Registration3Activity.class));
+                  overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                  finish();
+              }
+              else{
+                  Toasty.info(Registration2Activity.this, "Take NID front photo", Toasty.LENGTH_SHORT).show();
+              }
+          }
+      });
 
 
         nidFrontBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                /*Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);*/
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
-
+                CropImage.activity()
+                        .setFixAspectRatio(false)
+                        .setGuidelines(CropImageView.Guidelines.OFF)
+                        .start(Registration2Activity.this);
             }
         });
-        nidBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 2);
-
-            }
-        });
-        driverLicenseFrontBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 3);
-            }
-        });
-        driverLicenseBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 4);
-            }
-        });
-        selfieBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(Registration2Activity.this, Manifest.permission.CAMERA) !=
-                        PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Registration2Activity.this, new String[]{Manifest.permission.CAMERA}, 5);
-                }
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 5);
-            }
-        });
 
 
     }
 
     private void init() {
         nidFrontBtn = findViewById(R.id.nidFrontBtn);
-        nidBackBtn = findViewById(R.id.nidBackBtn);
-        driverLicenseFrontBtn = findViewById(R.id.driverLicenseFrontBtn);
-        driverLicenseBackBtn = findViewById(R.id.driverLicenseBackBtn);
-        selfieBtn = findViewById(R.id.selfieBtn);
         nidFrontIv = findViewById(R.id.nidFrontIV);
-        nidBackIv = findViewById(R.id.nidBackIV);
-        driverLicenseFrontIv = findViewById(R.id.driverLicenseFrontIV);
-        driverLicenseBackIv = findViewById(R.id.driverLicenseBackIV);
-        selfieIv = findViewById(R.id.selfieIV);
-        lastStepBtn = findViewById(R.id.lastStepBtn);
+        nextBtn = findViewById(R.id.nextBtnNID1);
         linearLayout = findViewById(R.id.linear);
         relativeLayout = findViewById(R.id.relative);
         nidFrontTxt=findViewById(R.id.nidFrontTxt);
         nid1Txt=findViewById(R.id.nid1Txt);
-        nidBackTxt=findViewById(R.id.nidBackTxt);
-        nid2Txt=findViewById(R.id.nid2Txt);
-        licenseFrontTxt=findViewById(R.id.licenseFrontTxt);
-        license1Txt=findViewById(R.id.license1Txt);
-        licenseBackTxt=findViewById(R.id.licenseBackTxt);
-        license2Txt=findViewById(R.id.license2Txt);
-        selfieTxt=findViewById(R.id.selfieTxt);
-        selfie1Txt=findViewById(R.id.selfie1Txt);
+        api=ApiUtils.getUserService();
         sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         driverId = sharedPreferences.getString("id","");
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+   @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                front = resultUri;
+                nidFrontIv.setImageURI(front);
 
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-//            front = (Bitmap) data.getExtras().get("data");
-//            nidFrontIv.setImageBitmap(front);
-            front = data.getData();
-            nidFrontIv.setImageURI(front);
-            nidFrontTxt.setVisibility(View.GONE);
-            nid1Txt.setVisibility(View.VISIBLE);
+                nidFrontTxt.setVisibility(View.GONE);
+                nid1Txt.setVisibility(View.VISIBLE);
 
-
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                // progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(Registration2Activity.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
         }
-        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
-//            back = (Bitmap) data.getExtras().get("data");
-//            nidBackIv.setImageBitmap(back);
-            back = data.getData();
-            nidBackIv.setImageURI(back);
-            nidBackTxt.setVisibility(View.GONE);
-            nid2Txt.setVisibility(View.VISIBLE);
-
-        }
-        if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
-            //licence = (Bitmap) data.getExtras().get("data");
-            //driverLicenceIv.setImageBitmap(licence);
-            licenceFront = data.getData();
-            driverLicenseFrontIv.setImageURI(licenceFront);
-            licenseFrontTxt.setVisibility(View.GONE);
-            license1Txt.setVisibility(View.VISIBLE);
-
-        }
-        if (requestCode == 4 && resultCode == Activity.RESULT_OK) {
-            //licence = (Bitmap) data.getExtras().get("data");
-            //driverLicenceIv.setImageBitmap(licence);
-            licenceBack = data.getData();
-            driverLicenseBackIv.setImageURI(licenceBack);
-            licenseBackTxt.setVisibility(View.GONE);
-            license2Txt.setVisibility(View.VISIBLE);
-        }
-        if (requestCode == 5 && resultCode == Activity.RESULT_OK) {
-            selfieBitmap = (Bitmap) data.getExtras().get("data");
-            selfieIv.setVisibility(View.VISIBLE);
-            selfieIv.setImageBitmap(selfieBitmap);
-            selfieTxt.setVisibility(View.GONE);
-            selfie1Txt.setVisibility(View.VISIBLE);
-        }
-
     }
 
 
     @Override
-    public void onBackPressed() {/*
-        startActivity(new Intent(DriverInformationActivity.this,MainActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
+    public void onBackPressed() {
         finish();
     }
 

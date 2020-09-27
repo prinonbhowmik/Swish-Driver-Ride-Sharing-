@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.Registration4Activity">
+    tools:context=".Activity.Registration6Activity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,29 +20,30 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
-            android:text="(Step 3) License Front"
+            android:text="(Step 5) Take a selfie"
             android:textColor="@color/themColor"
             android:textSize="24sp"
             android:textStyle="bold" />
 
+
         <RelativeLayout
-            android:id="@+id/driverLicenseFrontBtn"
+            android:id="@+id/selfieBtn"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
             android:layout_marginTop="10dp">
             <ImageView
                 android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/driverLicenseFrontIV"
-                android:src="@drawable/license_front"/>
+                android:layout_height="240dp"
+                android:id="@+id/selfieIV"
+                android:src="@drawable/selfie"/>
             <TextView
-                android:id="@+id/licenseFrontTxt"
+                android:id="@+id/selfieTxt"
                 android:layout_width="300dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="Upload Photo"
+                android:text="Take a Selfie"
                 android:textStyle="bold"
                 android:padding="5dp"
                 android:textColor="@android:color/black"
@@ -51,13 +52,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/license1Txt"
-            android:text="License Front Photo"
+            android:id="@+id/selfie1Txt"
+            android:text="Selfie"
             android:visibility="gone"
             android:layout_gravity="center_horizontal"/>
 
         <Button
-            android:id="@+id/nextBtnLicense1"
+            android:id="@+id/finishBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="50dp"
@@ -66,7 +67,7 @@
             android:layout_marginBottom="50dp"
             android:background="@drawable/btn_background"
             android:padding="10dp"
-            android:text="Next"
+            android:text="Finish"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="20sp"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.Registration4Activity">
+    tools:context=".Activity.Registration5Activity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,13 +20,13 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
-            android:text="(Step 3) License Front"
+            android:text="(Step 4) License Back"
             android:textColor="@color/themColor"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/driverLicenseFrontBtn"
+            android:id="@+id/driverLicenseBackBtn"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
@@ -34,10 +34,10 @@
             <ImageView
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/driverLicenseFrontIV"
-                android:src="@drawable/license_front"/>
+                android:id="@+id/driverLicenseBackIV"
+                android:src="@drawable/license_back"/>
             <TextView
-                android:id="@+id/licenseFrontTxt"
+                android:id="@+id/licenseBackTxt"
                 android:layout_width="300dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
@@ -51,13 +51,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/license1Txt"
-            android:text="License Front Photo"
+            android:id="@+id/license2Txt"
+            android:text="License Back Photo"
             android:visibility="gone"
             android:layout_gravity="center_horizontal"/>
 
         <Button
-            android:id="@+id/nextBtnLicense1"
+            android:id="@+id/nextBtnLicense2"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="50dp"

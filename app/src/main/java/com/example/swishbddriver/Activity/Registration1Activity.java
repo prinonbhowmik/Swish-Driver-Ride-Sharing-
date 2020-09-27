@@ -118,9 +118,10 @@ public class Registration1Activity extends AppCompatActivity {
                         startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
                     }
                     else {
-
-                        startActivity(new Intent(Registration1Activity.this, Registration4Activity.class));
+                        startActivity(new Intent(Registration1Activity.this, Registration7Activity.class));
                     }
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
                 }
             }
         });

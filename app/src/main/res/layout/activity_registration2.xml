@@ -60,132 +60,14 @@
                 android:text="Nid Front Photo"
                 android:visibility="gone"
                 android:layout_gravity="center_horizontal"/>
-            <RelativeLayout
-                android:id="@+id/nidBackBtn"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_marginTop="10dp">
-                <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/nidBackIV"
-                    android:src="@drawable/nid_back"/>
-                <TextView
-                    android:id="@+id/nidBackTxt"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="Upload Photo"
-                    android:textStyle="bold"
-                    android:padding="5dp"
-                    android:textColor="@android:color/black"
-                    android:background="#45DAE0E1"/>
-            </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/nid2Txt"
-                android:text="Nid Back Photo"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"/>
-            <RelativeLayout
-                android:id="@+id/driverLicenseFrontBtn"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_marginTop="10dp">
-                <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/driverLicenseFrontIV"
-                    android:src="@drawable/license_front"/>
-                <TextView
-                    android:id="@+id/licenseFrontTxt"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="Upload Photo"
-                    android:textStyle="bold"
-                    android:padding="5dp"
-                    android:textColor="@android:color/black"
-                    android:background="#45DAE0E1"/>
-            </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/license1Txt"
-                android:text="License Front Photo"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"/>
-
-            <RelativeLayout
-                android:id="@+id/driverLicenseBackBtn"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_marginTop="10dp">
-                <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/driverLicenseBackIV"
-                    android:src="@drawable/license_back"/>
-                <TextView
-                    android:id="@+id/licenseBackTxt"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="Upload Photo"
-                    android:textStyle="bold"
-                    android:padding="5dp"
-                    android:textColor="@android:color/black"
-                    android:background="#45DAE0E1"/>
-            </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/license2Txt"
-                android:text="License Back Photo"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"/>
 
 
-            <RelativeLayout
-                android:id="@+id/selfieBtn"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_marginTop="10dp">
-                <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="240dp"
-                    android:id="@+id/selfieIV"
-                    android:src="@drawable/selfie"/>
-                <TextView
-                    android:id="@+id/selfieTxt"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="Take a Selfie"
-                    android:textStyle="bold"
-                    android:padding="5dp"
-                    android:textColor="@android:color/black"
-                    android:background="#45DAE0E1"/>
-            </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/selfie1Txt"
-                android:text="Selfie"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"/>
+
+
+
 
             <Button
-                android:id="@+id/lastStepBtn"
+                android:id="@+id/nextBtnNID1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="20dp"

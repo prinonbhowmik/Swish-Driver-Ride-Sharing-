@@ -34,44 +34,44 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Registration4Activity extends AppCompatActivity {
+public class Registration6Activity extends AppCompatActivity {
     private Button nextBtn;
-    private TextView licenseFrontTxt,license1Txt;
-    private RelativeLayout driverLicenseFrontBtn;
-    private ImageView driverLicenseFrontIv;
+    private TextView selfieTxt,selfie1Txt;
+    private RelativeLayout selfieBtn;
+    private ImageView selfieIv;
     private SharedPreferences sharedPreferences;
     private String driverId;
-    private Uri licenceFront;
+    private Uri selfie;
     private ProgressDialog progressDialog;
     private ApiInterface api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration4);
+        setContentView(R.layout.activity_registration6);
         init();
 
-        driverLicenseFrontBtn.setOnClickListener(new View.OnClickListener() {
+        selfieBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 CropImage.activity()
                         .setFixAspectRatio(false)
                         .setGuidelines(CropImageView.Guidelines.OFF)
-                        .start(Registration4Activity.this);
+                        .start(Registration6Activity.this);
 
             }
         });
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (licenceFront != null) {
-                    File file1 = new File(licenceFront.getPath());
+                if (selfie != null) {
+                    File file1 = new File(selfie.getPath());
                     RequestBody requestFile1 = RequestBody.create(MediaType.parse("image/*"), file1);
-                    MultipartBody.Part image = MultipartBody.Part.createFormData("driving_license_photosF", file1.getName(), requestFile1);
+                    MultipartBody.Part image = MultipartBody.Part.createFormData("selfie", file1.getName(), requestFile1);
 
                     RequestBody driverid = RequestBody.create(MediaType.parse("text/plain"), driverId);
 
-                    Call<List<DriverInfo>> call = api.driverLicense1(driverid, image);
+                    Call<List<DriverInfo>> call = api.selfie(driverid, image);
                     call.enqueue(new Callback<List<DriverInfo>>() {
                         @Override
                         public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
@@ -82,28 +82,28 @@ public class Registration4Activity extends AppCompatActivity {
                             Log.d("errorKI", t.getMessage());
                         }
                     });
-                    startActivity(new Intent(Registration4Activity.this,Registration5Activity.class));
+                    startActivity(new Intent(Registration6Activity.this,Registration6Activity.class));
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();
                 }
                 else{
-                    Toasty.info(Registration4Activity.this, "Take NID Back photo", Toasty.LENGTH_SHORT).show();
+                    Toasty.info(Registration6Activity.this, "Take NID Back photo", Toasty.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private void init() {
-        driverLicenseFrontBtn = findViewById(R.id.driverLicenseFrontBtn);
-        driverLicenseFrontIv = findViewById(R.id.driverLicenseFrontIV);
-        licenseFrontTxt=findViewById(R.id.licenseFrontTxt);
-        license1Txt=findViewById(R.id.license1Txt);
-        nextBtn = findViewById(R.id.nextBtnLicense1);
+
+        selfieIv = findViewById(R.id.selfieIV);
+        selfieBtn = findViewById(R.id.selfieBtn);
+        selfieTxt=findViewById(R.id.selfieTxt);
+        selfie1Txt=findViewById(R.id.selfie1Txt);
+        nextBtn = findViewById(R.id.finishBtn);
         api= ApiUtils.getUserService();
         sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         driverId = sharedPreferences.getString("id","");
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -111,22 +111,22 @@ public class Registration4Activity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                licenceFront = resultUri;
-                driverLicenseFrontIv.setImageURI(licenceFront);
-                licenseFrontTxt.setVisibility(View.GONE);
-                license1Txt.setVisibility(View.VISIBLE);
+                selfie = resultUri;
+                selfieIv.setImageURI(selfie);
+                selfieTxt.setVisibility(View.GONE);
+                selfie1Txt.setVisibility(View.VISIBLE);
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 // progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(Registration4Activity.this, "Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Registration6Activity.this, "Failed", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(Registration4Activity.this, DriverMapActivity.class));
+        startActivity(new Intent(Registration6Activity.this, DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

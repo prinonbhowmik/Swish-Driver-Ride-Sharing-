@@ -1,5 +1,6 @@
 package com.example.swishbddriver.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +34,7 @@ import retrofit2.Response;
 
 public class DriverProfile extends AppCompatActivity {
 
-    private String userId, name, email, phone, image, gender, dob,bio, driverId;
+    private String userId, name, email, phone, image, gender, dob,bio, driverId,editable;
     private TextView nametv, emailtv, phonetv, genderTv, dobTv,rideCount,bioTv,edit_bioTv;
     private CircleImageView userImage,editBtn;
     private float rating;
@@ -43,6 +45,7 @@ public class DriverProfile extends AppCompatActivity {
     private ApiInterface api;
     private Button changePassword;
     private SharedPreferences sharedPreferences;
+    private boolean checkEdit=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,26 +57,6 @@ public class DriverProfile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(DriverProfile.this,EditDriverBio.class).putExtra("bio",bio));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
-            }
-        });
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class)
-                .putExtra("name",nametv.getText())
-                .putExtra("email",emailtv.getText())
-                .putExtra("gender",genderTv.getText())
-                .putExtra("dob",dobTv.getText()));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
-            }
-        });
-        changePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(DriverProfile.this, ChangePassword.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
             }
@@ -102,6 +85,7 @@ public class DriverProfile extends AppCompatActivity {
                     dobTv.setText(list.get(0).getDate());
                     ratingCount=list.get(0).getRatingCount();
                     rating=list.get(0).getRating();
+                    editable=list.get(0).getEditable();
                     bio = list.get(0).getDetails();
                     float rat=rating/ratingCount;
                     ratingBar.setRating(rat);
@@ -113,6 +97,9 @@ public class DriverProfile extends AppCompatActivity {
                     }else if (bio.equals("")){
                         bioTv.setVisibility(View.GONE);
                     }
+                    if(editable.equals("false")){
+                        checkEdit=false;
+                    }
                     Log.d("name", list.get(0).getFull_name());
                 }
             }
@@ -123,6 +110,44 @@ public class DriverProfile extends AppCompatActivity {
             }
         });
 
+
+
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(checkEdit){
+                    startActivity(new Intent(DriverProfile.this, UpdateDriverProfileActivity.class)
+                            .putExtra("name",nametv.getText())
+                            .putExtra("email",emailtv.getText())
+                            .putExtra("gender",genderTv.getText())
+                            .putExtra("dob",dobTv.getText()));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                }else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverProfile.this);
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("You can not change your profile after verification.");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
+                }
+            }
+        });
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DriverProfile.this, ChangePassword.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
     }
 
     private void init() {

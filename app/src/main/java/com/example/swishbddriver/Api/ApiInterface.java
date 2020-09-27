@@ -157,15 +157,28 @@ public interface ApiInterface {
                                          @Field("plate_number") String plate_number,
                                          @Field("car_owner") String car_owner);
 
+
     @Multipart
     @POST("drivernid")
-    Call<List<DriverInfo>> drivernid(@Part("driver_id") RequestBody driver_id,
-                                     @Part MultipartBody.Part nid_front,
-                                     @Part MultipartBody.Part nid_back,
-                                     @Part MultipartBody.Part driving_license_photosF,
-                                     @Part MultipartBody.Part driving_license_photosB,
-                                     @Part MultipartBody.Part selfie);
+    Call<List<DriverInfo>> driverNid1(@Part("driver_id") RequestBody driver_id,
+                                     @Part MultipartBody.Part nidFront);
+    @Multipart
+    @POST("drivernid")
+    Call<List<DriverInfo>> driverNid2(@Part("driver_id") RequestBody driver_id,
+                                      @Part MultipartBody.Part nidBack);
+    @Multipart
+    @POST("drivernid")
+    Call<List<DriverInfo>> driverLicense1(@Part("driver_id") RequestBody driver_id,
+                                      @Part MultipartBody.Part licenseFront);
+    @Multipart
+    @POST("drivernid")
+    Call<List<DriverInfo>> driverLicense2(@Part("driver_id") RequestBody driver_id,
+                                          @Part MultipartBody.Part licenseBack);
 
+    @Multipart
+    @POST("drivernid")
+    Call<List<DriverInfo>> selfie(@Part("driver_id") RequestBody driver_id,
+                                          @Part MultipartBody.Part selfie);
 
     @GET("driverbookinglist?")
     Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
