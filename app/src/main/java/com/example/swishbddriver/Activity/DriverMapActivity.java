@@ -111,9 +111,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private float rating;
     private int ratingCount;
     private RatingBar ratingBar;
-    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
+    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus;
     private ApiInterface apiInterface;
     private LinearLayout hourRequestLayout;
+    private TextView pickupPlaceTV;
+    private Button rejectBtn,accptBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,15 +252,41 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void getRequestCall() {
         DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantConfirmDriver").child(carType);
-
         checkReqRef.orderByChild(driverId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    hourRequestLayout.setVisibility(View.VISIBLE);
-                    final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
-                    mp.start();
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        place = data.child("pickPlace").getValue().toString();
+                        bookingId = data.child("bookingId").getValue().toString();
+                        tripStatus =  data.child("status").getValue().toString();
+                        pickupPlaceTV.setText(place);
+                        hourRequestLayout.setVisibility(View.VISIBLE);
+                        final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
+                        mp.start();
 
+                        rejectBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mp.stop();
+                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("HourlyInstantRides")
+                                        .child(carType).child(bookingId);
+                                updtref.child("driverId").setValue("");
+                                hourRequestLayout.setVisibility(View.GONE);
+                            }
+                        });
+
+                        accptBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mp.stop();
+                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("HourlyInstantRides")
+                                        .child(carType).child(bookingId);
+                                updtref.child("status").setValue("accepted");
+                                hourRequestLayout.setVisibility(View.GONE);
+                            }
+                        });
+                    }
                 }
             }
 
@@ -455,6 +483,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
         autocompleteFragment.setCountry("BD");
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
+
+        hourRequestLayout = findViewById(R.id.hourlyRequestLayout);
+        pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
+        accptBtn = findViewById(R.id.accptBtn);
+        rejectBtn = findViewById(R.id.rejectBtn);
+
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
