@@ -17,6 +17,6 @@
         android:top="1dp"
         android:bottom="1dp"/>
 
-    <solid android:color="@color/themColor"/>
+    <solid android:color="@color/neomorph_background_color"/>
 
 </shape>

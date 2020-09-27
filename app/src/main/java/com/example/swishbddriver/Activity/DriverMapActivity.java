@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,6 +113,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private RatingBar ratingBar;
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
     private ApiInterface apiInterface;
+    private LinearLayout hourRequestLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +127,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         navHeaderData();
 
         checkDriverOnLine();
+
+        getRequestCall();
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -239,6 +244,27 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 });
                 AlertDialog alertDialog = dialog.create();
                 alertDialog.show();
+            }
+        });
+    }
+
+    private void getRequestCall() {
+        DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantConfirmDriver").child(carType);
+
+        checkReqRef.orderByChild(driverId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    hourRequestLayout.setVisibility(View.VISIBLE);
+                    final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
+                    mp.start();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

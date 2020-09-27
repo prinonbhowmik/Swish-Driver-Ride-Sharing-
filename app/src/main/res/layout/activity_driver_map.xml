@@ -66,14 +66,16 @@
             android:backgroundTint="@android:color/white"
             android:src="@drawable/ic_location_searching_24" />
 
+
+
     </RelativeLayout>
+
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+
         android:background="@color/transparent">
 
         <!-- TODO: Update blank fragment layout -->
@@ -110,7 +112,83 @@
 
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:id="@+id/hourlyRequestLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:background="@drawable/rounded_corner_layout"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Hourly Ride Request!"
+                android:textAlignment="center"
+                android:textStyle="italic"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="sedanpremiere.json"
+                    app:lottie_loop="true" />
+
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/pickupPlaceTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Hourly Ride Request!"
+                android:textAlignment="center"
+                android:drawableLeft="@drawable/userpickup"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <Button
+                    android:id="@+id/rejectBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/reject_btn_background"
+                    android:text="Reject"
+                    android:textAllCaps="false"
+                    android:textColor="#000" />
+                <Button
+                    android:id="@+id/accptBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_background"
+                    android:text="Accept"
+                    android:textAllCaps="false"
+                    android:textColor="#fff" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
