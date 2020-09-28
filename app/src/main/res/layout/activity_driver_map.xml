@@ -84,6 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:backgroundTint="@android:color/white"
             app:cardCornerRadius="5dp">
 
@@ -201,17 +202,18 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
+            android:visibility="gone"
             android:background="@drawable/rounded_corner_layout"
             android:orientation="vertical"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/passengerIV"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
+                android:layout_margin="20dp"
                 android:padding="15dp"
-                android:src="@drawable/userpickup"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="1dp" />
 
@@ -224,14 +226,56 @@
                 android:textColor="#000"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/pickPlaceTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Name"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
             <Button
                 android:id="@+id/callCustomerBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@drawable/btn_background"
+                android:drawableLeft="@drawable/ic_phone2"
                 android:text="Call Passenger"
-                android:textColor="#000"
+                android:textColor="#fff"
                 android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/cancelbtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_background"
+                    android:text="Cancel"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/pickUpbtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_background"
+                    android:text="Pick Up"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+            >
 
 
         </LinearLayout>

@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -76,6 +79,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,7 +100,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private FusedLocationProviderClient mFusedLocationClient;
     private Geocoder geocoder;
     private FloatingActionButton currentLocationFButton;
-    private CircleImageView profileImage;
+    private CircleImageView profileImage,passengerIV;
     private TextView UserName, userPhone;
     private static int time = 5000;
     private boolean isGPS = false;
@@ -113,9 +117,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private RatingBar ratingBar;
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus,customerId;
     private ApiInterface apiInterface;
-    private LinearLayout hourRequestLayout;
-    private TextView pickupPlaceTV;
-    private Button rejectBtn,accptBtn;
+    private LinearLayout hourRequestLayout,customerDetailsLayout;
+    private TextView pickupPlaceTV,pickplaceTv,customerNameTv;
+    private Button rejectBtn,accptBtn,callCustomerBtn,cancelbtn,pickUpbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -285,6 +289,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         .child(carType).child(bookingId);
                                 updtref.child("status").setValue("accepted");
                                 hourRequestLayout.setVisibility(View.GONE);
+                                customerDetailsLayout.setVisibility(View.VISIBLE);
+                                getAcceptedCustomerData();
+
                             }
                         });
                     }
@@ -297,6 +304,56 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
     }
+
+    private void getAcceptedCustomerData() {
+        Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
+        call.enqueue(new Callback<List<CustomerProfile>>() {
+            @Override
+            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                if (response.isSuccessful()){
+
+                    List<CustomerProfile> list = response.body();
+
+                    Picasso.get().load(Config.CUSTOMER_LINE + list.get(0).getImage()).into(passengerIV, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d("kiKahini", e.getMessage());
+                        }
+                    });
+
+
+                    customerNameTv.setText(list.get(0).getName());
+                    callCustomerBtn.setText(list.get(0).getPhone());
+                    pickplaceTv.setText(place);
+                    callCustomerBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                callIntent.setData(Uri.parse("tel:"+"+88"+callCustomerBtn.getText().toString()));
+                                startActivity(callIntent);
+
+                            } catch (ActivityNotFoundException activityException) {
+                                Toasty.error(DriverMapActivity.this,""+activityException.getMessage(), Toasty.LENGTH_SHORT).show();
+                                Log.e("Calling a Phone Number", "Call failed", activityException);
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+            }
+        });
+
+    }
+
 
     private void RegistrationCheck() {
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
@@ -465,6 +522,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         ratingBar = navigationView.getHeaderView(0).findViewById(R.id.headerRatingBar);
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
+
         currentLocationFButton = findViewById(R.id.currentLocationBtn);
         menuImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,9 +544,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
 
         hourRequestLayout = findViewById(R.id.hourlyRequestLayout);
+        customerDetailsLayout = findViewById(R.id.customerDetailsLayout);
         pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
         accptBtn = findViewById(R.id.accptBtn);
         rejectBtn = findViewById(R.id.rejectBtn);
+        passengerIV = findViewById(R.id.passengerIV);
+        pickplaceTv = findViewById(R.id.pickPlaceTv);
+        customerNameTv = findViewById(R.id.customerNameTv);
+        pickUpbtn = findViewById(R.id.pickUpbtn);
+        callCustomerBtn = findViewById(R.id.callCustomerBtn);
+        cancelbtn = findViewById(R.id.cancelbtn);
 
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
