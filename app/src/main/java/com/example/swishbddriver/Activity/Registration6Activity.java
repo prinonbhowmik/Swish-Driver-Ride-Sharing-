@@ -1,9 +1,11 @@
 package com.example.swishbddriver.Activity;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -82,15 +84,35 @@ public class Registration6Activity extends AppCompatActivity {
                             Log.d("errorKI", t.getMessage());
                         }
                     });
-                    startActivity(new Intent(Registration6Activity.this,Registration6Activity.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
+                    showAlertDialog();
+
                 }
                 else{
                     Toasty.info(Registration6Activity.this, "Take NID Back photo", Toasty.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void showAlertDialog() {
+            androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(this);
+            dialog.setTitle("Registration Done");
+            dialog.setIcon(R.drawable.ic_leave_24);
+            dialog.setMessage("We will get other information from owner of the car. Please wait 24 hours for verification.");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(Registration6Activity.this,Registration6Activity.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = dialog.create();
+            alertDialog.show();
+
     }
 
     private void init() {

@@ -77,8 +77,8 @@
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
         android:id="@+id/cashNFL"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:layout_below="@+id/txt1"
         android:layerType="software"
         app:neomorph_background_color="@color/neomorph_background_color"
@@ -118,17 +118,70 @@
                     app:lottie_autoPlay="true"
                     app:lottie_fileName="4261-cash-money-euro.json"
                     />
-
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lottie"
+                    android:id="@+id/totalTxt"
+                    android:text="Total Fare :"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    android:textAlignment="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/lottie"
                     android:id="@+id/cashTxt"
-                    android:text="Your Cash"
-                    android:textSize="45sp"
+                    android:layout_marginEnd="10dp"
+                    android:text="1000"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    android:textAlignment="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/totalTxt"
+                    android:id="@+id/discountTxt"
+                    android:text="Discount :"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    android:textAlignment="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/totalTxt"
+                    android:id="@+id/discount_Txt"
+                    android:layout_marginEnd="10dp"
+                    android:text="400"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="18sp"
                     android:textColor="#000"
                     android:textAlignment="center"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/discount_Txt"
+                    android:id="@+id/finalTxt"
+                    android:text="Final Fare :"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    android:textAlignment="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/discount_Txt"
+                    android:id="@+id/final_Txt"
+                    android:layout_marginEnd="10dp"
+                    android:text="600"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    android:textAlignment="center"/>
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>

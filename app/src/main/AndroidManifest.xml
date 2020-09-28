@@ -34,7 +34,6 @@
         <activity android:name=".Activity.Registration6Activity"></activity>
         <activity android:name=".Activity.Registration5Activity" />
         <activity android:name=".Activity.Registration4Activity" />
-        <activity android:name=".Activity.ImageLoader" />
         <activity android:name=".Activity.Registration7Activity" />
         <activity android:name=".Activity.EditDriverBio" />
         <activity android:name=".Activity.DriverMapActivity" />

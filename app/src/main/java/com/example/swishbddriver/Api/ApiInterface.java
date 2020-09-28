@@ -157,8 +157,24 @@ public interface ApiInterface {
                                          @Field("car_model") String car_model,
                                          @Field("production_year") String production_year,
                                          @Field("plate_number") String plate_number,
+                                         @Field("car_owner") String car_owner,
+                                         @Field("partner_name") String partner_name,
+                                         @Field("partner_phone") String partner_phone,
+                                         @Field("partner_address") String partner_address);
+    @FormUrlEncoded
+    @PUT("drivercarinfo/{driver_id}")
+    Call<List<DriverInfo>> driverCarInfoWithOwner(@Path("driver_id") String driver_id,
+                                         @Field("car_name") String car_name,
+                                         @Field("car_model") String car_model,
+                                         @Field("production_year") String production_year,
+                                         @Field("plate_number") String plate_number,
                                          @Field("car_owner") String car_owner);
-
+    @FormUrlEncoded
+    @PUT("drivercarinfo/{driver_id}")
+    Call<List<DriverInfo>> partnerInfo(@Path("driver_id") String driver_id,
+                                         @Field("partner_name") String partner_name,
+                                         @Field("partner_phone") String partner_phone,
+                                         @Field("partner_address") String partner_address);
 
     @Multipart
     @POST("drivernid")
