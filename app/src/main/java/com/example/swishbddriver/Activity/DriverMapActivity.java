@@ -308,6 +308,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 }
                             });
 
+                        }else{
+                            hourRequestLayout.setVisibility(View.GONE);
+                            mp.stop();
                         }
 
 
