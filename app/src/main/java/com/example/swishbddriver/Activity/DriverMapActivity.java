@@ -264,12 +264,17 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         place = data.child("pickPlace").getValue().toString();
                         bookingId = data.child("bookingId").getValue().toString();
                         tripStatus =  data.child("status").getValue().toString();
+
                         customerId = data.child("customerId").getValue().toString();
                         pickupPlaceTV.setText(place);
                         hourRequestLayout.setVisibility(View.VISIBLE);
                         final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
                         mp.start();
 
+                        if (tripStatus.equals("accepted")){
+                            mp.stop();
+                            hourRequestLayout.setVisibility(View.GONE);
+                        }
                         rejectBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
