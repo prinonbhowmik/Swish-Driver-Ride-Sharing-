@@ -115,7 +115,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private float rating;
     private int ratingCount;
     private RatingBar ratingBar;
-    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus,customerId;
+    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus,customerId,accptDriverId;
     private ApiInterface apiInterface;
     private LinearLayout hourRequestLayout,customerDetailsLayout;
     private TextView pickupPlaceTV,pickplaceTv,customerNameTv;
@@ -263,42 +263,58 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     for (DataSnapshot data : snapshot.getChildren()) {
                         place = data.child("pickPlace").getValue().toString();
                         bookingId = data.child("bookingId").getValue().toString();
+                        accptDriverId = data.child("driverId").getValue().toString();
                         tripStatus =  data.child("status").getValue().toString();
-
                         customerId = data.child("customerId").getValue().toString();
                         pickupPlaceTV.setText(place);
-                        hourRequestLayout.setVisibility(View.VISIBLE);
+
                         final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
-                        mp.start();
 
                         if (tripStatus.equals("accepted")){
                             mp.stop();
                             hourRequestLayout.setVisibility(View.GONE);
                         }
-                        rejectBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mp.stop();
-                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
-                                        .child(carType).child(bookingId);
-                                updtref.child("driverId").setValue("");
-                                hourRequestLayout.setVisibility(View.GONE);
-                            }
-                        });
 
-                        accptBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mp.stop();
-                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
-                                        .child(carType).child(bookingId);
-                                updtref.child("status").setValue("accepted");
-                                hourRequestLayout.setVisibility(View.GONE);
-                                customerDetailsLayout.setVisibility(View.VISIBLE);
-                                getAcceptedCustomerData();
+                        if (accptDriverId.equals("")){
+                            hourRequestLayout.setVisibility(View.VISIBLE);
+                            mp.start();
+                            rejectBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    mp.stop();
+                                    hourRequestLayout.setVisibility(View.GONE);
+                                }
+                            });
 
-                            }
-                        });
+                            accptBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    mp.stop();
+
+                                    if (accptDriverId.equals("")){
+                                        DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
+                                                .child(carType).child(bookingId);
+                                        updtref.child("status").setValue("accepted");
+                                        updtref.child("driverId").setValue(driverId);
+                                        hourRequestLayout.setVisibility(View.GONE);
+
+                                        getAcceptedCustomerData();
+                                    }
+                                    else if (!accptDriverId.equals("") && !accptDriverId.equals(driverId)){
+                                        Toast.makeText(DriverMapActivity.this, "Someone else got it!", Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                }
+                            });
+
+                        }
+
+
+
+
+
+
                     }
                 }
             }
@@ -311,6 +327,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void getAcceptedCustomerData() {
+
+        customerDetailsLayout.setVisibility(View.VISIBLE);
         Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
         call.enqueue(new Callback<List<CustomerProfile>>() {
             @Override
