@@ -61,6 +61,8 @@ public interface ApiInterface {
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
+    @GET("driverinfo?")
+    Call<List<DriverInfo>> getRegistrationData(@Query("id") String id);
 
     @GET("customer?")
     Call<List<CustomerProfile>> getCustomerData(@Query("id") String customer_id);

@@ -10,17 +10,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
 import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.Model.DriverInfo;
+import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
@@ -41,12 +44,16 @@ public class Registration1Activity extends AppCompatActivity {
     private String Car_Model;
     private String productionYear;
     private String plateNumber;
+    private int indexName,indexModel,indexYear;
     private RadioGroup ownerRadioGp;
+    private RadioButton ownerRb,notOwnerRb;
     private DatabaseReference databaseReference;
     private ArrayList<String> carNameList = new ArrayList<String>();
     private ArrayList<String> carModelList = new ArrayList<String>();
     private ArrayList<String> carYearList = new ArrayList<String>();
     private Button nextBtn;
+    private List<DriverInfo> info;
+    private ApiInterface api;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -60,6 +67,8 @@ public class Registration1Activity extends AppCompatActivity {
 
 
         ShowModelYear();
+        ShowCarNameInSpinner();
+        getData();
 
         ownerRadioGp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -75,7 +84,6 @@ public class Registration1Activity extends AppCompatActivity {
             }
         });
 
-        ShowCarNameInSpinner();
 
         carNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -125,6 +133,50 @@ public class Registration1Activity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void getData() {
+        Call<List<DriverInfo>> call=api.getRegistrationData(driverId);
+        call.enqueue(new Callback<List<DriverInfo>>() {
+            @Override
+            public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
+                if (response.isSuccessful()) {
+                    info = response.body();
+                    Car_Name = info.get(0).getCar_name();
+                    if(!Car_Name.equals("")){
+                        carOwner=info.get(0).getCar_owner();
+                        if(carOwner.equals("yes")){
+                            ownerRb.setChecked(true);
+                        }
+                        else{
+                            notOwnerRb.setChecked(true);
+                        }
+                        Car_Model= info.get(0).getCar_model();
+                        productionYear=info.get(0).getProduction_year();
+                        plateNumber=info.get(0).getPlate_number();
+                        plateNumberET.setText(plateNumber);
+                        indexName=carNameList.indexOf(Car_Name);
+                        indexModel=carNameList.indexOf(Car_Model);
+                        indexYear=carNameList.indexOf(productionYear);
+                        carNameSpinner.setSelection(indexName);
+                        carModelSpinner.setSelection(indexModel);
+                        productionYearSpinner.setSelection(indexYear);
+
+                    }else {
+
+                    }
+
+                    Toast.makeText(Registration1Activity.this, ""+Car_Name, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
     private void getcarmodelList(String Car_Name) {
@@ -180,6 +232,10 @@ public class Registration1Activity extends AppCompatActivity {
         ownerRadioGp = findViewById(R.id.ownerRg);
         sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         driverId = sharedPreferences.getString("id","");
+        ownerRb=findViewById(R.id.ownerRb);
+        notOwnerRb=findViewById(R.id.notOwnerRb);
+        info = new ArrayList<>();
+        api = ApiUtils.getUserService();
     }
 
     private void ShowCarNameInSpinner() {
