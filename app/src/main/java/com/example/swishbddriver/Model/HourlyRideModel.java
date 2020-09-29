@@ -2,11 +2,11 @@ package com.example.swishbddriver.Model;
 
 public class HourlyRideModel {
     private String bookingId;
-    private String pickupLat;
-    private String pickupLon;
-    private String pickupPlace;
-    private String pickupDate;
-    private String pickupTime;
+    private String pickUpLat;
+    private String pickUpLon;
+    private String pickUpPlace;
+    private String pickUpDate;
+    private String pickUpTime;
     private String customerId;
     private String price;
     private String carType;
@@ -18,13 +18,14 @@ public class HourlyRideModel {
     public HourlyRideModel() {
     }
 
-    public HourlyRideModel(String bookingId, String pickupLat, String pickupLon, String pickupPlace, String pickupDate, String pickupTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime) {
+    public HourlyRideModel(String bookingId, String pickUpLat, String pickUpLon, String pickUpPlace,
+                           String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime) {
         this.bookingId = bookingId;
-        this.pickupLat = pickupLat;
-        this.pickupLon = pickupLon;
-        this.pickupPlace = pickupPlace;
-        this.pickupDate = pickupDate;
-        this.pickupTime = pickupTime;
+        this.pickUpLat = pickUpLat;
+        this.pickUpLon = pickUpLon;
+        this.pickUpPlace = pickUpPlace;
+        this.pickUpDate = pickUpDate;
+        this.pickUpTime = pickUpTime;
         this.customerId = customerId;
         this.price = price;
         this.carType = carType;
@@ -38,24 +39,24 @@ public class HourlyRideModel {
         return bookingId;
     }
 
-    public String getPickupLat() {
-        return pickupLat;
+    public String getPickUpLat() {
+        return pickUpLat;
     }
 
-    public String getPickupLon() {
-        return pickupLon;
+    public String getPickUpLon() {
+        return pickUpLon;
     }
 
-    public String getPickupPlace() {
-        return pickupPlace;
+    public String getPickUpPlace() {
+        return pickUpPlace;
     }
 
-    public String getPickupDate() {
-        return pickupDate;
+    public String getPickUpDate() {
+        return pickUpDate;
     }
 
-    public String getPickupTime() {
-        return pickupTime;
+    public String getPickUpTime() {
+        return pickUpTime;
     }
 
     public String getCustomerId() {

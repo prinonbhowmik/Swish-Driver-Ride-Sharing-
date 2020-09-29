@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
+import com.example.swishbddriver.Activity.HourlyDetailsActivity;
 import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.R;
@@ -36,13 +37,14 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final HourlyRideModel book=hourlyRideModelList.get(position);
-        holder.pickupTimeTV.setText(book.getPickupTime());
-        holder.pickupDate.setText(book.getPickupDate());
-        holder.pickupLocationTV.setText(book.getPickupPlace());
+        holder.pickupLocationTV.setText(book.getPickUpPlace());
+        holder.pickupTimeTV.setText(book.getPickUpTime());
+        holder.pickupDate.setText(book.getPickUpDate());
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, BookingDetailsActivity.class);
+                Intent intent=new Intent(context, HourlyDetailsActivity.class);
                 intent.putExtra("bookingId",book.getBookingId());
                 intent.putExtra("carType",book.getCarType());
                 intent.putExtra("userId",book.getCustomerId());
@@ -62,7 +64,7 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            pickupLocationTV=itemView.findViewById(R.id.pickup_TV);
+            pickupLocationTV=itemView.findViewById(R.id.pickup_TV1);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
         }

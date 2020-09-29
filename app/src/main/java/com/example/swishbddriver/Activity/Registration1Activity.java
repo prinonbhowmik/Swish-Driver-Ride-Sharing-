@@ -166,12 +166,12 @@ public class Registration1Activity extends AppCompatActivity {
 
                     checkRegistered=list.get(0).getStatus();
                     if(checkRegistered.equals("Active")){
-                        relativeLayout1.setVisibility(View.VISIBLE);
-                        relativeLayout2.setVisibility(View.GONE);
-                        registrationNumber.setText(driverId);
-                    }else{
                         relativeLayout1.setVisibility(View.GONE);
                         relativeLayout2.setVisibility(View.VISIBLE);
+                        registrationNumber.setText(driverId);
+                    }else{
+                        relativeLayout1.setVisibility(View.VISIBLE);
+                        relativeLayout2.setVisibility(View.GONE);
                     }
 
 

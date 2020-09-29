@@ -59,42 +59,49 @@ public class PhoneNoActivity extends AppCompatActivity {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
+
                 hideKeyBoard(getApplicationContext());
                 phone = editText.getText().toString();
                 nextBtn.setEnabled(false);
+                if (phone.length() < 11) {
+                    editText.setError("At least 11 digit", null);
+                    editText.requestFocus();
+                    nextBtn.setEnabled(true);
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    Call<List<CheckModel>> call = api.checkNo(phone);
+                    call.enqueue(new Callback<List<CheckModel>>() {
+                        @Override
+                        public void onResponse(Call<List<CheckModel>> call, Response<List<CheckModel>> response) {
+                            if (response.isSuccessful()) {
+                                list = response.body();
+                                status = list.get(0).getStatus();
 
-                Call<List<CheckModel>> call = api.checkNo(phone);
-                call.enqueue(new Callback<List<CheckModel>>() {
-                    @Override
-                    public void onResponse(Call<List<CheckModel>> call, Response<List<CheckModel>> response) {
-                        if (response.isSuccessful()) {
-                            list = response.body();
-                            status = list.get(0).getStatus();
+                                if (status.equals("1")) {
+                                    startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
+                                            .putExtra("id", list.get(0).getDriver_id()).putExtra("status", list.get(0).getActivationStatus()));
 
-                            if (status.equals("1")) {
-                                startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
-                                        .putExtra("id", list.get(0).getDriver_id()).putExtra("status",list.get(0).getActivationStatus()));
-
-                                progressBar.setVisibility(View.GONE);
-                                nextBtn.setEnabled(true);
-                            } else if (status.equals("0")) {
-                                startActivity(new Intent(PhoneNoActivity.this, Otp_Activity.class)
-                                        .putExtra("phone", phone)
-                                        .putExtra("otp", list.get(0).getOtp()));
-                                progressBar.setVisibility(View.GONE);
-                                nextBtn.setEnabled(true);
+                                    progressBar.setVisibility(View.GONE);
+                                    nextBtn.setEnabled(true);
+                                } else if (status.equals("0")) {
+                                    startActivity(new Intent(PhoneNoActivity.this, Otp_Activity.class)
+                                            .putExtra("phone", phone)
+                                            .putExtra("otp", list.get(0).getOtp()));
+                                    progressBar.setVisibility(View.GONE);
+                                    nextBtn.setEnabled(true);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<CheckModel>> call, Throwable t) {
-                        Log.d("check", t.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<CheckModel>> call, Throwable t) {
+                            Log.d("check", t.getMessage());
+                        }
+                    });
+                }
             }
         });
+
 
     }
 

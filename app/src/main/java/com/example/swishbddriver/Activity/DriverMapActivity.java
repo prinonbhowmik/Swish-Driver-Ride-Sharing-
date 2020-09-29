@@ -148,12 +148,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                updateToken(instanceIdResult.getToken());
-            }
-        });
+
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -616,7 +611,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         autocompleteFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
         autocompleteFragment.setCountry("BD");
-        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
 
         hourRequestLayout = findViewById(R.id.hourlyRequestLayout);
         customerDetailsLayout = findViewById(R.id.customerDetailsLayout);
@@ -630,12 +624,19 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         callCustomerBtn = findViewById(R.id.callCustomerBtn);
         cancelbtn = findViewById(R.id.cancelbtn);
 
+        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 if (response.body().get(0).getCarType() != null) {
                     carType = response.body().get(0).getCarType();
 
+                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                        @Override
+                        public void onSuccess(InstanceIdResult instanceIdResult) {
+                            updateToken(carType,instanceIdResult.getToken());
+                        }
+                    });
                     SharedPreferences sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("carType", carType);
@@ -649,16 +650,17 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
+
+
     }
 
-    private void updateToken(String token) {
+    private void updateToken(String carType,String token) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
         if (!carType.equals("")) {
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
             userRef.removeValue();
             DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
             tokenRef.child("token").setValue(token);
         } else {
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
             userRef.child("token").setValue(token);
         }
 
@@ -729,17 +731,25 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 break;*/
             case R.id.logout:
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("loggedIn", false);
-                editor.putString("id", "");
-                editor.putString("carType", "");
-                editor.commit();
+
 
                 DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
                 dRef.removeValue();
                 buttonOff.setVisibility(View.VISIBLE);
                 buttonOn.setVisibility(View.GONE);
 
+                if (!carType.equals("")) {
+                    DatabaseReference tokeRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
+                    tokeRef.removeValue();
+                } else {
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
+                    userRef.removeValue();
+                }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("loggedIn", false);
+                editor.putString("id", "");
+                editor.putString("carType", "");
+                editor.commit();
                 Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
