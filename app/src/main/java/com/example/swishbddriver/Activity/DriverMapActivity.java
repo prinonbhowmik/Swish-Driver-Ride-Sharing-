@@ -264,7 +264,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void getInstantCustomerData() {
+    /*private void getInstantCustomerData() {
         DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
         tripRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -293,7 +293,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
-    }
+    }*/
 
     private void getRequestCall() {
         DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
@@ -436,7 +436,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 status = response.body().get(0).getStatus();
-                if (status.equals("Deactive")) {
+                if (status.equals("Deactivate")) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                     dialog.setTitle("Alert..!!");
                     dialog.setIcon(R.drawable.ic_leave_24);

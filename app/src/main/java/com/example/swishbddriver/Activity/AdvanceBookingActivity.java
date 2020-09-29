@@ -14,13 +14,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.swishbddriver.Adapter.BookForLaterAdapter;
+import com.example.swishbddriver.Adapter.TabPaggerAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Fragments.EarnHistoryFragment;
+import com.example.swishbddriver.Fragments.InsideDhaka;
+import com.example.swishbddriver.Fragments.OutSideDhaka;
+import com.example.swishbddriver.Fragments.PayHistoryFragment;
 import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,20 +60,48 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     private ApiInterface apiInterface;
     private List<ProfileModel> list;
 
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advance_booking);
 
         init();
+
+        TabPaggerAdapter tabPaggerAdapter = new TabPaggerAdapter(getSupportFragmentManager());
+        tabPaggerAdapter.addFragment(new OutSideDhaka());
+        tabPaggerAdapter.addFragment(new InsideDhaka());
+        viewPager.setAdapter(tabPaggerAdapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     list = response.body();
                     carType = list.get(0).getCarType();
-                    getList(carType);
+
                 }
             }
 
@@ -82,6 +117,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                 morePopup();
             }
         });
+        //getList();
     }
 
     private void morePopup() {
@@ -92,43 +128,26 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
     }
 
     private void init() {
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        bookForLaterModelList = new ArrayList<>();
-        recyclerView = findViewById(R.id.bookingRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(AdvanceBookingActivity.this));
-        bookForLaterAdapter = new BookForLaterAdapter(bookForLaterModelList, this);
-        recyclerView.setAdapter(bookForLaterAdapter);
-        //cardView=findViewById(R.id.cardItem);
+
         unavailableTxt=findViewById(R.id.unavailableTxt);
         moreTv=findViewById(R.id.moreTV);
         titleTv=findViewById(R.id.titleName);
         notificationCount=findViewById(R.id.notificationCount);
         moreRelative=findViewById(R.id.moreRelative);
-        emptyText=findViewById(R.id.emptyText);
+
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
         driverId = sharedPreferences.getString("id","");
         apiInterface = ApiUtils.getUserService();
         list= new ArrayList<>();
 
+
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.bookingViewPager);
+
     }
 
-    /*private void getData() {
-        DatabaseReference driverRef=databaseReference.child("RegisteredDrivers").child(driverId).child(carType);
-        driverRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists())
-                    driverCarType=snapshot.getValue(String.class);
-                    carType=driverCarType;
-                    getList();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }*/
 
-    private void getList(final String carType) {
+    private void getList() {
 
         DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
@@ -144,14 +163,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                         }
                     }
                     counter(carType);
-                    Collections.reverse(bookForLaterModelList);
-                    bookForLaterAdapter.notifyDataSetChanged();
-                }
-                if(bookForLaterModelList.size()<1){
-                    emptyText.setVisibility(View.VISIBLE);
-                    emptyText.setText("No Request Available");
-                }else {
-                    emptyText.setVisibility(View.GONE);
                 }
             }
             @Override
@@ -160,7 +171,7 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
             }
         });
     }
-    public void counter(String carType){
+ public void counter(String carType){
         DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child(carType);
         bookingRef2.addValueEventListener(new ValueEventListener() {
             @Override
@@ -177,8 +188,8 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                         }
                     }
                     if(count>0){
-                    notificationCount.setVisibility(View.VISIBLE);
-                    notificationCount.setText(""+count);
+                        notificationCount.setVisibility(View.VISIBLE);
+                        notificationCount.setText(""+count);
                     }
                     else
                         notificationCount.setVisibility(View.GONE);
@@ -230,8 +241,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                 titleTv.setText("My Rides List");
                 return false;
             case R.id.all_rides:
-                getList(carType);
-                counter(carType);
                 titleTv.setText("Advance Booking List");
                 return false;
             case  R.id.history:
@@ -260,7 +269,6 @@ public class AdvanceBookingActivity extends AppCompatActivity implements PopupMe
                         Toast.makeText(AdvanceBookingActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                counter(carType);
                 titleTv.setText("History");
                 return false;
         }
