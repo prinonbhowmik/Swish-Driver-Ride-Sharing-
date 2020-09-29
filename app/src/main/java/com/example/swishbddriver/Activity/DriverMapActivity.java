@@ -39,6 +39,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.CustomerProfile;
+import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -100,7 +101,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private FusedLocationProviderClient mFusedLocationClient;
     private Geocoder geocoder;
     private FloatingActionButton currentLocationFButton;
-    private CircleImageView profileImage,passengerIV;
+    private CircleImageView profileImage, passengerIV;
     private TextView UserName, userPhone;
     private static int time = 5000;
     private boolean isGPS = false;
@@ -115,11 +116,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private float rating;
     private int ratingCount;
     private RatingBar ratingBar;
-    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI",place,bookingId,tripStatus,customerId,accptDriverId;
+    private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI", place, bookingId, tripStatus, customerId, accptDriverId;
     private ApiInterface apiInterface;
-    private LinearLayout hourRequestLayout,customerDetailsLayout;
-    private TextView pickupPlaceTV,pickplaceTv,customerNameTv;
-    private Button rejectBtn,accptBtn,callCustomerBtn,cancelbtn,pickUpbtn;
+    private LinearLayout hourRequestLayout, customerDetailsLayout;
+    private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
+    private Button rejectBtn, accptBtn, callCustomerBtn, cancelbtn, pickUpbtn;
+    private double pickUpLat,pickUpLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,14 +129,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_driver_map);
 
         init();
-        carType = sharedPreferences.getString("carType","");
+        carType = sharedPreferences.getString("carType", "");
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
         navHeaderData();
 
         checkDriverOnLine();
 
-        getRequestCall();
+       // getInstantCustomerData();
+
+       // getRequestCall();
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -143,12 +147,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 isGPS = isGPSEnable;
             }
         });
+
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 updateToken(instanceIdResult.getToken());
             }
         });
+
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,6 +163,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
             }
         });
+
         locationCallback = new LocationCallback() {
 
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -191,6 +198,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                             }
                         });
+
                         if (!isContinue) {
                             getCurrentLocation();
                         } else {
@@ -211,6 +219,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         if (!isGPS) {
             Toast.makeText(this, "Please turn on your GPS!", Toast.LENGTH_SHORT).show();
         }
+
         currentLocationFButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -225,6 +234,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 RegistrationCheck();
             }
         });
+
         buttonOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,70 +264,94 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void getRequestCall() {
-        DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
-        checkReqRef.orderByChild(driverId).addValueEventListener(new ValueEventListener() {
+    private void getInstantCustomerData() {
+        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
+        tripRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     for (DataSnapshot data : snapshot.getChildren()) {
-                        place = data.child("pickPlace").getValue().toString();
-                        bookingId = data.child("bookingId").getValue().toString();
-                        accptDriverId = data.child("driverId").getValue().toString();
-                        tripStatus =  data.child("status").getValue().toString();
-                        customerId = data.child("customerId").getValue().toString();
-                        pickupPlaceTV.setText(place);
-
-                        final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
-
-                        if (tripStatus.equals("accepted")){
-                            mp.stop();
-                            hourRequestLayout.setVisibility(View.GONE);
+                        accptDriverId = String.valueOf(data.child("driverId").getValue());
+                        if (accptDriverId.equals(driverId)) {
+                            tripStatus = data.child("status").getValue().toString();
+                            if (tripStatus.equals("accepted")) {
+                                HourlyRideModel model = data.getValue(HourlyRideModel.class);
+                                customerId = model.getCustomerId();
+                                bookingId = model.getBookingId();
+                                pickUpLat = model.getPickUpLat();
+                                pickUpLon = model.getPickUpLon();
+                                getAcceptedCustomerData(customerId,bookingId);
+                            }
                         }
+                    }
 
-                        if (accptDriverId.equals("")){
-                            hourRequestLayout.setVisibility(View.VISIBLE);
-                            mp.start();
-                            rejectBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    mp.stop();
-                                    hourRequestLayout.setVisibility(View.GONE);
-                                }
-                            });
+                }
+            }
 
-                            accptBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    mp.stop();
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                                    if (accptDriverId.equals("")){
-                                        DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
-                                                .child(carType).child(bookingId);
-                                        updtref.child("status").setValue("accepted");
-                                        updtref.child("driverId").setValue(driverId);
+            }
+        });
+    }
+
+    private void getRequestCall() {
+        DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
+        checkReqRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        tripStatus = data.child("status").getValue().toString();
+                        if (tripStatus.equals("pending")){
+                            place = data.child("pickPlace").getValue().toString();
+                            bookingId = data.child("bookingId").getValue().toString();
+                            accptDriverId = data.child("driverId").getValue().toString();
+
+                            customerId = data.child("customerId").getValue().toString();
+                            pickupPlaceTV.setText(place);
+
+                            final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
+
+                            if (accptDriverId.equals("") && tripStatus.equals("pending")) {
+                                hourRequestLayout.setVisibility(View.VISIBLE);
+                                mp.start();
+                                rejectBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        mp.stop();
                                         hourRequestLayout.setVisibility(View.GONE);
-
-                                        getAcceptedCustomerData();
                                     }
-                                    else if (!accptDriverId.equals("") && !accptDriverId.equals(driverId)){
-                                        Toast.makeText(DriverMapActivity.this, "Someone else got it!", Toast.LENGTH_SHORT).show();
+                                });
+
+                                accptBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        mp.stop();
+
+                                        if (accptDriverId.equals("") && tripStatus.equals("pending")) {
+                                            DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantHourlyRide")
+                                                    .child(carType).child(bookingId);
+                                            updtref.child("status").setValue("accepted");
+                                            updtref.child("driverId").setValue(driverId);
+                                            hourRequestLayout.setVisibility(View.GONE);
+
+                                            getAcceptedCustomerData(customerId,bookingId);
+                                        } else if (!accptDriverId.equals("") && !accptDriverId.equals(driverId)) {
+                                            Toast.makeText(DriverMapActivity.this, "Someone else got it!", Toast.LENGTH_SHORT).show();
+                                        }
+
+
                                     }
+                                });
 
+                            }
 
-                                }
-                            });
-
-                        }else{
-                            hourRequestLayout.setVisibility(View.GONE);
-                            mp.stop();
+                            if (tripStatus.equals("accepted")) {
+                                mp.stop();
+                                hourRequestLayout.setVisibility(View.GONE);
+                            }
                         }
-
-
-
-
-
-
                     }
                 }
             }
@@ -329,57 +363,72 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void getAcceptedCustomerData() {
+    private void getAcceptedCustomerData(String customerId,String bookingId) {
+        if (accptDriverId.equals(driverId)) {
+            customerDetailsLayout.setVisibility(View.VISIBLE);
+            Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
+            call.enqueue(new Callback<List<CustomerProfile>>() {
+                @Override
+                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                    if (response.isSuccessful()) {
 
-        customerDetailsLayout.setVisibility(View.VISIBLE);
-        Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
-        call.enqueue(new Callback<List<CustomerProfile>>() {
-            @Override
-            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-                if (response.isSuccessful()){
+                        List<CustomerProfile> list = response.body();
 
-                    List<CustomerProfile> list = response.body();
-
-                    Picasso.get().load(Config.CUSTOMER_LINE + list.get(0).getImage()).into(passengerIV, new com.squareup.picasso.Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.d("kiKahini", e.getMessage());
-                        }
-                    });
-
-
-                    customerNameTv.setText(list.get(0).getName());
-                    callCustomerBtn.setText(list.get(0).getPhone());
-                    pickplaceTv.setText(place);
-                    callCustomerBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                                callIntent.setData(Uri.parse("tel:"+"+88"+callCustomerBtn.getText().toString()));
-                                startActivity(callIntent);
-
-                            } catch (ActivityNotFoundException activityException) {
-                                Toasty.error(DriverMapActivity.this,""+activityException.getMessage(), Toasty.LENGTH_SHORT).show();
-                                Log.e("Calling a Phone Number", "Call failed", activityException);
+                        Picasso.get().load(Config.CUSTOMER_LINE + list.get(0).getImage()).into(passengerIV, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onError(Exception e) {
+                                Log.d("kiKahini", e.getMessage());
+                            }
+                        });
+
+                        customerNameTv.setText(list.get(0).getName());
+                        callCustomerBtn.setText(""+list.get(0).getPhone());
+                        pickplaceTv.setText(place);
+                        callCustomerBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                try {
+                                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                    callIntent.setData(Uri.parse("tel:" + "+88" + callCustomerBtn.getText().toString()));
+                                    startActivity(callIntent);
+
+                                } catch (ActivityNotFoundException activityException) {
+                                    Toasty.error(DriverMapActivity.this, "" + activityException.getMessage(), Toasty.LENGTH_SHORT).show();
+                                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                                }
+                            }
+                        });
+
+                        pickUpbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(DriverMapActivity.this, BookLaterMapActivity.class);
+                                intent.putExtra("pLat", String.valueOf(pickUpLat));
+                                intent.putExtra("pLon", String.valueOf(pickUpLon));
+                                intent.putExtra("pPlace", place);
+                                intent.putExtra("check", 1);
+                                intent.putExtra("id", bookingId);
+                                intent.putExtra("carType", carType);
+                                intent.putExtra("rideStatus", "instant");
+                                startActivity(intent);
+                            }
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+                @Override
+                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }
+
 
     }
-
 
     private void RegistrationCheck() {
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
@@ -421,7 +470,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void checkDriverOnLine() {
 
-        carType = sharedPreferences.getString("carType","");
+        carType = sharedPreferences.getString("carType", "");
         DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType);
         dRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -584,12 +633,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.body().get(0).getCarType()!=null){
+                if (response.body().get(0).getCarType() != null) {
                     carType = response.body().get(0).getCarType();
 
-                    SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("carType",carType);
+                    editor.putString("carType", carType);
                     editor.commit();
                 }
             }
@@ -601,13 +650,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
 
     }
+
     private void updateToken(String token) {
-        if(!carType.equals("")) {
+        if (!carType.equals("")) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
             userRef.removeValue();
             DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
             tokenRef.child("token").setValue(token);
-        }else{
+        } else {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
             userRef.child("token").setValue(token);
         }
@@ -655,14 +705,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;
             case R.id.advance_book:
                 drawerLayout.closeDrawers();
-               if (!carType.equals("")){
-                   startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
-                   overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                   drawerLayout.closeDrawers();
-               }else{
-                   Toast.makeText(this, "Please Complete your registration!", Toast.LENGTH_SHORT).show();
+                if (!carType.equals("")) {
+                    startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    drawerLayout.closeDrawers();
+                } else {
+                    Toast.makeText(this, "Please Complete your registration!", Toast.LENGTH_SHORT).show();
 
-               }
+                }
                 //driverRegisterCheck2();
                 break;
             case R.id.registration:
@@ -684,6 +734,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 editor.putString("id", "");
                 editor.putString("carType", "");
                 editor.commit();
+
+                DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
+                dRef.removeValue();
+                buttonOff.setVisibility(View.VISIBLE);
+                buttonOn.setVisibility(View.GONE);
+
                 Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

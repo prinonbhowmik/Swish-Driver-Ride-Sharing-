@@ -67,7 +67,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
     private double destinationLat, destinationLon, currentLat, currentLon, pickUpLat, pickUpLon;
     private TextView placeNameTV;
     private int check;
-    private String apiKey = "AIzaSyDy8NWL5x_v5AyQkcM9-4wqAWBp27pe9Bk", destinationPlace, pickUpPlace,currentPlace,carType,id,userId;
+    private String apiKey = "AIzaSyDy8NWL5x_v5AyQkcM9-4wqAWBp27pe9Bk", destinationPlace, pickUpPlace,currentPlace,carType,id,userId,rideType;
     private Geocoder geocoder;
     private Locale locale;
     private boolean isGPS = false, isContinue = false;
@@ -151,6 +151,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
            pickUpPlace = intent.getStringExtra("pPlace");
            id = intent.getStringExtra("id");
            carType = intent.getStringExtra("carType");
+           rideType = intent.getStringExtra("rideStatus");
        }
 
        passengerNav.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +226,30 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
         getCurrentLocation();
 
         if (check==1){
-            showPickUpRoute();
+
+            if (rideType.equals("regular")){
+                DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+
+                checkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String driverId = snapshot.child("driverId").getValue().toString();
+                        if (driverId.equals(userId)){
+                            passengerNav.setVisibility(View.VISIBLE);
+                            showPickUpRoute();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            else if (rideType.equals("instant")){
+                showPickUpRoute();
+            }
+
         }
 
         if (check==2){
@@ -234,22 +258,6 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void showPickUpRoute() {
-        DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
-
-        checkRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-               String driverId = snapshot.child("driverId").getValue().toString();
-               if (driverId.equals(userId)){
-                   passengerNav.setVisibility(View.VISIBLE);
-               }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         placeNameTV.setText(pickUpPlace);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat,currentLon),11));

@@ -131,11 +131,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     } else {
                         confirmAlertDialog();
                     }
-
                 }
             }
         });
-
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +176,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 intent.putExtra("check", 1);
                 intent.putExtra("id", id);
                 intent.putExtra("carType", car_type);
+                intent.putExtra("rideStatus", "regular");
                 startActivity(intent);
                 Log.d("checkLat", pickupPlace + pickUpLat + pickUpLon);
 
