@@ -31,7 +31,7 @@
                app:civ_border_color="@android:color/white"
                app:civ_border_width="1dp"
                android:visibility="gone"
-               android:src="@drawable/logocircle"/>
+               android:src="@drawable/logo"/>
        </RelativeLayout>
 
        <LinearLayout

@@ -33,13 +33,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:drawableRight="@drawable/ic_map"
                 android:background="@drawable/stroke"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:layout_toEndOf="@id/txt1"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:drawableRightCompat="@drawable/ic_map" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -66,12 +66,12 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:maxLines="1"
-                android:drawableRight="@drawable/ic_flags"
                 android:background="@drawable/stroke"
                 android:gravity="center_vertical"
                 android:layout_toEndOf="@id/txt1"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:drawableRightCompat="@drawable/ic_flags" />
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
@@ -79,7 +79,6 @@
         android:id="@+id/cashNFL"
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:layout_below="@+id/txt1"
         android:layerType="software"
         app:neomorph_background_color="@color/neomorph_background_color"
         app:neomorph_corner_radius="10dp"
@@ -102,7 +101,7 @@
                     android:id="@+id/infoIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_baseline_info_24"
                     android:layout_margin="10dp"/>
                 <com.airbnb.lottie.LottieAnimationView
@@ -161,25 +160,16 @@
                     android:textColor="#000"
                     android:textAlignment="center"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/discount_Txt"
-                    android:id="@+id/finalTxt"
-                    android:text="Final Fare :"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
-                    android:textColor="#000"
-                    android:textAlignment="center"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/discount_Txt"
                     android:id="@+id/final_Txt"
-                    android:layout_marginEnd="10dp"
-                    android:text="600"
-                    android:layout_alignParentEnd="true"
-                    android:textSize="18sp"
+                    android:text="BDT 600"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="30sp"
+                    android:layout_marginTop="15dp"
                     android:textColor="#000"
                     android:textAlignment="center"/>
             </RelativeLayout>

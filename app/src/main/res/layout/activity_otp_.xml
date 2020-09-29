@@ -14,19 +14,38 @@
         android:id="@+id/logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/logocircle"
+        android:src="@drawable/logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="80dp"/>
+
+    <TextView
+        android:id="@+id/t1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Your OTP"
+        android:layout_below="@id/logo"
+        android:textColor="@color/themColor2"
+        android:layout_centerHorizontal="true"
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/t2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="We have sent you a 6 digit OTP"
+        android:layout_below="@id/t1"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/themColor2"
+        android:layout_centerHorizontal="true"
+        android:textSize="18sp"/>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/verify_LT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/t2"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:hint="Your OTP"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         android:textColorHint="#000"
@@ -39,6 +58,7 @@
             android:inputType="number"
             android:textColor="#000"
             android:maxLines="1"
+            android:gravity="center"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:textSize="21sp" />
@@ -48,7 +68,7 @@
         android:id="@+id/otpBtn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Log in"
+        android:text="Submit"
         android:textSize="20sp"
         android:background="@drawable/btn_background"
         android:textAllCaps="false"

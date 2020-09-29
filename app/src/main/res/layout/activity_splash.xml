@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="250dp"
         android:layout_height="100dp"
-        android:src="@drawable/logocircle"
+        android:src="@drawable/logo"
         android:layout_centerInParent="true"
         android:id="@+id/image"/>
 

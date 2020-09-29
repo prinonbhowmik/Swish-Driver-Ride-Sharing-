@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -33,7 +32,6 @@ public class Otp_Activity extends AppCompatActivity {
         phone = intent.getStringExtra("phone");
         otpCode = intent.getStringExtra("otp");
 
-        Log.d("otp", otpCode);
 
         otp = findViewById(R.id.verify_Et);
         otpBtn = findViewById(R.id.otpBtn);
@@ -44,14 +42,19 @@ public class Otp_Activity extends AppCompatActivity {
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
                 hideKeyBoard(getApplicationContext());
-                userOtp = otp.getText().toString();
+                userOtp = otp.getText().toString().trim();
                 otpBtn.setEnabled(false);
-                if (userOtp.equals(otpCode)) {
-                    startActivity(new Intent(Otp_Activity.this, SignUp.class).putExtra("phone", phone));
-                    finish();
-                } else {
-                    Toast.makeText(Otp_Activity.this, "Oi shala bhul disos", Toast.LENGTH_SHORT).show();
-
+                if (userOtp.length() != 6) {
+                    otp.setError("OTP must be 6 digit", null);
+                    otp.requestFocus();
+                }else {
+                    if (userOtp.equals(otpCode)) {
+                        startActivity(new Intent(Otp_Activity.this, SignUp.class).putExtra("phone", phone));
+                        finish();
+                    } else {
+                        Toast.makeText(Otp_Activity.this, "Wrong OTP", Toast.LENGTH_SHORT).show();
+                    }
+                    otpBtn.setEnabled(true);
                 }
             }
         });

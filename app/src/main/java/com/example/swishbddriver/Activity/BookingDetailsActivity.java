@@ -225,7 +225,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void endAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("End Trip!!");
-        dialog.setIcon(R.drawable.logocircle);
+        dialog.setIcon(R.drawable.logo);
         dialog.setMessage("Did you want to end this trip ?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -360,7 +360,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("Offline..!!");
-        dialog.setIcon(R.drawable.logocircle);
+        dialog.setIcon(R.drawable.logo);
         dialog.setMessage("You are currently offline.\nDid you want to go online?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Go OnLine", new DialogInterface.OnClickListener() {
@@ -387,7 +387,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void startTripAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("Alert..!!");
-        dialog.setIcon(R.drawable.logocircle);
+        dialog.setIcon(R.drawable.logo);
         dialog.setMessage("Did you picked Up your passenger?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
