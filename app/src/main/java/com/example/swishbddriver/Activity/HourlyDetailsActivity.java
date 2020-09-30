@@ -459,9 +459,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         cashRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                pickupTime = book.getPickUpLat();
+                HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
+                pickupTime = book.getPickUpTime();
                 endTime = book.getEndTime();
+
+                Toast.makeText(HourlyDetailsActivity.this, pickupTime+","+endTime, Toast.LENGTH_SHORT).show();
 
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                 rideRef.addValueEventListener(new ValueEventListener() {
@@ -489,14 +491,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void calculate(String pickupTime,String endTime) {
+
+        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+        
         SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-
-
         try {
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-            Date date1 = simpleDateFormat.parse(pickupTime);
-            Date date2 = simpleDateFormat.parse(endTime);
+            Date date1 = myFormat.parse(pickupTime);
+            Date date2 = myFormat.parse(endTime);
 
             long difference = date2.getTime() - date1.getTime();
             int days = (int) (difference / (1000 * 60 * 60 * 24));
