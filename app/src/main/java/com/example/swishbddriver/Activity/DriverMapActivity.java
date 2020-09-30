@@ -121,7 +121,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private LinearLayout hourRequestLayout, customerDetailsLayout;
     private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
     private Button rejectBtn, accptBtn, callCustomerBtn, cancelbtn, pickUpbtn;
-    private double pickUpLat,pickUpLon;
+    private double pickUpLat, pickUpLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,9 +136,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         checkDriverOnLine();
 
-       // getInstantCustomerData();
+        // getInstantCustomerData();
 
-       // getRequestCall();
+        // getRequestCall();
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -147,7 +147,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 isGPS = isGPSEnable;
             }
         });
-
 
 
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -298,7 +297,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if (snapshot.exists()) {
                     for (DataSnapshot data : snapshot.getChildren()) {
                         tripStatus = data.child("status").getValue().toString();
-                        if (tripStatus.equals("pending")){
+                        if (tripStatus.equals("pending")) {
                             place = data.child("pickPlace").getValue().toString();
                             bookingId = data.child("bookingId").getValue().toString();
                             accptDriverId = data.child("driverId").getValue().toString();
@@ -331,7 +330,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             updtref.child("driverId").setValue(driverId);
                                             hourRequestLayout.setVisibility(View.GONE);
 
-                                            getAcceptedCustomerData(customerId,bookingId);
+                                            getAcceptedCustomerData(customerId, bookingId);
                                         } else if (!accptDriverId.equals("") && !accptDriverId.equals(driverId)) {
                                             Toast.makeText(DriverMapActivity.this, "Someone else got it!", Toast.LENGTH_SHORT).show();
                                         }
@@ -358,7 +357,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void getAcceptedCustomerData(String customerId,String bookingId) {
+    private void getAcceptedCustomerData(String customerId, String bookingId) {
         if (accptDriverId.equals(driverId)) {
             customerDetailsLayout.setVisibility(View.VISIBLE);
             Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
@@ -381,7 +380,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         });
 
                         customerNameTv.setText(list.get(0).getName());
-                        callCustomerBtn.setText(""+list.get(0).getPhone());
+                        callCustomerBtn.setText("" + list.get(0).getPhone());
                         pickplaceTv.setText(place);
                         callCustomerBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -431,7 +430,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 status = response.body().get(0).getStatus();
-                if (status.equals("Deactivate")) {
+                if (status.equals("Deactive")) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                     dialog.setTitle("Alert..!!");
                     dialog.setIcon(R.drawable.ic_leave_24);
@@ -545,7 +544,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     });
 
                     UserName.setText(list.get(0).getFull_name());
-                    if (list.get(0).getCarType() != null) {
+                    if (!list.get(0).getCarType().equals("notSet")) {
                         carType = list.get(0).getCarType();
                         userPhone.setText(carType);
                     } else {
@@ -634,7 +633,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                         @Override
                         public void onSuccess(InstanceIdResult instanceIdResult) {
-                            updateToken(carType,instanceIdResult.getToken());
+                            updateToken(carType, instanceIdResult.getToken());
                         }
                     });
                     SharedPreferences sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
@@ -651,12 +650,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
 
 
-
     }
 
-    private void updateToken(String carType,String token) {
+    private void updateToken(String carType, String token) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
-        if (!carType.equals("")) {
+        if (!carType.equals("Notset")) {
             userRef.removeValue();
             DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
             tokenRef.child("token").setValue(token);
@@ -707,12 +705,25 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;
             case R.id.advance_book:
                 drawerLayout.closeDrawers();
-                if (!carType.equals("")) {
+                if (!carType.equals("Notset")) {
                     startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     drawerLayout.closeDrawers();
                 } else {
-                    Toast.makeText(this, "Please Complete your registration!", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("Alert..!!");
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
 
                 }
                 //driverRegisterCheck2();
@@ -722,14 +733,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 startActivity(new Intent(DriverMapActivity.this, Registration1Activity.class));
 
                 break;
-            /*case R.id.about:
-//                FragmentTransaction service = getSupportFragmentManager().beginTransaction();
-//                service.replace(R.id.fragment_container, new ServiceFragment());
-//                service.commit();
-                startActivity(new Intent(MainActivity.this, RideRequestActivity.class));
-                Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
-                drawerLayout.closeDrawers();
-                break;*/
+
             case R.id.logout:
 
 
@@ -738,7 +742,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 buttonOff.setVisibility(View.VISIBLE);
                 buttonOn.setVisibility(View.GONE);
 
-                if (!carType.equals("")) {
+                if (!carType.equals("Notset")) {
                     DatabaseReference tokeRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
                     tokeRef.removeValue();
                 } else {
@@ -757,17 +761,37 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;
             case R.id.earnings:
                 drawerLayout.closeDrawers();
-                Intent intent2 = new Intent(DriverMapActivity.this, EarningsActivity.class);
-                startActivity(intent2);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                if (!carType.equals("Notset")) {
+                    Intent intent2 = new Intent(DriverMapActivity.this, EarningsActivity.class);
+                    startActivity(intent2);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    drawerLayout.closeDrawers();
+                } else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("Alert..!!");
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                break;
-            case R.id.settings:
-                startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
 
-                break;
+
+                }
+                    break;
+                    case R.id.settings:
+                        startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
+
+                        break;
+                }
+                return false;
         }
-        return false;
     }
-}

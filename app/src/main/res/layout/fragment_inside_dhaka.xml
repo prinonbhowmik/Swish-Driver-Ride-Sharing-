@@ -5,8 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.InsideDhaka">
 
+    <Switch
+        android:id="@+id/checkSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="All Rides"
+        android:textSize="18sp"
+        android:textColor="#000" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hourlyRecyclerView"
+        android:layout_below="@+id/checkSwitch"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

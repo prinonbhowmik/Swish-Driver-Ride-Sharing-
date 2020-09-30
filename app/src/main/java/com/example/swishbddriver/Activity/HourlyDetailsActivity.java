@@ -57,9 +57,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -73,7 +75,7 @@ import retrofit2.Response;
 public class HourlyDetailsActivity extends AppCompatActivity {
     private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV;
 
-    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType,
+    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime,endTime,carType,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,
             currentDate, rideStatus, pickUpCity, destinationCity, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
 
@@ -299,19 +301,13 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String currentTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
+        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
-        rideRef.child("destinationLat").setValue(String.valueOf(currentLat));
-        rideRef.child("destinationLon").setValue(String.valueOf(currentLon));
-        rideRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
         rideRef.child("endTime").setValue(currentTime);
 
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
         userRef.child("rideStatus").setValue("End");
-        userRef.child("destinationLat").setValue(String.valueOf(currentLat));
-        userRef.child("destinationLon").setValue(String.valueOf(currentLon));
-        userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
         userRef.child("endTime").setValue(currentTime);
 
         Call<List<BookForLaterModel>> call = api.endTripData(id,"End",destinationLat,destinationLon,destinationPlace,currentTime);
@@ -444,11 +440,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
                 endTripBtn.setVisibility(View.VISIBLE);
 
-                Uri navigation = Uri.parse("google.navigation:q=" + destinationLat + "," + destinationLon + "&mode=d");
-                Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
-                navigationIntent.setPackage("com.google.android.apps.maps");
-                startActivity(navigationIntent);
-                sendNotification(id, "Start Trip", "Your trip has started.", "running_trip");
 
             }
         });
@@ -463,25 +454,21 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void getCashData() {
-        DatabaseReference cashRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+        DatabaseReference cashRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
         cashRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                pickUpLat = book.getPickUpLat();
-                pickUpLon = book.getPickUpLon();
-                destinationLat = book.getDestinationLat();
-                destinationLon = book.getDestinationLon();
-                pickupPlace = book.getPickUpPlace();
-                destinationPlace = book.getDestinationPlace();
+                pickupTime = book.getPickUpLat();
+                endTime = book.getEndTime();
 
-                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                 rideRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String rideStatus = snapshot.child("rideStatus").getValue().toString();
                         if (rideStatus.equals("End")) {
-                            calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace);
+                            calculate(pickupTime,endTime);
                         }
                     }
 
@@ -500,141 +487,27 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace) {
-        Locale locale = new Locale("en");
-        Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
-        List<Address> addresses = null;
+    private void calculate(String pickupTime,String endTime) {
+        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+
+        Date dateBefore = null;
         try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(pickUpLat), Double.parseDouble(pickUpLon), 1);
-            pickUpCity = addresses.get(0).getLocality();
-        } catch (IOException e) {
+            dateBefore = myFormat.parse(pickupTime);
+            Date dateAfter = myFormat.parse(endTime);
+            long difference = dateAfter.getTime() - dateBefore.getTime();
+            long daysBetween =  (difference / (1000*60*60*24));
+            long hours = ((difference - (1000*60*60*24*daysBetween)) / (1000*60*60));
+
+            Toast.makeText(this, ""+hours, Toast.LENGTH_SHORT).show();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(destinationLat), Double.parseDouble(destinationLon), 1);
-            destinationCity = addresses.get(0).getLocality();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        String origins = pickUpLat + "," + pickUpLon;
-        String destination = destinationLat + "," + destinationLon;
 
-        Map<String, String> mapQuery = new HashMap<>();
-        mapQuery.put("units", "driving");
-        mapQuery.put("origins", origins);
-        mapQuery.put("destinations", destination);
-        mapQuery.put("key", apiKey);
-
-        DistanceApiClient client = RestUtil.getInstance().getRetrofit().create(DistanceApiClient.class);
-        Call<DistanceResponse> call = client.getDistanceInfo(mapQuery);
-        call.enqueue(new Callback<DistanceResponse>() {
-            @Override
-            public void onResponse(Call<DistanceResponse> call, Response<DistanceResponse> response) {
-                if (response.body() != null &&
-                        response.body().getRows() != null &&
-                        response.body().getRows().size() > 0 &&
-                        response.body().getRows().get(0) != null &&
-                        response.body().getRows().get(0).getElements() != null &&
-                        response.body().getRows().get(0).getElements().size() > 0 &&
-                        response.body().getRows().get(0).getElements().get(0) != null &&
-                        response.body().getRows().get(0).getElements().get(0).getDistance() != null &&
-                        response.body().getRows().get(0).getElements().get(0).getDuration() != null) {
-                    Element element = response.body().getRows().get(0).getElements().get(0);
-                    distance = element.getDistance().getValue();
-                    trduration = element.getDuration().getValue();
-
-                    kmdistance = distance / 1000;
-                    travelduration = trduration / 60;
-
-                    Call<List<RidingRate>> call1 = api.getPrice(carType);
-                    call1.enqueue(new Callback<List<RidingRate>>() {
-                        @Override
-                        public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
-                            if (response.isSuccessful()){
-                                List<RidingRate> rate = new ArrayList<>();
-                                rate = response.body();
-                                int kmRate = rate.get(0).getKm_charge();
-                                int minRate =rate.get(0).getMin_charge();
-                                int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
-
-                                int kmPrice = kmRate * kmdistance;
-                                int minPrice = minRate * travelduration;
-
-                                Log.d("kmPrice", kmPrice + "," + minPrice);
-                                Log.d("minf", String.valueOf(minimumRate));
-
-                                Log.d("checkCity", pickUpCity + "," + destinationCity);
-
-                                price = kmPrice + minPrice + minimumRate;
-
-                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
-                                        .child(customerID).child(id);
-                                updateRef.child("price").setValue(String.valueOf(price));
-
-                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
-                                        .child(carType).child(id);
-                                newRef.child("price").setValue(String.valueOf(price));
-
-                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price));
-                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
-                                    @Override
-                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
-
-                                    }
-                                    @Override
-                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
-
-                                    }
-                                });
-                                addAmount(price, trduration, distance);
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<List<RidingRate>> call, Throwable t) {
-
-                        }
-                    });
-
-                   /* DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("RidingRate").child(car_type);
-                    amountRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            Rate rate = snapshot.getValue(Rate.class);
-
-                            String km = rate.getKm();                //20
-                            String min = rate.getMin();              //3
-                            String minfare = rate.getMinimumfare();  //40
-
-                            int kmRate = Integer.parseInt(km);
-                            int minRate = Integer.parseInt(min);
-                            int minimumRate = Integer.parseInt(minfare);
-
-                            int price = (kmdistance * kmRate) + (minRate * travelduration) + minimumRate;
-                            DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
-                            rideRef.child("price").setValue(String.valueOf(price));
-                            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
-                            userRef.child("price").setValue(String.valueOf(price));
-
-                            addAmount(price, trduration, distance);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });*/
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DistanceResponse> call, Throwable t) {
-            }
-        });
     }
 
-    private void addAmount(final int price, final int distance, final int trduration) {
+    private void addAmount() {
 
         currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
@@ -653,8 +526,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 intent.putExtra("price", price);
                 intent.putExtra("pPlace", pickupPlace);
                 intent.putExtra("dPlace", destinationPlace);
-                intent.putExtra("distance", distance);
-                intent.putExtra("duration", trduration);
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();

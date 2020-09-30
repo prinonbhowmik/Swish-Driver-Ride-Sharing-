@@ -181,7 +181,7 @@ public class SignUp extends AppCompatActivity {
         RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
         RequestBody  tokenBody = RequestBody .create(MediaType.parse("text/plain"), "");
         RequestBody  editBody = RequestBody .create(MediaType.parse("text/plain"), "false");
-        RequestBody  carTypeBody = RequestBody .create(MediaType.parse("text/plain"), "");
+        RequestBody  carTypeBody = RequestBody .create(MediaType.parse("text/plain"), "Notset");
 
         logIn.setEnabled(true);
 

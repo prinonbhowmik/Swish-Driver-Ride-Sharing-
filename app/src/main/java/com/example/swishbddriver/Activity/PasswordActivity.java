@@ -70,7 +70,7 @@ public class PasswordActivity extends AppCompatActivity {
 
                                 startActivity(new Intent(PasswordActivity.this,DriverMapActivity.class)
                                         .putExtra("id",driver_id));
-
+                                finish();
                                 progressBar.setVisibility(View.GONE);
                                 loginBtn.setEnabled(true);
                             }

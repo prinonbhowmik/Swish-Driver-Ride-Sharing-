@@ -48,8 +48,6 @@ public class ShowCash extends AppCompatActivity {
         driverId = sharedPreferences.getString("id","");
         final Intent intent = getIntent();
         price = intent.getIntExtra("price",0);
-        distance = intent.getIntExtra("distance",0);
-        duration = intent.getIntExtra("duration",0);
         pickUpPlace = intent.getStringExtra("pPlace");
         destinationPlace = intent.getStringExtra("dPlace");
 

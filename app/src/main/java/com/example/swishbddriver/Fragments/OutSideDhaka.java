@@ -70,20 +70,7 @@ public class OutSideDhaka extends Fragment {
         View view = inflater.inflate(R.layout.fragment_out_side_dhaka, container, false);
         init(view);
 
-        switchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (switchBtn.isChecked()) {
-                    switchBtn.setText("My Rides");
-                    checked = true;
 
-                } else {
-                    switchBtn.setText("All Rides");
-                    switchBtn.setChecked(false);
-                    checked = false;
-                }
-            }
-        });
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -105,24 +92,8 @@ public class OutSideDhaka extends Fragment {
     }
 
     private void getMyList() {
-        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()) {
-                    list = response.body();
-                    carType = list.get(0).getCarType();
 
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
-            }
-        });
-
-        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -176,6 +147,7 @@ public class OutSideDhaka extends Fragment {
         emptyText = view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
+        carType = sharedPreferences.getString("carType", "");
         apiInterface = ApiUtils.getUserService();
         list = new ArrayList<>();
         switchBtn = view.findViewById(R.id.checkSwitch);
@@ -184,24 +156,7 @@ public class OutSideDhaka extends Fragment {
 
     private void getList() {
 
-        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()) {
-                    list = response.body();
-                    carType = list.get(0).getCarType();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
-            }
-        });
-
-        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

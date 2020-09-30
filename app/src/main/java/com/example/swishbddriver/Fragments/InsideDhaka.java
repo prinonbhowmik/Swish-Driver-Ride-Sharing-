@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,7 @@ public class InsideDhaka extends Fragment {
     private String bookingStatus, driverCarType;
     private CardView cardView;
     private TextView unavailableTxt;
+    private static Switch switchBtn;
     private String carType;
     private int count = 0;
     private RelativeLayout moreRelative;
@@ -62,24 +65,61 @@ public class InsideDhaka extends Fragment {
         View view= inflater.inflate(R.layout.fragment_inside_dhaka, container, false);
         init(view);
 
-        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
-        call.enqueue(new Callback<List<ProfileModel>>() {
+        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()) {
-                    list = response.body();
-                    carType = list.get(0).getCarType();
-                    getList(carType);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked){
+                    switchBtn.setText("My Rides");
+                    getMyList();
+                }else {
+
+                    switchBtn.setText("All Rides");
+                    getList();
+                }
+            }
+        });
+
+        getList();
+
+        return view;
+    }
+
+    private void getMyList() {
+
+        DatabaseReference bookingRef = databaseReference.child("BookHourly").child(carType);
+        bookingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    hourlyRideModelList.clear();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String rideStatus = (String) data.child("rideStatus").getValue().toString();
+                            if (!rideStatus.equals("End")) {
+                                HourlyRideModel book = data.getValue(HourlyRideModel.class);
+                                hourlyRideModelList.add(book);
+                            }
+
+                        }
+                    }
+                    //  notificationCount.setVisibility(View.GONE);
+                    Collections.reverse(hourlyRideModelList);
+                    bookHourlyAdapter.notifyDataSetChanged();
+                }
+                if (hourlyRideModelList.size() < 1) {
+                    emptyText.setVisibility(View.VISIBLE);
+                    emptyText.setText("You have no confirm ride.");
+                } else {
+                    emptyText.setVisibility(View.GONE);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        return view;
     }
 
     private void init(View view) {
@@ -98,11 +138,13 @@ public class InsideDhaka extends Fragment {
         emptyText = view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
+        carType = sharedPreferences.getString("carType", "");
         apiInterface = ApiUtils.getUserService();
         list = new ArrayList<>();
+        switchBtn = view.findViewById(R.id.checkSwitch);
     }
 
-    private void getList(final String carType) {
+    private void getList() {
 
         DatabaseReference bookingRef = databaseReference.child("BookHourly").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
