@@ -88,7 +88,7 @@ public class Registration6Activity extends AppCompatActivity {
 
                 }
                 else{
-                    Toasty.info(Registration6Activity.this, "Take NID Back photo", Toasty.LENGTH_SHORT).show();
+                    Toasty.info(Registration6Activity.this, "Take a selfie", Toasty.LENGTH_SHORT).show();
                 }
             }
         });
@@ -103,7 +103,7 @@ public class Registration6Activity extends AppCompatActivity {
             dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    startActivity(new Intent(Registration6Activity.this,Registration6Activity.class));
+                    startActivity(new Intent(Registration6Activity.this,DriverMapActivity.class));
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();
                     dialog.dismiss();

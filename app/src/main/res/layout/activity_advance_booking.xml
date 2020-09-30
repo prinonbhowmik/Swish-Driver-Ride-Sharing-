@@ -7,24 +7,13 @@
     android:background="@color/neomorph_background_color"
     tools:context=".Activity.AdvanceBookingActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/themColor"
-        app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            app:layout_scrollFlags="scroll|enterAlways">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/appBarLayout"
+                android:background="@color/themColor">
 
                 <TextView
                     android:id="@+id/titleName"
@@ -38,12 +27,15 @@
                     android:id="@+id/tabLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/tab_layout_background"
                     app:tabMode="scrollable"
                     app:tabBackground="@drawable/tab_layout_selector"
                     app:tabSelectedTextColor="@color/themColor"
                     app:tabIndicatorHeight="0dp"
                     app:tabRippleColor="@null"
+                    android:layout_centerHorizontal="true"
                     app:tabTextAppearance="@style/TabTextAppearance">
 
                     <com.google.android.material.tabs.TabItem
@@ -85,8 +77,6 @@
                         android:visibility="gone" />
                 </RelativeLayout>
             </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
 
 
     <RelativeLayout

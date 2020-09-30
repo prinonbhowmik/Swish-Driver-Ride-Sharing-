@@ -290,8 +290,8 @@
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_drawer_header"
-        app:itemIconTint="@color/themColor"
-        app:itemTextColor="@color/themColor"
+        app:itemIconTint="@color/themColor2"
+        app:itemTextColor="@color/themColor2"
         app:menu="@menu/nav_options">
 
         <LinearLayout

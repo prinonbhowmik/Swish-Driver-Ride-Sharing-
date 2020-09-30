@@ -192,9 +192,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 //Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
-                Log.d("phone",phone);
-                finish();
+
             }
 
             @Override
@@ -202,7 +200,9 @@ public class SignUp extends AppCompatActivity {
 
             }
         });
-
+        startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
+        finish();
+        progressBar.setVisibility(View.VISIBLE);
 
 
 
