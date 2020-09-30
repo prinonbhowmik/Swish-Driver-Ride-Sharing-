@@ -3,23 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.OutSideDhaka">
 
 
-    <Switch
-        android:id="@+id/checkSwitch"
-        android:layout_width="wrap_content"
+    <co.ceryle.radiorealbutton.RadioRealButtonGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:text="All Rides"
-        android:textSize="18sp"
-        android:textColor="#000" />
+        app:rrbg_animateDrawables_enter="overshoot"
+        app:rrbg_animateTexts_enter="anticipateOvershoot"
+        app:rrbg_dividerColor="@color/black"
+        app:rrbg_dividerSize="1dp"
+        app:rrbg_radius="10dp"
+        app:rrbg_selectorColor="@color/themColor"
+        android:background="@color/neomorph_background_color"
+        app:rrbg_selectorRadius="10dp"
+        app:rrbg_selectorSize="3dp"
+        app:rrbg_checkedPosition="0">
 
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/all_rides"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawableHeight="30dp"
+            app:rrb_drawablePadding="12dp"
+            app:rrb_drawableWidth="30dp"
+            app:rrb_ripple="true"
+            android:background="@color/neomorph_background_color"
+            app:rrb_rippleColor="@color/themColor"
+            app:rrb_text="All Rides"
+            app:rrb_textColor="@color/themColor" />
+
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/my_rides"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawableHeight="30dp"
+            app:rrb_drawablePadding="12dp"
+            app:rrb_drawableWidth="30dp"
+            app:rrb_ripple="true"
+            android:background="@color/neomorph_background_color"
+            app:rrb_rippleColor="@color/themColor"
+            app:rrb_text="My Rides"
+            app:rrb_textColor="@color/themColor" />
+
+    </co.ceryle.radiorealbutton.RadioRealButtonGroup>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookingRecyclerView"
-        android:layout_below="@+id/checkSwitch"
+        android:layout_below="@+id/radioGroup"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

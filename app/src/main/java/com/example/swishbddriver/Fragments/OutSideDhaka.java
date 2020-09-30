@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.ceryle.radiorealbutton.RadioRealButton;
+import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,7 +64,7 @@ public class OutSideDhaka extends Fragment {
     private ApiInterface apiInterface;
     private List<ProfileModel> list;
     private boolean checked = false;
-
+    private RadioRealButtonGroup radioGroup;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,20 +73,19 @@ public class OutSideDhaka extends Fragment {
         init(view);
 
 
-        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
-                    switchBtn.setText("My Rides");
-                    getMyList();
-                }else {
 
-                    switchBtn.setText("All Rides");
+
+
+        radioGroup.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
+            @Override
+            public void onClickedButton(RadioRealButton button, int position) {
+                if(position == 0){
                     getList();
+                }else if(position == 1){
+                    getMyList();
                 }
             }
         });
-
         getList();
 
 
@@ -150,8 +151,7 @@ public class OutSideDhaka extends Fragment {
         carType = sharedPreferences.getString("carType", "");
         apiInterface = ApiUtils.getUserService();
         list = new ArrayList<>();
-        switchBtn = view.findViewById(R.id.checkSwitch);
-
+        radioGroup = view.findViewById(R.id.radioGroup);
     }
 
     private void getList() {

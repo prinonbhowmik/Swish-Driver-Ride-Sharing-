@@ -88,24 +88,26 @@ public class WelcomeScreen extends AppCompatActivity {
 
     private void setupOnboardingItems(){
         List<OnboardingItem> onboardingItems = new ArrayList<>();
+
+        OnboardingItem itemOnTheWay = new OnboardingItem();
+        itemOnTheWay.setImage(R.drawable.welcome_driver3);
+        itemOnTheWay.setTitle("Financial Freedom");
+        itemOnTheWay.setDescription("Achieve your financial freedom by providing ride shearing service with SWISH.");
+
         OnboardingItem itemPayOnline = new OnboardingItem();
         itemPayOnline.setImage(R.drawable.book_car);
-        itemPayOnline.setTitle("Get Customer");
-        itemPayOnline.setDescription("Get your nearby customer easily.");
-
-        /*OnboardingItem itemOnTheWay = new OnboardingItem();
-        itemOnTheWay.setImage(R.drawable.book_car2);
-        itemOnTheWay.setTitle("Cash Back");
-        itemOnTheWay.setDescription("Get your nearby customer easily.");*/
+        itemPayOnline.setTitle("Get passenger");
+        itemPayOnline.setDescription("Get your nearby passenger easily.");
 
 
         OnboardingItem itemEatTogether = new OnboardingItem();
-        itemEatTogether.setImage(R.drawable.welcome_driver3);
-        itemEatTogether.setTitle("Car Share");
-        itemEatTogether.setDescription("Share your car with other and earn some money.");
+        itemEatTogether.setImage(R.drawable.welcome_screen2);
+        itemEatTogether.setTitle("Pick Up");
+        itemEatTogether.setDescription("Pick your passenger from his/her desired location.");
 
+        onboardingItems.add(itemOnTheWay);
         onboardingItems.add(itemPayOnline);
-       // onboardingItems.add(itemOnTheWay);
+
         onboardingItems.add(itemEatTogether);
 
         onboardingAdapter = new OnboardingAdapter(onboardingItems);
