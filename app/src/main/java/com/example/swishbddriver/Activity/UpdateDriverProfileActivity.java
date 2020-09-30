@@ -347,11 +347,6 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 driverProfileIV.setImageURI(imageUri);
                 updateBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_tick_green));
 
-              /*  if (!image.isEmpty()) {
-                    deleteImage();
-                } else {
-                    uploadImage();
-                }*/
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                // progressBar.setVisibility(View.INVISIBLE);

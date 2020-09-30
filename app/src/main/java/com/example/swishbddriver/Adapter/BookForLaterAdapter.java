@@ -38,9 +38,9 @@ public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final BookForLaterModel book=bookForLaterModelList.get(position);
         holder.destinationTV.setText(book.getDestinationPlace());
-        holder.pickupTimeTV.setText(book.getPickupTime());
-        holder.pickupDate.setText(book.getPickupDate());
-        holder.pickupLocationTV.setText(book.getPickupPlace());
+        holder.pickupTimeTV.setText(book.getPickUpTime());
+        holder.pickupDate.setText(book.getPickUpDate());
+        holder.pickupLocationTV.setText(book.getPickUpPlace());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

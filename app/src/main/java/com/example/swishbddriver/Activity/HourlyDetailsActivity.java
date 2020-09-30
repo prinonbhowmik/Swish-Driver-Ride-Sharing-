@@ -213,9 +213,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
         getDriverRat();
 
-
     }
-
 
     private void blockAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
@@ -302,14 +300,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         }
 
         String currentTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
-        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
         rideRef.child("destinationLat").setValue(String.valueOf(currentLat));
         rideRef.child("destinationLon").setValue(String.valueOf(currentLon));
         rideRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
         rideRef.child("endTime").setValue(currentTime);
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
         userRef.child("rideStatus").setValue("End");
         userRef.child("destinationLat").setValue(String.valueOf(currentLat));
         userRef.child("destinationLon").setValue(String.valueOf(currentLon));
@@ -396,6 +394,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void startTripAlert() {
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
         dialog.setTitle("Alert..!!");
         dialog.setIcon(R.drawable.logo);
@@ -413,19 +412,19 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                 rideRef.child("rideStatus").setValue("Start");
-                rideRef.child("pickupLat").setValue(String.valueOf(currentLat));
-                rideRef.child("pickupLon").setValue(String.valueOf(currentLon));
-                rideRef.child("pickupPlace").setValue(String.valueOf(pickupPlace));
-                rideRef.child("pickupTime").setValue(currentTime);
+                rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                rideRef.child("pickUpTime").setValue(currentTime);
 
-                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
                 userRef.child("rideStatus").setValue("Start");
-                userRef.child("pickupLat").setValue(String.valueOf(currentLat));
-                userRef.child("pickupLon").setValue(String.valueOf(currentLon));
-                userRef.child("pickupPlace").setValue(String.valueOf(pickupPlace));
-                userRef.child("pickupTime").setValue(currentTime);
+                userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                userRef.child("pickUpTime").setValue(currentTime);
 
                 Call<List<BookForLaterModel>> call = api.startTripData(id,pickupTime,pickUpLat,pickUpLon,pickupPlace,"Start");
                 call.enqueue(new Callback<List<BookForLaterModel>>() {
@@ -469,11 +468,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                pickUpLat = book.getPickupLat();
-                pickUpLon = book.getPickupLon();
+                pickUpLat = book.getPickUpLat();
+                pickUpLon = book.getPickUpLon();
                 destinationLat = book.getDestinationLat();
                 destinationLon = book.getDestinationLon();
-                pickupPlace = book.getPickupPlace();
+                pickupPlace = book.getPickUpPlace();
                 destinationPlace = book.getDestinationPlace();
 
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
@@ -810,7 +809,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     private void confirmBooked() {
 
-        DatabaseReference ref = databaseReference.child("BookForLater").child(car_type).child(id);
+        DatabaseReference ref = databaseReference.child("BookHourly").child(car_type).child(id);
         ref.child("bookingStatus").setValue("Booked");
         ref.child("driverId").setValue(driverId).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -829,7 +828,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-        DatabaseReference ref2 = databaseReference.child("CustomerRides").child(customerID).child(id);
+        DatabaseReference ref2 = databaseReference.child("CustomerHourRides").child(customerID).child(id);
         ref2.child("bookingStatus").setValue("Booked");
         ref2.child("driverId").setValue(driverId);
 
@@ -910,7 +909,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void cancelRide() {
-        DatabaseReference ref = databaseReference.child("BookForLater").child(car_type).child(id);
+        DatabaseReference ref = databaseReference.child("BookHourly").child(car_type).child(id);
         ref.child("bookingStatus").setValue("Pending");
         ref.child("driverId").setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -931,7 +930,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-        DatabaseReference ref2 = databaseReference.child("CustomerRides").child(customerID).child(id);
+        DatabaseReference ref2 = databaseReference.child("CustomerHourRides").child(customerID).child(id);
         ref2.child("bookingStatus").setValue("Pending");
         ref2.child("driverId").setValue("");
     }

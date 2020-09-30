@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,7 @@ public class OutSideDhaka extends Fragment {
     private TextView moreTv, titleTv, notificationCount, emptyText;
     private BookForLaterAdapter bookForLaterAdapter;
     private String driverId;
+    private static Switch switchBtn;
     private String bookingStatus, driverCarType;
     private CardView cardView;
     private TextView unavailableTxt;
@@ -58,6 +61,7 @@ public class OutSideDhaka extends Fragment {
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private List<ProfileModel> list;
+    private boolean checked = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +69,42 @@ public class OutSideDhaka extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_out_side_dhaka, container, false);
         init(view);
+
+        switchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (switchBtn.isChecked()) {
+                    switchBtn.setText("My Rides");
+                    checked = true;
+
+                } else {
+                    switchBtn.setText("All Rides");
+                    switchBtn.setChecked(false);
+                    checked = false;
+                }
+            }
+        });
+        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked){
+                    switchBtn.setText("My Rides");
+                    getMyList();
+                }else {
+
+                    switchBtn.setText("All Rides");
+                    getList();
+                }
+            }
+        });
+
+        getList();
+
+
+        return view;
+    }
+
+    private void getMyList() {
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -72,7 +112,7 @@ public class OutSideDhaka extends Fragment {
                 if (response.isSuccessful()) {
                     list = response.body();
                     carType = list.get(0).getCarType();
-                    getList(carType);
+
                 }
             }
 
@@ -82,7 +122,42 @@ public class OutSideDhaka extends Fragment {
             }
         });
 
-        return view;
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
+        bookingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    bookForLaterModelList.clear();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String rideStatus = (String) data.child("rideStatus").getValue().toString();
+                            if (!rideStatus.equals("End")) {
+                                BookForLaterModel book = data.getValue(BookForLaterModel.class);
+                                bookForLaterModelList.add(book);
+                            }
+
+                        }
+                    }
+                    //  notificationCount.setVisibility(View.GONE);
+                    Collections.reverse(bookForLaterModelList);
+                    bookForLaterAdapter.notifyDataSetChanged();
+                }
+                if (bookForLaterModelList.size() < 1) {
+                    emptyText.setVisibility(View.VISIBLE);
+                    emptyText.setText("You have no confirm ride.");
+                } else {
+                    emptyText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     private void init(View view) {
@@ -103,40 +178,62 @@ public class OutSideDhaka extends Fragment {
         driverId = sharedPreferences.getString("id", "");
         apiInterface = ApiUtils.getUserService();
         list = new ArrayList<>();
+        switchBtn = view.findViewById(R.id.checkSwitch);
+
     }
 
-    private void getList(final String carType) {
+    private void getList() {
 
-        DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
+        Call<List<ProfileModel>> call = apiInterface.getData(driverId);
+        call.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                if (response.isSuccessful()) {
+                    list = response.body();
+                    carType = list.get(0).getCarType();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+
+        DatabaseReference bookingRef = databaseReference.child("BookForLater").child("Sedan");
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     bookForLaterModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        bookingStatus=data.child("bookingStatus").getValue().toString();
-                        if(bookingStatus.equals("Pending")){
+                        bookingStatus = data.child("bookingStatus").getValue().toString();
+                        if (bookingStatus.equals("Pending")) {
                             BookForLaterModel book = data.getValue(BookForLaterModel.class);
                             bookForLaterModelList.add(book);
                         }
                     }
-                    //counter(carType);
+
                     Collections.reverse(bookForLaterModelList);
                     bookForLaterAdapter.notifyDataSetChanged();
                 }
-                if(bookForLaterModelList.size()<1){
+                if (bookForLaterModelList.size() < 1) {
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("No Request Available");
-                }else {
+                } else {
                     emptyText.setVisibility(View.GONE);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
    /* public void counter(String carType){
         DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child(carType);

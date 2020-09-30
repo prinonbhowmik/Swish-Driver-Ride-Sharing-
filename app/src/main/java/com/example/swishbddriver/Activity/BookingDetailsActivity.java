@@ -47,7 +47,6 @@ import com.example.swishbddriver.R;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,11 +58,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -404,17 +401,17 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
                 rideRef.child("rideStatus").setValue("Start");
-                rideRef.child("pickupLat").setValue(String.valueOf(currentLat));
-                rideRef.child("pickupLon").setValue(String.valueOf(currentLon));
-                rideRef.child("pickupPlace").setValue(String.valueOf(pickupPlace));
-                rideRef.child("pickupTime").setValue(currentTime);
+                rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                rideRef.child("pickUpTime").setValue(currentTime);
 
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
                 userRef.child("rideStatus").setValue("Start");
-                userRef.child("pickupLat").setValue(String.valueOf(currentLat));
-                userRef.child("pickupLon").setValue(String.valueOf(currentLon));
-                userRef.child("pickupPlace").setValue(String.valueOf(pickupPlace));
-                userRef.child("pickupTime").setValue(currentTime);
+                userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                userRef.child("pickUpTime").setValue(currentTime);
 
                 Call<List<BookForLaterModel>> call = api.startTripData(id,pickupTime,pickUpLat,pickUpLon,pickupPlace,"Start");
                 call.enqueue(new Callback<List<BookForLaterModel>>() {
@@ -458,11 +455,11 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                pickUpLat = book.getPickupLat();
-                pickUpLon = book.getPickupLon();
+                pickUpLat = book.getPickUpLat();
+                pickUpLon = book.getPickUpLon();
                 destinationLat = book.getDestinationLat();
                 destinationLon = book.getDestinationLon();
-                pickupPlace = book.getPickupPlace();
+                pickupPlace = book.getPickUpPlace();
                 destinationPlace = book.getDestinationPlace();
 
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
@@ -677,14 +674,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                pickupPlace = book.getPickupPlace();
+                pickupPlace = book.getPickUpPlace();
                 destinationPlace = book.getDestinationPlace();
-                pickupDate = book.getPickupDate();
-                pickupTime = book.getPickupTime();
+                pickupDate = book.getPickUpDate();
+                pickupTime = book.getPickUpTime();
                 carType = book.getCarType();
                 taka = book.getPrice();
-                pickUpLat = book.getPickupLat();
-                pickUpLon = book.getPickupLon();
+                pickUpLat = book.getPickUpLat();
+                pickUpLon = book.getPickUpLon();
                 destinationLat = book.getDestinationLat();
                 destinationLon = book.getDestinationLon();
                 bookingStatus = book.getBookingStatus();
