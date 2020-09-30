@@ -59,6 +59,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -490,13 +491,16 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private void calculate(String pickupTime,String endTime) {
         SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
 
-        Date dateBefore = null;
+
         try {
-            dateBefore = myFormat.parse(pickupTime);
-            Date dateAfter = myFormat.parse(endTime);
-            long difference = dateAfter.getTime() - dateBefore.getTime();
-            long daysBetween =  (difference / (1000*60*60*24));
-            long hours = ((difference - (1000*60*60*24*daysBetween)) / (1000*60*60));
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            Date date1 = simpleDateFormat.parse(pickupTime);
+            Date date2 = simpleDateFormat.parse(endTime);
+
+            long difference = date2.getTime() - date1.getTime();
+            int days = (int) (difference / (1000 * 60 * 60 * 24));
+            int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
 
             Toast.makeText(this, ""+hours, Toast.LENGTH_SHORT).show();
         } catch (ParseException e) {
