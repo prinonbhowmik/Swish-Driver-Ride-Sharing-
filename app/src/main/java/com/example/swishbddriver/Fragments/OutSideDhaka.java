@@ -141,10 +141,6 @@ public class OutSideDhaka extends Fragment {
         recyclerView.setAdapter(bookForLaterAdapter);
         //cardView=findViewById(R.id.cardItem);
         unavailableTxt = view.findViewById(R.id.unavailableTxt);
-        moreTv = view.findViewById(R.id.moreTV);
-        titleTv = view.findViewById(R.id.titleName);
-        notificationCount = view.findViewById(R.id.notificationCount);
-        moreRelative = view.findViewById(R.id.moreRelative);
         emptyText = view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");

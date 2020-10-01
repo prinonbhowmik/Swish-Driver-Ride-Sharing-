@@ -63,8 +63,8 @@ public class PhoneNoActivity extends AppCompatActivity {
                 hideKeyBoard(getApplicationContext());
                 phone = editText.getText().toString();
                 nextBtn.setEnabled(false);
-                if (phone.length() < 11) {
-                    editText.setError("At least 11 digit", null);
+                if (phone.length() != 11) {
+                    editText.setError("Please Provide Correct Phone Number", null);
                     editText.requestFocus();
                     nextBtn.setEnabled(true);
                 } else {

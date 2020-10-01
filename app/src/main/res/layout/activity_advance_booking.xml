@@ -15,14 +15,7 @@
                 android:id="@+id/appBarLayout"
                 android:background="@color/themColor">
 
-                <TextView
-                    android:id="@+id/titleName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Advance Booking List"
-                    android:visibility="gone"
-                    android:textColor="@android:color/white"
-                    android:textSize="21sp" />
+
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabLayout"
                     android:layout_width="wrap_content"
@@ -51,31 +44,7 @@
                         android:textAlignment="center"/>
                 </com.google.android.material.tabs.TabLayout>
 
-                <RelativeLayout
-                    android:id="@+id/moreRelative"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true">
 
-                    <TextView
-                        android:id="@+id/moreTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/notificationCount"
-                        android:drawableStart="@drawable/ic_more_24" />
-
-                    <TextView
-                        android:id="@+id/notificationCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:background="@drawable/red_circle"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textColor="@android:color/white"
-                        android:visibility="gone" />
-                </RelativeLayout>
             </RelativeLayout>
 
 
