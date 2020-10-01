@@ -104,10 +104,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("bookingtripstart/{bookingId}")
     Call<List<BookForLaterModel>> startTripData(@Path("bookingId") String bookingId,
-                                                @Field("pickupTime") String pickupTime,
-                                                @Field("pickupLat") String pickupLat,
-                                                @Field("pickupLon") String pickupLon,
-                                                @Field("pickupPlace") String pickupPlace,
+                                                @Field("pickUpTime") String pickupTime,
+                                                @Field("pickUpLat") String pickupLat,
+                                                @Field("pickUpLon") String pickupLon,
+                                                @Field("pickUpPlace") String pickupPlace,
                                                 @Field("rideStatus") String rideStatus);
 
     @FormUrlEncoded

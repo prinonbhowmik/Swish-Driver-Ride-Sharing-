@@ -478,8 +478,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                                 Date date2 = myFormat.parse(endTime);
 
                                 long difference = date2.getTime() - date1.getTime();
-                                float days = (float) (difference / (1000 * 60 * 60 * 24));
-                                float hours = (float) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+
+                                float hours = (float) difference/(1000 * 60 * 60);
 
                                 Toast.makeText(HourlyDetailsActivity.this, ""+hours, Toast.LENGTH_SHORT).show();
                             } catch (ParseException e) {
