@@ -311,15 +311,15 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         userRef.child("rideStatus").setValue("End");
         userRef.child("endTime").setValue(currentTime);
 
-        Call<List<BookForLaterModel>> call = api.endTripData(id,"End",destinationLat,destinationLon,destinationPlace,currentTime);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<HourlyRideModel>> call = api.endHourTripData(id,"End",String.valueOf(currentLat), String.valueOf(currentLon),destinationPlace,currentTime);
+        call.enqueue(new Callback<List<HourlyRideModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
 
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
 
             }
         });
@@ -423,15 +423,15 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
                 userRef.child("pickUpTime").setValue(currentTime);
 
-                Call<List<BookForLaterModel>> call = api.startTripData(id,pickupTime,pickUpLat,pickUpLon,pickupPlace,"Start");
-                call.enqueue(new Callback<List<BookForLaterModel>>() {
+                Call<List<HourlyRideModel>> call = api.startHourTripData(id,pickupTime,pickUpLat,pickUpLon,pickupPlace,"Start");
+                call.enqueue(new Callback<List<HourlyRideModel>>() {
                     @Override
-                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
 
                     }
 
                     @Override
-                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
 
                     }
                 });
@@ -702,18 +702,20 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         ref2.child("bookingStatus").setValue("Booked");
         ref2.child("driverId").setValue(driverId);
 
-        Call<List<BookForLaterModel>> call = api.confirmRide(id, "Booked", driverId);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<HourlyRideModel>> call = api.confirmHourRide(id, "Booked", driverId);
+        call.enqueue(new Callback<List<HourlyRideModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
 
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
 
             }
         });
+
+
     }
 
     private void sendNotification(final String id, final String title, final String message, final String toActivity) {

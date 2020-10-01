@@ -76,10 +76,8 @@ public class OutsideDhakaHistoryFragment extends Fragment {
                         noHistoryTxt.setText("No History");
                         recyclerView.setVisibility(View.GONE);
                     }
-                    adapter.notifyDataSetChanged();
                 }
-
-
+                adapter.notifyDataSetChanged();
             }
 
             @Override

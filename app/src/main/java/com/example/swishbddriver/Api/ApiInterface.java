@@ -10,6 +10,7 @@ import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
+import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
 
@@ -102,6 +103,12 @@ public interface ApiInterface {
                                               @Field("driverId") String driverId);
 
     @FormUrlEncoded
+    @PUT("hourlyrideconfirm/{bookingId}")
+    Call<List<HourlyRideModel>> confirmHourRide(@Path("bookingId") String bookingId,
+                                            @Field("bookingStatus") String bookingStatus,
+                                            @Field("driverId") String driverId);
+
+    @FormUrlEncoded
     @PUT("bookingtripstart/{bookingId}")
     Call<List<BookForLaterModel>> startTripData(@Path("bookingId") String bookingId,
                                                 @Field("pickUpTime") String pickupTime,
@@ -111,8 +118,26 @@ public interface ApiInterface {
                                                 @Field("rideStatus") String rideStatus);
 
     @FormUrlEncoded
+    @PUT("hourlyridestart/{bookingId}")
+    Call<List<HourlyRideModel>> startHourTripData(@Path("bookingId") String bookingId,
+                                                @Field("pickUpTime") String pickupTime,
+                                                @Field("pickUpLat") String pickupLat,
+                                                @Field("pickUpLon") String pickupLon,
+                                                @Field("pickUpPlace") String pickupPlace,
+                                                @Field("rideStatus") String rideStatus);
+
+    @FormUrlEncoded
     @PUT("bookingtripend/{bookingId}")
     Call<List<BookForLaterModel>> endTripData(@Path("bookingId") String bookingId,
+                                              @Field("rideStatus") String rideStatus,
+                                              @Field("destinationLat") String destinationLat,
+                                              @Field("destinationLon") String destinationLon,
+                                              @Field("destinationPlace") String destinationPlace,
+                                              @Field("endTime") String endTime);
+
+    @FormUrlEncoded
+    @PUT("hourlytripend/{bookingId}")
+    Call<List<HourlyRideModel>> endHourTripData(@Path("bookingId") String bookingId,
                                               @Field("rideStatus") String rideStatus,
                                               @Field("destinationLat") String destinationLat,
                                               @Field("destinationLon") String destinationLon,
