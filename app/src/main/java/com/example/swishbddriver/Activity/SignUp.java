@@ -285,5 +285,10 @@ public class SignUp extends AppCompatActivity {
         InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
     }
+    public void backPressUp(View view) {
+        startActivity(new Intent(SignUp.this,PhoneNoActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 
 }

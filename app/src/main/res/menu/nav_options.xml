@@ -18,7 +18,12 @@
         <item
             android:id="@+id/earnings"
             android:title="Earnings"
-            android:icon="@drawable/ic_term_24"/>
+            android:icon="@drawable/ic_bangladeshi_taka"/>
+
+        <item
+            android:id="@+id/history"
+            android:icon="@drawable/ic_history2"
+            android:title="History" />
 
 
 

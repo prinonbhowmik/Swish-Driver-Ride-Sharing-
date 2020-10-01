@@ -1,52 +1,38 @@
 package com.example.swishbddriver.Activity;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
 import com.example.swishbddriver.Adapter.TabPaggerAdapter;
-import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Fragments.InsideDhaka;
+import com.example.swishbddriver.Fragments.InsideDhakaHistroyFragment;
 import com.example.swishbddriver.Fragments.OutsideDhaka;
-import com.example.swishbddriver.Model.ProfileModel;
+import com.example.swishbddriver.Fragments.OutsideDhakaHistoryFragment;
 import com.example.swishbddriver.R;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class AdvanceBookingActivity extends AppCompatActivity  {
-    private String driverId;
-    private String bookingStatus,driverCarType;
-    private CardView cardView;
-    private TextView unavailableTxt;
-    private String carType;
-    private int count=0;
-    private RelativeLayout moreRelative;
-    private SharedPreferences sharedPreferences;
-    private ApiInterface apiInterface;
-    private List<ProfileModel> list;
-
+public class RideHistoryActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_advance_booking);
+        setContentView(R.layout.activity_ride_history);
 
         init();
 
+
         TabPaggerAdapter tabPaggerAdapter = new TabPaggerAdapter(getSupportFragmentManager());
-        tabPaggerAdapter.addFragment(new OutsideDhaka());
-        tabPaggerAdapter.addFragment(new InsideDhaka());
+        tabPaggerAdapter.addFragment(new OutsideDhakaHistoryFragment());
+        tabPaggerAdapter.addFragment(new InsideDhakaHistroyFragment());
         viewPager.setAdapter(tabPaggerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -66,25 +52,20 @@ public class AdvanceBookingActivity extends AppCompatActivity  {
 
             }
         });
-
-
     }
-
-
 
     private void init() {
 
-        unavailableTxt=findViewById(R.id.unavailableTxt);
-
-        sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
-        driverId = sharedPreferences.getString("id","");
-        apiInterface = ApiUtils.getUserService();
-        list= new ArrayList<>();
 
         tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.bookingViewPager);
+        viewPager = findViewById(R.id.historyViewPager);
 
     }
 
+    public void backPressUp(View view) {
+        startActivity(new Intent(RideHistoryActivity.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 
 }

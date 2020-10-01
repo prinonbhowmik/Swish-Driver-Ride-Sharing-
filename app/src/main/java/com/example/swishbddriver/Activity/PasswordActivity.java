@@ -75,6 +75,7 @@ public class PasswordActivity extends AppCompatActivity {
                                 loginBtn.setEnabled(true);
                             }
                             else{
+                                loginBtn.setEnabled(true);
                                 Toast.makeText(PasswordActivity.this, "Password doesn't march!", Toast.LENGTH_SHORT).show();
                             }
                         }

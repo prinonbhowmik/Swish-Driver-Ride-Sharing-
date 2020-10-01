@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.RideHistoryActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appBarLayout"
+        android:background="@color/themColor">
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/tab_layout_background"
+            app:tabMode="scrollable"
+            app:tabBackground="@drawable/tab_layout_selector"
+            app:tabSelectedTextColor="@color/themColor"
+            app:tabIndicatorHeight="0dp"
+            app:tabRippleColor="@null"
+            android:layout_centerHorizontal="true"
+            app:tabTextAppearance="@style/TabTextAppearance">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Outside Dhaka"
+                android:textAlignment="center" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Inside Dhaka"
+                android:textAlignment="center"/>
+        </com.google.android.material.tabs.TabLayout>
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBarLayout"
+        android:id="@+id/layerTwo">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/historyViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

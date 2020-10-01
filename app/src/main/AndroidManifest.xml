@@ -31,7 +31,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.HourlyDetailsActivity"></activity>
+        <activity android:name=".Activity.RideHistoryActivity"></activity>
+        <activity android:name=".Activity.HourlyDetailsActivity" />
         <activity android:name=".Activity.Registration6Activity" />
         <activity android:name=".Activity.Registration5Activity" />
         <activity android:name=".Activity.Registration4Activity" />

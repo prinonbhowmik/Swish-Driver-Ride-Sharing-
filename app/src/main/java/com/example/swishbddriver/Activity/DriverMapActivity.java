@@ -736,7 +736,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             case R.id.logout:
 
-
                 DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
                 dRef.removeValue();
                 buttonOff.setVisibility(View.VISIBLE);
@@ -787,6 +786,35 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                 }
                     break;
+
+            case R.id.history:
+                drawerLayout.closeDrawers();
+                if (!carType.equals("Notset")) {
+                    Intent intent2 = new Intent(DriverMapActivity.this, RideHistoryActivity.class);
+                    startActivity(intent2);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    drawerLayout.closeDrawers();
+                } else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("Alert..!!");
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
+
+
+                }
+                break;
                     case R.id.settings:
                         startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
 

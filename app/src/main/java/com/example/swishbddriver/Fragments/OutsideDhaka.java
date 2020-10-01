@@ -45,7 +45,7 @@ import retrofit2.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class OutSideDhaka extends Fragment {
+public class OutsideDhaka extends Fragment {
 
     private DatabaseReference databaseReference;
     private List<BookForLaterModel> bookForLaterModelList;
