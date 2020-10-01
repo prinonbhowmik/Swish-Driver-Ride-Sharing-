@@ -8,15 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.swishbddriver.Adapter.TabPaggerAdapter;
-import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Fragments.InsideDhaka;
-import com.example.swishbddriver.Fragments.InsideDhakaHistroyFragment;
-import com.example.swishbddriver.Fragments.OutsideDhaka;
+import com.example.swishbddriver.Fragments.InsideDhakaHistoryFragment;
 import com.example.swishbddriver.Fragments.OutsideDhakaHistoryFragment;
 import com.example.swishbddriver.R;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
 
 public class RideHistoryActivity extends AppCompatActivity {
 
@@ -32,7 +27,7 @@ public class RideHistoryActivity extends AppCompatActivity {
 
         TabPaggerAdapter tabPaggerAdapter = new TabPaggerAdapter(getSupportFragmentManager());
         tabPaggerAdapter.addFragment(new OutsideDhakaHistoryFragment());
-        tabPaggerAdapter.addFragment(new InsideDhakaHistroyFragment());
+        tabPaggerAdapter.addFragment(new InsideDhakaHistoryFragment());
         viewPager.setAdapter(tabPaggerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));

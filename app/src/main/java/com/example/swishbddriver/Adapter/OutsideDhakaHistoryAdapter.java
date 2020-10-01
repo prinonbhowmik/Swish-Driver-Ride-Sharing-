@@ -54,7 +54,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
 
     @Override
     public int getItemCount() {
-        return 0;
+        return bookForLaterModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -14,11 +14,11 @@
         <item
             android:id="@+id/registration"
             android:title="Registration"
-            android:icon="@drawable/ic_map_24"/>
+            android:icon="@drawable/ic_website"/>
         <item
             android:id="@+id/earnings"
             android:title="Earnings"
-            android:icon="@drawable/ic_bangladeshi_taka"/>
+            android:icon="@drawable/ic_coin_stack"/>
 
         <item
             android:id="@+id/history"
@@ -37,14 +37,7 @@
             android:id="@+id/settings"
             android:title="Settings"
             android:icon="@drawable/ic_baseline_settings_24"/>
-        <!--<item
-            android:id="@+id/about"
-            android:title="About"
-            android:icon="@drawable/ic_map_24"/>
-        <item
-            android:id="@+id/feedback"
-            android:title="Feedback"
-            android:icon="@drawable/ic_feedback_24"/>-->
+
         <item
             android:id="@+id/logout"
             android:title="logout"
