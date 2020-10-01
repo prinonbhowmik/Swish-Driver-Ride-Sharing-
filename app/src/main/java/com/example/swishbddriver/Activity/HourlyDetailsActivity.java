@@ -471,7 +471,20 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String rideStatus = snapshot.child("rideStatus").getValue().toString();
                         if (rideStatus.equals("End")) {
-                            calculate(pickupTime,endTime);
+                            SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+                            try {
+
+                                Date date1 = myFormat.parse(pickupTime);
+                                Date date2 = myFormat.parse(endTime);
+
+                                long difference = date2.getTime() - date1.getTime();
+                                float days = (float) (difference / (1000 * 60 * 60 * 24));
+                                float hours = (float) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+
+                                Toast.makeText(HourlyDetailsActivity.this, ""+hours, Toast.LENGTH_SHORT).show();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
@@ -490,28 +503,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void calculate(String pickupTime,String endTime) {
 
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-        
-        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-        try {
-
-            Date date1 = myFormat.parse(pickupTime);
-            Date date2 = myFormat.parse(endTime);
-
-            long difference = date2.getTime() - date1.getTime();
-            int days = (int) (difference / (1000 * 60 * 60 * 24));
-            int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
-
-            Toast.makeText(this, ""+hours, Toast.LENGTH_SHORT).show();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
 
     private void addAmount() {
 
