@@ -145,6 +145,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Bundle args = new Bundle();
                 args.putString("customerId", customerID);
+                args.putInt("check", check);
                 CustomerDetailsBottomSheet bottom_sheet = new CustomerDetailsBottomSheet();
                 bottom_sheet.setArguments(args);
                 bottom_sheet.show(getSupportFragmentManager(), "bottomSheet");

@@ -56,8 +56,8 @@ public class RideHistoryActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.historyViewPager);
 
     }
-
-    public void backPressUp(View view) {
+    @Override
+    public void onBackPressed() {
         startActivity(new Intent(RideHistoryActivity.this,DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();

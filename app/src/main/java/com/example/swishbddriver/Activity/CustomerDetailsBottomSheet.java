@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,11 +39,13 @@ import retrofit2.Response;
 
 public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
     private View view;
-    private TextView customerName,customerPhone;
+    private TextView customerName,customerPhone,phoneTxt;
+    private int check;
+    private ImageView phoneIV;
     private Button callCustomer;
     private DatabaseReference databaseReference;
     private String bookingId,carType,custName,custPhone,customerId;
-
+    private Button callCustomerBtn;
     private List<CustomerProfile> list;
     private ApiInterface api;
 
@@ -51,7 +54,15 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
         init(view);
         Bundle mArgs = getArguments();
         customerId = mArgs.getString("customerId");
+        check=mArgs.getInt("check");
+        if(check==2){
+            customerPhone.setVisibility(View.GONE);
+            callCustomerBtn.setVisibility(View.GONE);
+            phoneIV.setVisibility(View.GONE);
+            phoneTxt.setVisibility(View.GONE);
 
+
+        }
         getData();
 
         callCustomer.setOnClickListener(new View.OnClickListener() {
@@ -118,5 +129,8 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
         callCustomer=view.findViewById(R.id.callCustomerBtn);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+        phoneIV=view.findViewById(R.id.phoneIV);
+        phoneTxt=view.findViewById(R.id.phoneTxt);
+        callCustomerBtn=view.findViewById(R.id.callCustomerBtn);
     }
 }
