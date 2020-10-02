@@ -153,6 +153,11 @@ public interface ApiInterface {
                                               @Field("price") String price);
 
     @FormUrlEncoded
+    @PUT("hourlypriceupdate/{bookingId}")
+    Call<List<HourlyRideModel>> hourpriceUpdate(@Path("bookingId") String bookingId,
+                                              @Field("price") String price);
+
+    @FormUrlEncoded
     @PUT("rideCountUpdate/{driver_id}")
     Call<List<ProfileModel>> rideCountUpdate(@Path("driver_id") String driver_id,
                                              @Field("rideCount") int rideCount);

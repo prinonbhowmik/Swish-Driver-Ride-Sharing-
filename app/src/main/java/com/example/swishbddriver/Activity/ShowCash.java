@@ -32,7 +32,7 @@ public class ShowCash extends AppCompatActivity {
 
     Button collectBtn;
     TextView pickupPlaceTV,destinationPlaceTV,cashTxt;
-    int price,distance,duration;
+    int price,distance,duration,check;
     String pickUpPlace,destinationPlace, driverId,carType;
     private ImageView info;
     private SharedPreferences sharedPreferences;
@@ -50,6 +50,7 @@ public class ShowCash extends AppCompatActivity {
         price = intent.getIntExtra("price",0);
         pickUpPlace = intent.getStringExtra("pPlace");
         destinationPlace = intent.getStringExtra("dPlace");
+        check = intent.getIntExtra("check",0);
 
         init();
 

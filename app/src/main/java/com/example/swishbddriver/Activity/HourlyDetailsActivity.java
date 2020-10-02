@@ -462,8 +462,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 pickupTime = book.getPickUpTime();
                 endTime = book.getEndTime();
 
-                Toast.makeText(HourlyDetailsActivity.this, pickupTime+","+endTime, Toast.LENGTH_SHORT).show();
-
                 DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                 rideRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -479,8 +477,91 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                                 long difference = date2.getTime() - date1.getTime();
 
                                 float hours = (float) difference/(1000 * 60 * 60);
+                                float price = Math.abs(hours);
 
-                                Toast.makeText(HourlyDetailsActivity.this, ""+hours, Toast.LENGTH_SHORT).show();
+                                Log.d("checkhour", String.valueOf(price));
+
+                                DatabaseReference hourRef = FirebaseDatabase.getInstance().getReference("HourlyRate").child(carType);
+                                hourRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String priceRate = snapshot.getValue().toString();
+                                        int carTypeRate = Integer.parseInt(priceRate);
+                                        double actualPrice = carTypeRate*price;
+                                        int actualIntPrice = (int) actualPrice;
+                                        if (price<2.00){
+                                            actualIntPrice = carTypeRate*2;
+                                            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                    .child(customerID).child(id);
+                                            updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                    .child(carType).child(id);
+                                            newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                            call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                @Override
+                                                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                }
+                                                @Override
+                                                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                }
+                                            });
+                                            addamountToEarnings();
+
+                                            Intent intent = new Intent(HourlyDetailsActivity.this,ShowCash.class);
+                                            intent.putExtra("price", actualIntPrice);
+                                            intent.putExtra("pPlace", pickupPlace);
+                                            intent.putExtra("dPlace", destinationPlace);
+                                            intent.putExtra("check", 2);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else{
+                                            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                    .child(customerID).child(id);
+                                            updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                    .child(carType).child(id);
+                                            newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                            call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                @Override
+                                                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                }
+                                                @Override
+                                                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                }
+                                            });
+                                            addamountToEarnings();
+
+                                            Intent intent = new Intent(HourlyDetailsActivity.this,ShowCash.class);
+                                            intent.putExtra("price", actualIntPrice);
+                                            intent.putExtra("pPlace", pickupPlace);
+                                            intent.putExtra("dPlace", destinationPlace);
+                                            intent.putExtra("check", 2);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -502,6 +583,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     }
 
+    private void addamountToEarnings() {
+    }
 
 
     private void addAmount() {

@@ -645,6 +645,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 intent.putExtra("dPlace", destinationPlace);
                 intent.putExtra("distance", distance);
                 intent.putExtra("duration", trduration);
+                intent.putExtra("check", 1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
