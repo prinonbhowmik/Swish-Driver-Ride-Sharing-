@@ -3,4 +3,10 @@
     <string name="terms_and_conditions"><u>terms and conditions</u></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description">999 Emergency services is an emergency call center run by the Bangladesh Police.
+        From there emergency police, emergency fire service and emergency ambulance services are provided.
+        Anyone from any part of the country can avail these emergency services by calling 999.
+        The call center is open 24 hours a day, 7 days a week. 999 is a toll free number.
+        The caller does not have to spend any money to call this number. Their trained call center agents
+        are always ready for your emergency call, Bangladesh Police. Stay well, stay safe.</string>
 </resources>

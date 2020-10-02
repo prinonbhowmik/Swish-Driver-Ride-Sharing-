@@ -1,6 +1,7 @@
 package com.example.swishbddriver.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,18 +27,20 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
     @NonNull
     @Override
     public EarningHistoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.earning_history_layout_design,parent,false);
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.earning_history_design,parent,false);
         return new EarningHistoryAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         BookForLaterModel book=bookForLaterModelList.get(position);
-        holder.destinationTV.setText(book.getDestinationPlace());
+        holder.bookingIdTV.setText(book.getBookingId());
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
-        holder.pickupLocationTV.setText(book.getPickUpPlace());
-        holder.taka.setText("৳ "+book.getPrice());
+        String price=book.getPrice();
+        int price1= Integer.parseInt(price);
+        int commission=(price1*15)/100;
+        holder.taka.setText("৳ "+commission);
 
     }
 
@@ -47,11 +50,10 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate,taka;
+        private TextView bookingIdTV,pickupTimeTV,pickupDate,taka;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            pickupLocationTV=itemView.findViewById(R.id.pickup_TV);
-            destinationTV=itemView.findViewById(R.id.destination_TV);
+            bookingIdTV=itemView.findViewById(R.id.bookingIdTV);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
             taka = itemView.findViewById(R.id.earnTv);

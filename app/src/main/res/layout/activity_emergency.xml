@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    tools:context=".Activity.Emergency">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/themColor"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/emergencyBackBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="emergencyBack"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/titleName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Emergency"
+                    android:layout_marginLeft="50dp"
+                    android:textColor="@android:color/white"
+                    android:layout_centerVertical="true"
+                    android:textSize="21sp"/>
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/customerCareIv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/customer_care" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/description"
+        android:justificationMode="inter_word"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="-60dp"
+        android:layout_below="@+id/customerCareIv" />
+    <TextView
+        android:id="@+id/call999"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Call 999"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/description" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/call999"
+        app:lottie_loop="true"
+        android:layout_centerHorizontal="true"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="sos.json"
+        android:id="@+id/sos2"/>
+
+</RelativeLayout>

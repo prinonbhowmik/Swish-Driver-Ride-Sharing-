@@ -59,6 +59,7 @@
         <activity android:name=".Activity.DriverProfile" />
         <activity android:name=".Activity.Otp_Activity" />
         <activity android:name=".Activity.PasswordActivity" />
+        <activity android:name=".Activity.Emergency" />
         <activity android:name=".Activity.SignUp" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

@@ -779,14 +779,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             dialog.dismiss();
                         }
                     });
-
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
-
-
                 }
-                    break;
-
+                break;
             case R.id.history:
                 drawerLayout.closeDrawers();
                 if (!carType.equals("Notset")) {
@@ -808,18 +804,21 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             dialog.dismiss();
                         }
                     });
-
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
-
-
                 }
+
                 break;
-                    case R.id.settings:
-                        startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
+            case R.id.emergency:
+                startActivity(new Intent(DriverMapActivity.this, Emergency.class));
+                drawerLayout.closeDrawers();
 
-                        break;
-                }
-                return false;
+                break;
+            case R.id.settings:
+                startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
+
+                break;
         }
+        return false;
     }
+}
