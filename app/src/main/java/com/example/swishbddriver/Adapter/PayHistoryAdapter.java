@@ -34,8 +34,9 @@ public class PayHistoryAdapter extends RecyclerView.Adapter<PayHistoryAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull PayHistoryAdapter.ViewHolder holder, int position) {
         PayHistoryModel book=payHistoryModels.get(position);
-        holder.payDate.setText(book.getDate());
-        holder.payTaka.setText("৳ "+book.getPay());
+        holder.payDate.setText(book.getPay_date());
+        holder.payTaka.setText("৳ "+book.getPay_amount());
+        holder.payMethod.setText(book.getPay_method());
 
     }
 
@@ -45,11 +46,12 @@ public class PayHistoryAdapter extends RecyclerView.Adapter<PayHistoryAdapter.Vi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView payTaka,payDate;
+        private TextView payTaka,payDate,payMethod;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             payDate=itemView.findViewById(R.id.payDate);
             payTaka = itemView.findViewById(R.id.payTaka);
+            payMethod = itemView.findViewById(R.id.payMethod);
         }
     }
 }

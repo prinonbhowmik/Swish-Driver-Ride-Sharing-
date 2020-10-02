@@ -74,7 +74,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HourlyDetailsActivity extends AppCompatActivity {
-    private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV;
+    private TextView pickupPlaceTV, pickupDateTV, pickupTimeTV, carTypeTV,takaTV;
 
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime,endTime,carType,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,
@@ -96,10 +96,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private int distance, trduration;
     private float rating, rat;
     private int ratingCount;
-    private int ride;
+    private int ride,check;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price;
+    private String price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         id = intent.getStringExtra("bookingId");
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
-
+        check = intent.getIntExtra("check",0);
 
         getData();
 
@@ -145,6 +145,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Bundle args = new Bundle();
                 args.putString("customerId", customerID);
+                args.putInt("check", check);
                 CustomerDetailsBottomSheet bottom_sheet = new CustomerDetailsBottomSheet();
                 bottom_sheet.setArguments(args);
                 bottom_sheet.show(getSupportFragmentManager(), "bottomSheet");
@@ -200,6 +201,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         pickupDateTV = findViewById(R.id.pickupDateTV);
         pickupTimeTV = findViewById(R.id.pickupTimeTV);
         carTypeTV = findViewById(R.id.carTypeTV);
+        takaTV=findViewById(R.id.takaTV);
         confirmBtn = findViewById(R.id.confirmBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
         customerDetailsBtn = findViewById(R.id.customerDetailsBtn);
@@ -587,7 +589,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
 
-    private void addAmount() {
+   /* private void addAmount() {
 
         currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
@@ -612,7 +614,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
+    }*/
 
     private void getDriverInformation() {
         DatabaseReference driverRef = databaseReference.child("DriversProfile").child(driverId);
@@ -631,61 +633,74 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        if (check == 1) {
+            DatabaseReference reference = databaseReference.child("BookHourly").child(car_type).child(id);
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        DatabaseReference reference = databaseReference.child("BookHourly").child(car_type).child(id);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
+                    pickupPlace = book.getPickUpPlace();
+                    pickupDate = book.getPickUpDate();
+                    pickupTime = book.getPickUpTime();
+                    carType = book.getCarType();
+                    pickUpLat = book.getPickUpLat();
+                    pickUpLon = book.getPickUpLon();
+                    bookingStatus = book.getBookingStatus();
+                    rideStatus = book.getRideStatus();
+                    price=book.getPrice();
+                    pickupPlaceTV.setText(pickupPlace);
+                    pickupDateTV.setText(pickupDate);
+                    pickupTimeTV.setText(pickupTime);
+                    carTypeTV.setText(carType);
+                    takaTV.setText(price);
 
-                HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
-                pickupPlace = book.getPickUpPlace();
-                pickupDate = book.getPickUpDate();
-                pickupTime = book.getPickUpTime();
-                carType = book.getCarType();
-                pickUpLat = book.getPickUpLat();
-                pickUpLon = book.getPickUpLon();
-                bookingStatus = book.getBookingStatus();
-                rideStatus = book.getRideStatus();
+                    if (!driverId.equals("")) {
+                        if (!driverId.equals(driverId)) {
+                            confirmBtn.setVisibility(View.GONE);
+                            cancelBtn.setVisibility(View.GONE);
+                            customerDetailsBtn.setVisibility(View.GONE);
+                            //Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    checkDate();
+                    checkBookingConfirm(bookingStatus);
 
-                pickupPlaceTV.setText(pickupPlace);
-                pickupDateTV.setText(pickupDate);
-                pickupTimeTV.setText(pickupTime);
-                carTypeTV.setText(carType);
+                    getDriverRide();
 
-                if (!driverId.equals("")) {
-                    if (!driverId.equals(driverId)) {
-                        confirmBtn.setVisibility(View.GONE);
+                    if (rideStatus.equals("Start")) {
+                        startTripBtn.setVisibility(View.GONE);
+                        neomorphFrameLayoutStart.setVisibility(View.GONE);
+                        neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+                        endTripBtn.setVisibility(View.VISIBLE);
                         cancelBtn.setVisibility(View.GONE);
-                        customerDetailsBtn.setVisibility(View.GONE);
-                        //Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_SHORT).show();
-                        finish();
+                    } else if (rideStatus.equals("End")) {
+                        startTripBtn.setVisibility(View.GONE);
+                        neomorphFrameLayoutStart.setVisibility(View.GONE);
+                        neomorphFrameLayoutEnd.setVisibility(View.GONE);
+                        endTripBtn.setVisibility(View.GONE);
+                        cancelBtn.setVisibility(View.GONE);
                     }
                 }
-                checkDate();
-                checkBookingConfirm(bookingStatus);
 
-                getDriverRide();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-                if (rideStatus.equals("Start")) {
-                    startTripBtn.setVisibility(View.GONE);
-                    neomorphFrameLayoutStart.setVisibility(View.GONE);
-                    neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-                    endTripBtn.setVisibility(View.VISIBLE);
-                    cancelBtn.setVisibility(View.GONE);
-                } else if (rideStatus.equals("End")) {
-                    startTripBtn.setVisibility(View.GONE);
-                    neomorphFrameLayoutStart.setVisibility(View.GONE);
-                    neomorphFrameLayoutEnd.setVisibility(View.GONE);
-                    endTripBtn.setVisibility(View.GONE);
-                    cancelBtn.setVisibility(View.GONE);
                 }
-            }
+            });
+        }if(check==2){
+            Intent intent = getIntent();
+            pickupPlaceTV.setText(intent.getStringExtra("pickUpPlace"));
+            pickupDateTV.setText(intent.getStringExtra("pickUpDate"));
+            pickupTimeTV.setText(intent.getStringExtra("pickUpTime"));
+            carTypeTV.setText(intent.getStringExtra("carType"));
+            takaTV.setText(intent.getStringExtra("price"));
+            details.setVisibility(View.VISIBLE);
+            confirmBtn.setVisibility(View.GONE);
+            cancelBtn.setVisibility(View.GONE);
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void checkBookingConfirm(String bookingStatus) {

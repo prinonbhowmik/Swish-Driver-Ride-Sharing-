@@ -20,14 +20,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/stroke">
 
             <TextView
                 android:id="@+id/payDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:text="10/10/2020"
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -37,10 +38,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:text="2000"
                 android:layout_marginEnd="10dp"
                 android:textColor="#F44336"
                 android:textSize="18sp" />
+            <TextView
+                android:id="@+id/payMethod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bkash"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@+id/payDate"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
         </RelativeLayout>
     </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 </RelativeLayout>

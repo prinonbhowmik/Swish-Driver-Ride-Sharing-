@@ -11,6 +11,7 @@ import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.HourlyRideModel;
+import com.example.swishbddriver.Model.PayHistoryModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
 
@@ -233,5 +234,8 @@ public interface ApiInterface {
 
     @GET("driverhourlylist?")
     Call<List<HourlyRideModel>> driverInsideHistory(@Query("id") String driver_id);
+
+    @GET("paymentshow?")
+    Call<List<PayHistoryModel>> driverPayHistory(@Query("id") String driver_id);
 
 }
