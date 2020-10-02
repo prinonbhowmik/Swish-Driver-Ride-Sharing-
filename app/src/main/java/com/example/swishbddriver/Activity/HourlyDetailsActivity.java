@@ -121,7 +121,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //checkDate();
-                if (rat < 2) {
+                if (rat < 2.5) {
                     blockAlert();
                 }else {
                     if (hasDateMatch) {
@@ -396,7 +396,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
         dialog.setTitle("Alert..!!");
         dialog.setIcon(R.drawable.logo);
-        dialog.setMessage("Did you picked Up your passenger?");
+        dialog.setMessage("Did you picked up your passenger?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -786,12 +786,12 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     confirmBtn.setVisibility(View.GONE);
                     cancelBtn.setVisibility(View.VISIBLE);
                     customerDetailsBtn.setVisibility(View.VISIBLE);
-                    Snackbar snackbar = Snackbar.make(scrollLayout, "You are booked for this ride.", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(scrollLayout, "You have confirmed this trip.", Snackbar.LENGTH_SHORT);
                     snackbar.show();
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(HourlyDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
+                    sendNotification(id, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_ride_details");
                 }
             }
         });
