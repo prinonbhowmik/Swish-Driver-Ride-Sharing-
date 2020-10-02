@@ -665,6 +665,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         }
                     }
                     checkDate();
+
                     checkBookingConfirm(bookingStatus);
 
                     getDriverRide();
@@ -713,7 +714,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
-            String todayDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            String todayDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
             if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
@@ -725,7 +726,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void checkDate() {
-        DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+        DatabaseReference ref = databaseReference.child("BookHourly").child(carType);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -734,7 +735,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     if (driver_id.equals(driverId)) {
                         String pickup_date2 = String.valueOf(data.child("pickupDate").getValue());
 
-                        String date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+                        String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
                         hasDateMatch = date.equals(pickup_date2);
                     } else {

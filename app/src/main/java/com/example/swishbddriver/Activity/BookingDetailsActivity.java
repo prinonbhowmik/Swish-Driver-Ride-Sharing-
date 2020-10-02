@@ -626,7 +626,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void addAmount(final int price, final int distance, final int trduration) {
 
-        currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+        currentDate = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
         DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("Earnings")
                 .child(driverId).child("Earn").child(id);
@@ -756,7 +756,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
-            String todayDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            String todayDate = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
             if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
@@ -803,7 +803,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     if (driver_id.equals(driverId)) {
                         String pickup_date2 = String.valueOf(data.child("pickupDate").getValue());
 
-                       String date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+                       String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
                         hasDateMatch = date.equals(pickup_date2);
                     } else {
