@@ -226,4 +226,7 @@ public interface ApiInterface {
     @GET("driverbookinglist?")
     Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
 
+    @GET("driverhourlylist?")
+    Call<List<HourlyRideModel>> driverInsideHistory(@Query("id") String driver_id);
+
 }

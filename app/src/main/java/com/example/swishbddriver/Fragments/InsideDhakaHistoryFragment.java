@@ -48,7 +48,7 @@ public class InsideDhakaHistoryFragment extends Fragment {
 
 
 
-       // getData();
+        getData();
         return view;
     }
 
@@ -66,12 +66,12 @@ public class InsideDhakaHistoryFragment extends Fragment {
 
     private void getData() {
         list.clear();
-        Call<List<BookForLaterModel>> call = api.driverRideHistory(driverId);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<HourlyRideModel>> call = api.driverInsideHistory(driverId);
+        call.enqueue(new Callback<List<HourlyRideModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
                 if (response.isSuccessful()){
-                    //list = response.body();
+                    list = response.body();
                     adapter = new InsideDhakaHistoryAdapter(list, getContext());
                     recyclerView.setAdapter(adapter);
                     if (list.size() == 0) {
@@ -86,7 +86,7 @@ public class InsideDhakaHistoryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
             }
         });
     }

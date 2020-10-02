@@ -1,5 +1,6 @@
 package com.example.swishbddriver.Activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
@@ -85,6 +86,12 @@ public class AdvanceBookingActivity extends AppCompatActivity  {
         viewPager = findViewById(R.id.bookingViewPager);
 
     }
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(AdvanceBookingActivity.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 
 }

@@ -48,6 +48,7 @@ public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapte
                 intent.putExtra("bookingId",book.getBookingId());
                 intent.putExtra("carType",book.getCarType());
                 intent.putExtra("userId",book.getCustomerId());
+                intent.putExtra("check", 1);
                 context.startActivity(intent);
             }
         });

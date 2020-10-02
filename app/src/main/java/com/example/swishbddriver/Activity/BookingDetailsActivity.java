@@ -97,7 +97,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price;
+    private int price,check;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -110,6 +110,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         //getDriverInformation();
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
+        check = intent.getIntExtra("check",0);
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
 
@@ -667,8 +668,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void getData() {
-
-        DatabaseReference reference = databaseReference.child("BookForLater").child(car_type).child(id);
+        if (check == 1){
+            DatabaseReference reference = databaseReference.child("BookForLater").child(car_type).child(id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -728,6 +729,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+        if(check==2){
+            Intent intent = getIntent();
+            pickupPlaceTV.setText(intent.getStringExtra("pickUpPlace"));
+            destinationTV.setText(intent.getStringExtra("destinationPlace"));
+            pickupDateTV.setText(intent.getStringExtra("pickUpDate"));
+            pickupTimeTV.setText(intent.getStringExtra("pickUpTime"));
+            carTypeTV.setText(intent.getStringExtra("carType"));
+            takaTV.setText(intent.getStringExtra("price"));
+            details.setVisibility(View.VISIBLE);
+            confirmBtn.setVisibility(View.GONE);
+            cancelBtn.setVisibility(View.GONE);
+        }
     }
 
     private void checkBookingConfirm(String bookingStatus) {

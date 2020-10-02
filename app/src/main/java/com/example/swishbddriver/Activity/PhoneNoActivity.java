@@ -75,7 +75,7 @@ public class PhoneNoActivity extends AppCompatActivity {
                     phn_LT.setErrorEnabled(true);
                     phn_LT.setError("Please Provide Correct Phone Number");
                     editText.requestFocus();
-                    nextBtn.setEnabled(true);
+
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     Call<List<CheckModel>> call = api.checkNo(phone);
@@ -85,19 +85,20 @@ public class PhoneNoActivity extends AppCompatActivity {
                             if (response.isSuccessful()) {
                                 list = response.body();
                                 status = list.get(0).getStatus();
-
+                                phn_LT.setErrorEnabled(false);
                                 if (status.equals("1")) {
                                     startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
                                             .putExtra("id", list.get(0).getDriver_id()).putExtra("status", list.get(0).getActivationStatus()));
-
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                     progressBar.setVisibility(View.GONE);
-                                    nextBtn.setEnabled(true);
+
                                 } else if (status.equals("0")) {
                                     startActivity(new Intent(PhoneNoActivity.this, Otp_Activity.class)
                                             .putExtra("phone", phone)
                                             .putExtra("otp", list.get(0).getOtp()));
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                     progressBar.setVisibility(View.GONE);
-                                    nextBtn.setEnabled(true);
+
                                 }
                             }
                         }
@@ -108,6 +109,7 @@ public class PhoneNoActivity extends AppCompatActivity {
                         }
                     });
                 }
+                nextBtn.setEnabled(true);
             }
         });
 

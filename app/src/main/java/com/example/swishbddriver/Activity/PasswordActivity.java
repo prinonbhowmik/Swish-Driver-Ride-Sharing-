@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 
@@ -28,9 +30,10 @@ import retrofit2.Response;
 public class PasswordActivity extends AppCompatActivity {
 
     private TextInputEditText verify_Et;
+    private TextInputLayout passwordIL;
     private Button loginBtn;
     private ApiInterface api;
-    private String driver_id,password,status;
+    private String driver_id, password, status;
     private LottieAnimationView progressBar;
 
     @Override
@@ -48,44 +51,50 @@ public class PasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 password = verify_Et.getText().toString();
-                hideKeyBoard(getApplicationContext());
-                progressBar.setVisibility(View.VISIBLE);
                 loginBtn.setEnabled(false);
-                Call<List<ProfileModel>> call = api.getData(driver_id);
-                call.enqueue(new Callback<List<ProfileModel>>() {
-                    @Override
-                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                        if (response.isSuccessful()){
-                            List<ProfileModel> models = response.body();
-                            String checkpass = models.get(0).getPassword();
+                if (TextUtils.isEmpty(password)) {
+                    passwordIL.setErrorEnabled(true);
+                    passwordIL.setError("Please Enter Password!");
+                    verify_Et.requestFocus();
+                } else {
+                    Call<List<ProfileModel>> call = api.getData(driver_id);
+                    call.enqueue(new Callback<List<ProfileModel>>() {
+                        @Override
+                        public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                            if (response.isSuccessful()) {
+                                List<ProfileModel> models = response.body();
+                                String checkpass = models.get(0).getPassword();
+                                if (password.matches(checkpass)) {
+                                    passwordIL.setErrorEnabled(false);
+                                    hideKeyBoard(getApplicationContext());
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    SharedPreferences sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("id", driver_id);
+                                    editor.putBoolean("loggedIn", true);
+                                    editor.putString("status", status);
+                                    editor.commit();
+                                    Intent intent1 = new Intent(PasswordActivity.this, DriverMapActivity.class);
+                                    intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent1);
+                                    finish();
+                                    progressBar.setVisibility(View.GONE);
 
-                            if (password.matches(checkpass)){
-
-                                SharedPreferences sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("id",driver_id);
-                                editor.putBoolean("loggedIn",true);
-                                editor.putString("status",status);
-                                editor.commit();
-
-                                startActivity(new Intent(PasswordActivity.this,DriverMapActivity.class)
-                                        .putExtra("id",driver_id));
-                                finish();
-                                progressBar.setVisibility(View.GONE);
-                                loginBtn.setEnabled(true);
-                            }
-                            else{
-                                loginBtn.setEnabled(true);
-                                Toast.makeText(PasswordActivity.this, "Password doesn't march!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    passwordIL.setErrorEnabled(true);
+                                    passwordIL.setError("Password doesn't march!");
+                                    verify_Et.requestFocus();
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                    }
-                });
+                        }
+                    });
+                }
+                loginBtn.setEnabled(true);
             }
         });
 
@@ -96,6 +105,7 @@ public class PasswordActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         api = ApiUtils.getUserService();
         progressBar = findViewById(R.id.progrssbar);
+        passwordIL = findViewById(R.id.passw_LT);
 
     }
 

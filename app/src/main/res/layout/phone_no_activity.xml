@@ -58,7 +58,7 @@
         android:padding="10dp"
         android:textColor="@android:color/white"
         android:layout_below="@+id/phn_LT"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
 

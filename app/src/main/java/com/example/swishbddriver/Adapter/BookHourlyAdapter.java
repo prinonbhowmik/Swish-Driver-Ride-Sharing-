@@ -48,6 +48,7 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
                 intent.putExtra("bookingId",book.getBookingId());
                 intent.putExtra("carType",book.getCarType());
                 intent.putExtra("userId",book.getCustomerId());
+                intent.putExtra("check", 1);
                 context.startActivity(intent);
             }
         });

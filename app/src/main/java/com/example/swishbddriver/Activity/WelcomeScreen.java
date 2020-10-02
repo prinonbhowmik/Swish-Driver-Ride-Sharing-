@@ -92,7 +92,7 @@ public class WelcomeScreen extends AppCompatActivity {
         OnboardingItem itemOnTheWay = new OnboardingItem();
         itemOnTheWay.setImage(R.drawable.welcome_driver3);
         itemOnTheWay.setTitle("Financial Freedom");
-        itemOnTheWay.setDescription("Achieve your financial freedom by providing ride shearing service with SWISH.");
+        itemOnTheWay.setDescription("Achieve your financial freedom by providing ride sharing service with SWISH.");
 
         OnboardingItem itemPayOnline = new OnboardingItem();
         itemPayOnline.setImage(R.drawable.book_car);

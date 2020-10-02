@@ -48,6 +48,7 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
                 intent.putExtra("bookingId",book.getBookingId());
                 intent.putExtra("carType",book.getCarType());
                 intent.putExtra("userId",book.getCustomerId());
+                intent.putExtra("check", 2);
                 context.startActivity(intent);
             }
         });

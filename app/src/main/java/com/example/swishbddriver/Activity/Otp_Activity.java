@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -15,10 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class Otp_Activity extends AppCompatActivity {
 
     private TextInputEditText otp;
+    private TextInputLayout verify_LT;
     private Button otpBtn;
     private String phone, otpCode, userOtp;
     private LottieAnimationView progressBar;
@@ -31,7 +34,7 @@ public class Otp_Activity extends AppCompatActivity {
         Intent intent = getIntent();
         phone = intent.getStringExtra("phone");
         otpCode = intent.getStringExtra("otp");
-
+        verify_LT=findViewById(R.id.verify_LT);
 
         otp = findViewById(R.id.verify_Et);
         otpBtn = findViewById(R.id.otpBtn);
@@ -40,22 +43,34 @@ public class Otp_Activity extends AppCompatActivity {
         otpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
-                hideKeyBoard(getApplicationContext());
                 userOtp = otp.getText().toString().trim();
                 otpBtn.setEnabled(false);
-                if (userOtp.length() != 6) {
-                    otp.setError("OTP must be 6 digit", null);
+                if (TextUtils.isEmpty(userOtp)) {
+                    verify_LT.setErrorEnabled(true);
+                    verify_LT.setError("Please Enter OTP.");
+                    otp.requestFocus();
+                }else if (userOtp.length() != 6) {
+                    verify_LT.setErrorEnabled(true);
+                    verify_LT.setError("OTP must be 6 digit.");
                     otp.requestFocus();
                 }else {
                     if (userOtp.equals(otpCode)) {
+                        verify_LT.setErrorEnabled(false);
+                        progressBar.setVisibility(View.VISIBLE);
+                        hideKeyBoard(getApplicationContext());
                         startActivity(new Intent(Otp_Activity.this, SignUp.class).putExtra("phone", phone));
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        progressBar.setVisibility(View.GONE);
                         finish();
                     } else {
-                        Toast.makeText(Otp_Activity.this, "Wrong OTP", Toast.LENGTH_SHORT).show();
+                        verify_LT.setErrorEnabled(true);
+                        verify_LT.setError("OTP does not match!");
+                        otp.requestFocus();
                     }
                     otpBtn.setEnabled(true);
                 }
+
+                otpBtn.setEnabled(true);
             }
         });
     }
