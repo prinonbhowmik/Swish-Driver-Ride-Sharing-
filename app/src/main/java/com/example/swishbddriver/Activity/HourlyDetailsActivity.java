@@ -160,13 +160,12 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 intent.putExtra("pLat", pickUpLat);
                 intent.putExtra("pLon", pickUpLon);
                 intent.putExtra("pPlace", pickupPlace);
-                intent.putExtra("check", 1);
+                intent.putExtra("check", 4);
                 intent.putExtra("id", id);
                 intent.putExtra("carType", car_type);
                 intent.putExtra("rideStatus", "regular");
                 startActivity(intent);
                 Log.d("checkLat", pickupPlace + pickUpLat + pickUpLon);
-
             }
         });
 

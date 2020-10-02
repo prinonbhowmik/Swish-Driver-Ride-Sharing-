@@ -153,6 +153,14 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
            carType = intent.getStringExtra("carType");
            rideType = intent.getStringExtra("rideStatus");
        }
+       if (check==4){
+           pickUpLat = Double.parseDouble(intent.getStringExtra("pLat"));
+           pickUpLon = Double.parseDouble(intent.getStringExtra("pLon"));
+           pickUpPlace = intent.getStringExtra("pPlace");
+           id = intent.getStringExtra("id");
+           carType = intent.getStringExtra("carType");
+           rideType = intent.getStringExtra("rideStatus");
+       }
 
        passengerNav.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -228,6 +236,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
         if (check==1){
 
             if (rideType.equals("regular")){
+
                 DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
 
                 checkRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -254,6 +263,25 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
 
         if (check==2){
             showDestinationPoint();
+        }
+        if (check==4){
+            DatabaseReference checkRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+
+            checkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String driverId = snapshot.child("driverId").getValue().toString();
+                    if (driverId.equals(userId)){
+                        passengerNav.setVisibility(View.VISIBLE);
+                        showPickUpRoute();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     }
 
