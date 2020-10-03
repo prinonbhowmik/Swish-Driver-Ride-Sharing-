@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,7 +21,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.example.swishbddriver.Activity.AdvanceBookingActivity;
+import com.example.swishbddriver.Activity.BookingDetailsActivity;
 import com.example.swishbddriver.Activity.DriverMapActivity;
+import com.example.swishbddriver.Activity.HourlyDetailsActivity;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +41,7 @@ import java.net.URL;
 public class MyFirebaseMessaging extends FirebaseMessagingService {
     public static final String TAG = "FirebaseMessaging";
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onNewToken(@NonNull String s) {
@@ -77,6 +82,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     }
 
     private void sendOreoNotification(RemoteMessage remoteMessage) {
+        sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+        String carType = sharedPreferences.getString("carType", "");
         String userID = remoteMessage.getData().get("sent");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -87,24 +94,37 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
 
-        Intent intent = new Intent(getApplicationContext(), DriverMapActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("bookingId", bookingId);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        if(toActivity.equals("booking_details")) {
+            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+            Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        OreoNotification oreoNotification = new OreoNotification(this);
-        Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
-                defaultSound, icon);
-        int i = 0;
-        if (j > 0) {
-            i = j;
+            OreoNotification oreoNotification = new OreoNotification(this);
+            Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                    defaultSound, icon);
+            int i = 0;
+            if (j > 0) {
+                i = j;
 
+            }
+            oreoNotification.getManager().notify(i, builder.build());
+        }else if (toActivity.equals("hourly_details")) {
+            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+            Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            OreoNotification oreoNotification = new OreoNotification(this);
+            Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                    defaultSound, icon);
+            int i = 0;
+            if (j > 0) {
+                i = j;
+
+            }
+            oreoNotification.getManager().notify(i, builder.build());
         }
-        oreoNotification.getManager().notify(i, builder.build());
-
     }
 
 
@@ -146,7 +166,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     }
 
     private void sendNotification(RemoteMessage remoteMessage) {
-
+        sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+        String carType = sharedPreferences.getString("carType", "");
         String userID = remoteMessage.getData().get("sent");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -156,29 +177,47 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
 
-        Intent intent = new Intent(getApplicationContext(), DriverMapActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("bookingId", bookingId);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_car)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
-                .setContentIntent(pendingIntent);
-        NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(toActivity.equals("booking_details") ){
+            Intent intent = new Intent(getApplicationContext(), BookingDetailsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(R.drawable.ic_car)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                    .setContentIntent(pendingIntent);
+            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int i = 0;
-        if (j > 0) {
-            i = j;
+            int i = 0;
+            if (j > 0) {
+                i = j;
+            }
+
+            noti.notify(i, builder.build());
+        } else if(toActivity.equals("hourly_details") ){
+            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(R.drawable.ic_car)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                    .setContentIntent(pendingIntent);
+            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            int i = 0;
+            if (j > 0) {
+                i = j;
+            }
+
+            noti.notify(i, builder.build());
         }
-
-        noti.notify(i, builder.build());
-
 
     }
 }

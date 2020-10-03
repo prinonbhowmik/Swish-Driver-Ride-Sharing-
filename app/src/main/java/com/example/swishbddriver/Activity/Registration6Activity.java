@@ -96,11 +96,11 @@ public class Registration6Activity extends AppCompatActivity {
 
     private void showAlertDialog() {
             androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(this);
-            dialog.setTitle("Registration Done!");
+            dialog.setTitle("Registration Complete!");
             dialog.setIcon(R.drawable.ic_leave_24);
             dialog.setMessage("We will get other information from owner of the car. Please wait 24 hours for verification.");
             dialog.setCancelable(false);
-            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivity(new Intent(Registration6Activity.this,DriverMapActivity.class));

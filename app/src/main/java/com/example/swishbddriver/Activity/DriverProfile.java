@@ -74,7 +74,6 @@ public class DriverProfile extends AppCompatActivity {
                         public void onSuccess() {}
                         @Override
                         public void onError(Exception e) {
-                            Log.d("kiKahini", e.getMessage());
                         }
                     });
                     }
@@ -100,13 +99,11 @@ public class DriverProfile extends AppCompatActivity {
                     if(editable.equals("false")){
                         checkEdit=false;
                     }
-                    Log.d("name", list.get(0).getFull_name());
                 }
             }
 
             @Override
             public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-                Log.d("kahiniKi", t.getMessage());
             }
         });
 

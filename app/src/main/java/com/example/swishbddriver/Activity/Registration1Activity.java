@@ -262,6 +262,7 @@ public class Registration1Activity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<CarModleYear>> call, Response<List<CarModleYear>> response) {
                 if (response.isSuccessful()) {
+                    carYearList.clear();
                     for (int i = 0; i < response.body().size(); i++) {
                         //Car_Name = response.body().get(i).getCar_name();
                         carYearList.add(response.body().get(i).getModel_year());
@@ -332,4 +333,7 @@ public class Registration1Activity extends AppCompatActivity {
         manager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
     }
 
+    public void registrationBack(View view) {
+        finish();
+    }
 }

@@ -20,7 +20,7 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
-            android:text="(Step 2) Nationa ID Back"
+            android:text="(Step 2) National ID Back"
             android:textColor="@color/themColor"
             android:textSize="24sp"
             android:textStyle="bold" />
