@@ -31,12 +31,12 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="Earn" />
+                android:text="Earnings" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="Paid" />
+                android:text="Commissions Paid" />
         </com.google.android.material.tabs.TabLayout>
 
 
