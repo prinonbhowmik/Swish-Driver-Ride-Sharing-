@@ -121,11 +121,12 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //checkDate();
-                if (rat < 2.5) {
+                if (!(rat > 2)){
                     blockAlert();
                 }else {
                     if (hasDateMatch) {
-                        Toasty.info(HourlyDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
+                        dateMatchAlertDialog();
+                        //Toasty.info(HourlyDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
                     } else {
                         confirmAlertDialog();
                     }
@@ -735,11 +736,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     if (driver_id.equals(driverId)) {
                         String pickup_date2 = String.valueOf(data.child("pickupDate").getValue());
 
-                        String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+                        //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
-                        hasDateMatch = date.equals(pickup_date2);
-                    } else {
-                        hasDateMatch = false;
+                        hasDateMatch = pickupDate.equals(pickup_date2);
                     }
                 }
 
@@ -774,7 +773,27 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         AlertDialog alertDialog = dialog.create();
         alertDialog.show();
     }
-
+    private void dateMatchAlertDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Date Match!");
+        dialog.setIcon(R.drawable.ic_leave_24);
+        dialog.setMessage("You have already a ride on this day.\nDo you want to confirm this ride ?");
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                confirmBooked();
+            }
+        });
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
+    }
     private void confirmBooked() {
 
         DatabaseReference ref = databaseReference.child("BookHourly").child(car_type).child(id);
@@ -817,7 +836,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void sendNotification(final String id, final String title, final String message, final String toActivity) {
-        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("profile");
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
         Query query = tokens.orderByKey().equalTo(customerID);
 
         query.addValueEventListener(new ValueEventListener() {
