@@ -225,7 +225,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void endAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("End Trip!!");
-        dialog.setIcon(R.drawable.logo);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("Did you want to end this trip ?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -360,7 +360,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("Offline..!!");
-        dialog.setIcon(R.drawable.logo);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("You are currently offline.\nDid you want to go online?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Go OnLine", new DialogInterface.OnClickListener() {
@@ -387,7 +387,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void startTripAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(BookingDetailsActivity.this);
         dialog.setTitle("Alert..!!");
-        dialog.setIcon(R.drawable.logo);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("Did you picked Up your passenger?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -822,7 +822,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void confirmAlertDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Confirm");
-        dialog.setIcon(R.drawable.ic_leave_24);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("Do you want to confirm this ride ?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -844,7 +844,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void dateMatchAlertDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Date Match!");
-        dialog.setIcon(R.drawable.ic_leave_24);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("You have already a ride on this day.\nDo you want to confirm this ride ?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -944,7 +944,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void cancelAlertDialog() {
         AlertDialog.Builder dialog2 = new AlertDialog.Builder(this);
         dialog2.setTitle("Cancel");
-        dialog2.setIcon(R.drawable.ic_leave_24);
+        dialog2.setIcon(R.drawable.logo_circle);
         dialog2.setMessage("If you cancel this ride, your ratting will be decreased.\nDo you want to cancel this ride?");
         dialog2.setCancelable(false);
         dialog2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {

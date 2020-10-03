@@ -40,7 +40,7 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
         String price=book.getPrice();
         int price1= Integer.parseInt(price);
         int commission=(price1*15)/100;
-        holder.taka.setText("৳ "+commission);
+        holder.taka.setText("৳ "+(price1-commission));
 
     }
 
