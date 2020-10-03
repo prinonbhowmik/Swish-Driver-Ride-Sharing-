@@ -845,7 +845,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(id, R.drawable.ic_car, message, title, customerID, toActivity);
+                    Data data = new Data(id, R.mipmap.ic_noti_foreground, message, title, customerID, toActivity);
 
                     Sender sender = new Sender(data, token.getToken());
 
