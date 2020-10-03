@@ -728,6 +728,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                                         int actualPrice = price/2;
                                                          int updatewallet = wallet - actualPrice;
+                                                         discount = actualPrice;
 
                                                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
                                                                 .child(customerID).child(id);
