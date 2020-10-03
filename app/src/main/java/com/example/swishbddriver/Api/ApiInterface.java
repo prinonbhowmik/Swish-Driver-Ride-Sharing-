@@ -8,6 +8,7 @@ import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
 import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.Model.CheckModel;
+import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.HourlyRideModel;
@@ -63,6 +64,7 @@ public interface ApiInterface {
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
+
     @GET("driverinfo?")
     Call<List<DriverInfo>> getRegistrationData(@Query("id") String id);
 
@@ -106,8 +108,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("hourlyrideconfirm/{bookingId}")
     Call<List<HourlyRideModel>> confirmHourRide(@Path("bookingId") String bookingId,
-                                            @Field("bookingStatus") String bookingStatus,
-                                            @Field("driverId") String driverId);
+                                                @Field("bookingStatus") String bookingStatus,
+                                                @Field("driverId") String driverId);
 
     @FormUrlEncoded
     @PUT("bookingtripstart/{bookingId}")
@@ -121,11 +123,11 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("hourlyridestart/{bookingId}")
     Call<List<HourlyRideModel>> startHourTripData(@Path("bookingId") String bookingId,
-                                                @Field("pickUpTime") String pickupTime,
-                                                @Field("pickUpLat") String pickupLat,
-                                                @Field("pickUpLon") String pickupLon,
-                                                @Field("pickUpPlace") String pickupPlace,
-                                                @Field("rideStatus") String rideStatus);
+                                                  @Field("pickUpTime") String pickupTime,
+                                                  @Field("pickUpLat") String pickupLat,
+                                                  @Field("pickUpLon") String pickupLon,
+                                                  @Field("pickUpPlace") String pickupPlace,
+                                                  @Field("rideStatus") String rideStatus);
 
     @FormUrlEncoded
     @PUT("bookingtripend/{bookingId}")
@@ -139,11 +141,11 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("hourlytripend/{bookingId}")
     Call<List<HourlyRideModel>> endHourTripData(@Path("bookingId") String bookingId,
-                                              @Field("rideStatus") String rideStatus,
-                                              @Field("destinationLat") String destinationLat,
-                                              @Field("destinationLon") String destinationLon,
-                                              @Field("destinationPlace") String destinationPlace,
-                                              @Field("endTime") String endTime);
+                                                @Field("rideStatus") String rideStatus,
+                                                @Field("destinationLat") String destinationLat,
+                                                @Field("destinationLon") String destinationLon,
+                                                @Field("destinationPlace") String destinationPlace,
+                                                @Field("endTime") String endTime);
 
     @GET("bookingrate?")
     Call<List<RidingRate>> getPrice(@Query("id") String car_type);
@@ -156,7 +158,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("hourlypriceupdate/{bookingId}")
     Call<List<HourlyRideModel>> hourpriceUpdate(@Path("bookingId") String bookingId,
-                                              @Field("price") String price);
+                                                @Field("price") String price);
 
     @FormUrlEncoded
     @PUT("rideCountUpdate/{driver_id}")
@@ -192,33 +194,38 @@ public interface ApiInterface {
                                          @Field("partner_name") String partner_name,
                                          @Field("partner_phone") String partner_phone,
                                          @Field("partner_address") String partner_address);
+
     @FormUrlEncoded
     @PUT("drivercarinfo/{driver_id}")
     Call<List<DriverInfo>> driverCarInfoWithOwner(@Path("driver_id") String driver_id,
-                                         @Field("car_name") String car_name,
-                                         @Field("car_model") String car_model,
-                                         @Field("production_year") String production_year,
-                                         @Field("plate_number") String plate_number,
-                                         @Field("car_owner") String car_owner);
+                                                  @Field("car_name") String car_name,
+                                                  @Field("car_model") String car_model,
+                                                  @Field("production_year") String production_year,
+                                                  @Field("plate_number") String plate_number,
+                                                  @Field("car_owner") String car_owner);
+
     @FormUrlEncoded
     @PUT("drivercarinfo/{driver_id}")
     Call<List<DriverInfo>> partnerInfo(@Path("driver_id") String driver_id,
-                                         @Field("partner_name") String partner_name,
-                                         @Field("partner_phone") String partner_phone,
-                                         @Field("partner_address") String partner_address);
+                                       @Field("partner_name") String partner_name,
+                                       @Field("partner_phone") String partner_phone,
+                                       @Field("partner_address") String partner_address);
 
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverNid1(@Part("driver_id") RequestBody driver_id,
-                                     @Part MultipartBody.Part nidFront);
+                                      @Part MultipartBody.Part nidFront);
+
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverNid2(@Part("driver_id") RequestBody driver_id,
                                       @Part MultipartBody.Part nidBack);
+
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverLicense1(@Part("driver_id") RequestBody driver_id,
-                                      @Part MultipartBody.Part licenseFront);
+                                          @Part MultipartBody.Part licenseFront);
+
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverLicense2(@Part("driver_id") RequestBody driver_id,
@@ -227,7 +234,7 @@ public interface ApiInterface {
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> selfie(@Part("driver_id") RequestBody driver_id,
-                                          @Part MultipartBody.Part selfie);
+                                  @Part MultipartBody.Part selfie);
 
     @GET("driverbookinglist?")
     Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
@@ -237,5 +244,14 @@ public interface ApiInterface {
 
     @GET("paymentshow?")
     Call<List<PayHistoryModel>> driverPayHistory(@Query("id") String driver_id);
+
+    @GET("couponshow?")
+    Call<List<CouponShow>> getValidCoupon(@Query("customer_id") String customer_id);
+
+    @FormUrlEncoded
+    @PUT("walletupdate/{id}")
+    Call<List<CustomerProfile>> walletValue(@Path("id") String customer_id,
+                                            @Field("wallet") int wallet);
+
 
 }

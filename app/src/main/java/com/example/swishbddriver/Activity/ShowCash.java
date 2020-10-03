@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.database.DataSnapshot;
@@ -31,9 +32,10 @@ import retrofit2.Response;
 public class ShowCash extends AppCompatActivity {
 
     Button collectBtn;
-    TextView pickupPlaceTV,destinationPlaceTV,cashTxt;
-    int price,distance,duration,check;
-    String pickUpPlace,destinationPlace, driverId,carType;
+    TextView pickupPlaceTV,destinationPlaceTV,cashTxt,distanceTv,durationTv,final_Txt,discountTv;
+    int price,check,realPrice,discount;
+    double distance,duration;
+    String pickUpPlace,destinationPlace, driverId,carType,payment,customerId;
     private ImageView info;
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
@@ -46,21 +48,56 @@ public class ShowCash extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
         api = ApiUtils.getUserService();
         driverId = sharedPreferences.getString("id","");
+
         final Intent intent = getIntent();
         price = intent.getIntExtra("price",0);
         pickUpPlace = intent.getStringExtra("pPlace");
         destinationPlace = intent.getStringExtra("dPlace");
+        payment = intent.getStringExtra("payment");
+        distance = intent.getDoubleExtra("distance",0);
+        duration = intent.getDoubleExtra("duration",0);
+        realPrice=intent.getIntExtra("realPrice",0);
+        discount = intent.getIntExtra("discount", 0);
         check = intent.getIntExtra("check",0);
+        customerId = intent.getStringExtra("custid");
 
         init();
 
-        cashTxt.setText("৳ " +price);
+        if (payment.equals("cash")){
+            cashTxt.setText("৳ " +price);
+            final_Txt.setText("৳ " +price);
+
+        }else if(payment.equals("wallet")){
+            cashTxt.setText("৳ " +price);
+            final_Txt.setText("৳ " +realPrice);
+            discountTv.setText("৳ " +discount);
+        }
+
         pickupPlaceTV.setText(pickUpPlace);
         destinationPlaceTV.setText(destinationPlace);
+
+        if (check == 1){
+            distanceTv.setText("Distance : "+String.format("%.2f",distance)+" km");
+            durationTv.setText("Duration : "+String.format("%.2f",duration)+"min");
+        }
 
         collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Call<List<CustomerProfile>> listCall = api.walletValue(customerId, 0);
+                listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                    @Override
+                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                    }
+                });
+
                 Intent intent1 = new Intent(ShowCash.this,DriverMapActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent1);
@@ -76,8 +113,7 @@ public class ShowCash extends AppCompatActivity {
                 call.enqueue(new Callback<List<ProfileModel>>() {
                     @Override
                     public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                        List<ProfileModel> list = response.body();
-                        carType = list.get(0).getCarType();
+
                         Toast.makeText(ShowCash.this, "" + carType, Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(ShowCash.this, FareDetails.class).putExtra("carType", carType));
 
@@ -89,27 +125,18 @@ public class ShowCash extends AppCompatActivity {
                     }
                 });
 
-               /* DatabaseReference typeRef = FirebaseDatabase.getInstance().getReference("DriversProfile").child(driverId);
-                typeRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ProfileModel model = snapshot.getValue(ProfileModel.class);
-                        carType = model.getCarType();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });*/
-
-
             }
         });
+
+
     }
 
     private void init() {
         collectBtn = findViewById(R.id.collectBtn);
+        final_Txt = findViewById(R.id.final_Txt);
+        distanceTv = findViewById(R.id.distance);
+        durationTv = findViewById(R.id.duration);
+        discountTv = findViewById(R.id.discount_Txt);
         pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
         destinationPlaceTV = findViewById(R.id.destinationPlaceTV);
         cashTxt = findViewById(R.id.cashTxt);
@@ -119,7 +146,18 @@ public class ShowCash extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+
+
         startActivity(new Intent(ShowCash.this,DriverMapActivity.class));
         finish();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+
 }
