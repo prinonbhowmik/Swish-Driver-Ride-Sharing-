@@ -77,8 +77,10 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/kmLayout"
         android:layout_below="@+id/locationLayout"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/distance"
@@ -95,6 +97,25 @@
             android:textSize="14sp"
             android:layout_alignParentRight="true"
             android:text="Duration"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/locationLayout"
+        android:id="@+id/hourLayout"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/hourTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_centerHorizontal="true"
+            android:text="Hour :"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"/>
 

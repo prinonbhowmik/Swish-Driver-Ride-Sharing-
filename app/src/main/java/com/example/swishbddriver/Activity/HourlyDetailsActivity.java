@@ -33,6 +33,8 @@ import com.example.swishbddriver.ForApi.DistanceResponse;
 import com.example.swishbddriver.ForApi.Element;
 import com.example.swishbddriver.ForApi.RestUtil;
 import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.CouponShow;
+import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
@@ -100,6 +102,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private List<ProfileModel> list;
     private ApiInterface api;
     private String price;
+    private String payment;
+    private int actualIntPrice;
+    private int setCoupon;
+    private int discount=0;
+    private float realprice=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,7 +338,515 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String rideStatus = snapshot.child("rideStatus").getValue().toString();
                 if (rideStatus.equals("End")) {
-                    getCashData();
+                    DatabaseReference cashRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+                    cashRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
+                            pickupTime = book.getPickUpTime();
+                            endTime = book.getEndTime();
+
+                            DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+                            rideRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    String rideStatus = snapshot.child("rideStatus").getValue().toString();
+                                    if (rideStatus.equals("End")) {
+                                        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+                                        try {
+
+                                            Date date1 = myFormat.parse(pickupTime);
+                                            Date date2 = myFormat.parse(endTime);
+
+                                            long difference = date2.getTime() - date1.getTime();
+
+                                            float hours = (float) difference/(1000 * 60 * 60);
+                                            float price = Math.abs(hours);
+
+                                            DatabaseReference hourRef = FirebaseDatabase.getInstance().getReference("HourlyRate").child(carType);
+                                            hourRef.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    String priceRate = snapshot.getValue().toString();
+                                                    int carTypeRate = Integer.parseInt(priceRate);
+                                                    double actualPrice = carTypeRate*price;
+                                                    actualIntPrice = (int) actualPrice;
+                                                    if (price<2.00){
+
+                                                        actualIntPrice = carTypeRate*2;
+                                                        DatabaseReference payRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(car_type).child(id);
+                                                        payRef.addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                payment = snapshot.child("payment").getValue().toString();
+
+                                                                if (payment.equals("cash")) {
+                                                                    Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
+                                                                    call1.enqueue(new Callback<List<CouponShow>>() {
+                                                                        @Override
+                                                                        public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
+
+                                                                            if (response.body() == null) {
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                                                                call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+
+                                                                            }
+
+                                                                            else {
+                                                                                List<CouponShow> list = response.body();
+                                                                                setCoupon = list.get(0).getSetCoupons();
+                                                                                if (setCoupon == 1) {
+                                                                                    discount = list.get(0).getAmount();
+                                                                                    realprice = (actualIntPrice * discount) / 100;
+
+                                                                                    Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+                                                                                    getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                        @Override
+                                                                                        public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                                                                                            int wallet = (int) (response.body().get(0).getWallet() + realprice);
+
+                                                                                            Call<List<CustomerProfile>> listCall = api.walletValue(customerID, wallet);
+                                                                                            listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                                @Override
+                                                                                                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                                }
+
+                                                                                                @Override
+                                                                                                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                                }
+                                                                                            });
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                        }
+                                                                                    });
+
+                                                                                    DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                            .child(customerID).child(id);
+                                                                                    updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                    DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                            .child(carType).child(id);
+                                                                                    newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                    Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                                                                    call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                        @Override
+                                                                                        public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                        }
+                                                                                    });
+
+                                                                                    addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Call<List<CouponShow>> call, Throwable t) {
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                                else if (payment.equals("wallet")) {
+
+                                                                    Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+                                                                    getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                        @Override
+                                                                        public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                            List<CustomerProfile> list = response.body();
+                                                                            int wallet = list.get(0).getWallet();
+                                                                            int halfPrice = actualIntPrice/2;
+
+                                                                            if (wallet <= halfPrice){
+
+                                                                                int actualPrice = actualIntPrice-wallet;
+                                                                                discount = wallet;
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualPrice));
+                                                                                call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                Call<List<CustomerProfile>> listCall = api.walletValue(customerID, 0);
+                                                                                listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+                                                                            }
+                                                                            else if (wallet > halfPrice){
+
+                                                                                int actualPrice = (int) (actualIntPrice/2);
+                                                                                int updatewallet = wallet - actualPrice;
+                                                                                discount = actualPrice;
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(actualPrice));
+                                                                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                                                                                listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+
+                                                    }
+
+                                                    else{
+
+                                                        DatabaseReference payRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(car_type).child(id);
+                                                        payRef.addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                payment = snapshot.child("payment").getValue().toString();
+
+                                                                if (payment.equals("cash")) {
+                                                                    Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
+                                                                    call1.enqueue(new Callback<List<CouponShow>>() {
+                                                                        @Override
+                                                                        public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
+
+                                                                            if (response.body() == null) {
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                                                                call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+
+                                                                            }
+                                                                            else {
+                                                                                List<CouponShow> list = response.body();
+                                                                                setCoupon = list.get(0).getSetCoupons();
+                                                                                if (setCoupon == 1) {
+                                                                                    discount = list.get(0).getAmount();
+                                                                                    realprice = (actualIntPrice * discount) / 100;
+
+                                                                                    Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+                                                                                    getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                        @Override
+                                                                                        public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                                                                                            int wallet = (int) (response.body().get(0).getWallet() + realprice);
+
+                                                                                            Call<List<CustomerProfile>> listCall = api.walletValue(customerID, wallet);
+                                                                                            listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                                @Override
+                                                                                                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                                }
+
+                                                                                                @Override
+                                                                                                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                                }
+                                                                                            });
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                        }
+                                                                                    });
+
+                                                                                    DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                            .child(customerID).child(id);
+                                                                                    updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                    DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                            .child(carType).child(id);
+                                                                                    newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                                                                                    Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                                                                                    call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                        @Override
+                                                                                        public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                        }
+                                                                                    });
+
+
+                                                                                    addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Call<List<CouponShow>> call, Throwable t) {
+
+                                                                        }
+                                                                    });
+                                                                }
+
+                                                                else if (payment.equals("wallet")) {
+
+                                                                    Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+                                                                    getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                        @Override
+                                                                        public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                            List<CustomerProfile> list = response.body();
+                                                                            int wallet = list.get(0).getWallet();
+                                                                            int halfPrice = actualIntPrice/2;
+
+                                                                            if (wallet <= halfPrice){
+
+                                                                                int actualPrice = actualIntPrice-wallet;
+                                                                                discount = wallet;
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualPrice));
+                                                                                call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                Call<List<CustomerProfile>> listCall = api.walletValue(customerID, 0);
+                                                                                listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+                                                                            }
+                                                                            else if (wallet > halfPrice){
+
+                                                                                int actualPrice = (int) (actualIntPrice/2);
+                                                                                int updatewallet = wallet - actualPrice;
+                                                                                discount = actualPrice;
+
+                                                                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                                                                                        .child(customerID).child(id);
+                                                                                updateRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                                                                                        .child(carType).child(id);
+                                                                                newRef.child("price").setValue(String.valueOf(actualPrice));
+
+                                                                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(actualPrice));
+                                                                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                                                                                listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                                    }
+                                                                                });
+
+                                                                                addEarning(actualIntPrice,pickupPlace,destinationPlace,actualPrice,price,discount,payment);
+
+
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+
+                                                    }
+
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
             @Override
@@ -340,6 +855,21 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addEarning(int actualIntPrice, String pickupPlace, String destinationPlace, double actualPrice, float price, int discount, String payment) {
+        Intent intent = new Intent(HourlyDetailsActivity.this,ShowCash.class);
+        intent.putExtra("price", actualIntPrice);
+        intent.putExtra("pPlace", pickupPlace);
+        intent.putExtra("dPlace", destinationPlace);
+        intent.putExtra("realPrice", actualPrice);
+        intent.putExtra("hour", price);
+        intent.putExtra("discount", discount);
+        intent.putExtra("payment", payment);
+        intent.putExtra("check", 2);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        finish();
+        startActivity(intent);
     }
 
     private void checkDriverOnLine() {
@@ -456,166 +986,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void getCashData() {
-        DatabaseReference cashRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-        cashRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
-                pickupTime = book.getPickUpTime();
-                endTime = book.getEndTime();
-
-                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-                rideRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String rideStatus = snapshot.child("rideStatus").getValue().toString();
-                        if (rideStatus.equals("End")) {
-                            SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-                            try {
-
-                                Date date1 = myFormat.parse(pickupTime);
-                                Date date2 = myFormat.parse(endTime);
-
-                                long difference = date2.getTime() - date1.getTime();
-
-                                float hours = (float) difference/(1000 * 60 * 60);
-                                float price = Math.abs(hours);
-
-                                Log.d("checkhour", String.valueOf(price));
-
-                                DatabaseReference hourRef = FirebaseDatabase.getInstance().getReference("HourlyRate").child(carType);
-                                hourRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        String priceRate = snapshot.getValue().toString();
-                                        int carTypeRate = Integer.parseInt(priceRate);
-                                        double actualPrice = carTypeRate*price;
-                                        int actualIntPrice = (int) actualPrice;
-                                        if (price<2.00){
-                                            actualIntPrice = carTypeRate*2;
-                                            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
-                                                    .child(customerID).child(id);
-                                            updateRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                                            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
-                                                    .child(carType).child(id);
-                                            newRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                                            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
-                                            call2.enqueue(new Callback<List<HourlyRideModel>>() {
-                                                @Override
-                                                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-                                                }
-                                                @Override
-                                                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-                                                }
-                                            });
-                                            addamountToEarnings();
-
-                                            Intent intent = new Intent(HourlyDetailsActivity.this,ShowCash.class);
-                                            intent.putExtra("price", actualIntPrice);
-                                            intent.putExtra("pPlace", pickupPlace);
-                                            intent.putExtra("dPlace", destinationPlace);
-                                            intent.putExtra("check", 2);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                            finish();
-                                        }
-                                        else{
-                                            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
-                                                    .child(customerID).child(id);
-                                            updateRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                                            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
-                                                    .child(carType).child(id);
-                                            newRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                                            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
-                                            call2.enqueue(new Callback<List<HourlyRideModel>>() {
-                                                @Override
-                                                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-                                                }
-                                                @Override
-                                                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-                                                }
-                                            });
-                                            addamountToEarnings();
-
-                                            Intent intent = new Intent(HourlyDetailsActivity.this,ShowCash.class);
-                                            intent.putExtra("price", actualIntPrice);
-                                            intent.putExtra("pPlace", pickupPlace);
-                                            intent.putExtra("dPlace", destinationPlace);
-                                            intent.putExtra("check", 2);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                            finish();
-                                        }
-
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
-
-    private void addamountToEarnings() {
-    }
-
-
-   /* private void addAmount() {
-
-        currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
-
-        DatabaseReference amountRef = FirebaseDatabase.getInstance().getReference().child("Earnings")
-                .child(driverId).child("Earn").child(id);
-        HashMap<String, Object> userInfo = new HashMap<>();
-        int due = (price * 15) / 100;
-        userInfo.put("date", currentDate);
-        userInfo.put("due", due);
-        userInfo.put("price", price);
-        amountRef.setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                Intent intent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
-                intent.putExtra("price", price);
-                intent.putExtra("pPlace", pickupPlace);
-                intent.putExtra("dPlace", destinationPlace);
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }*/
 
     private void getDriverInformation() {
         DatabaseReference driverRef = databaseReference.child("DriversProfile").child(driverId);

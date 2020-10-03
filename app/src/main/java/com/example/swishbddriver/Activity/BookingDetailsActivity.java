@@ -476,10 +476,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void getCashData() {
-
-    }
-
     private void calculate(String pickUpLat, String pickUpLon, String destinationLat
             , String destinationLon, String pickupPlace, String destinationPlace) {
         Locale locale = new Locale("en");

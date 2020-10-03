@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +33,12 @@ import retrofit2.Response;
 public class ShowCash extends AppCompatActivity {
 
     Button collectBtn;
-    TextView pickupPlaceTV,destinationPlaceTV,cashTxt,distanceTv,durationTv,final_Txt,discountTv;
-    int price,check,realPrice,discount;
-    double distance,duration;
-    String pickUpPlace,destinationPlace, driverId,carType,payment,customerId;
+    TextView pickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv,hourTv;
+    int price, check, realPrice, discount;
+    double distance, duration;
+    float hourPrice;
+    RelativeLayout hourLayout,kmLayout;
+    String pickUpPlace, destinationPlace, driverId, carType, payment, customerId;
     private ImageView info;
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
@@ -45,40 +48,48 @@ public class ShowCash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cash);
 
-        sharedPreferences = getSharedPreferences("MyRef",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         api = ApiUtils.getUserService();
-        driverId = sharedPreferences.getString("id","");
+        driverId = sharedPreferences.getString("id", "");
 
         final Intent intent = getIntent();
-        price = intent.getIntExtra("price",0);
+        price = intent.getIntExtra("price", 0);
         pickUpPlace = intent.getStringExtra("pPlace");
         destinationPlace = intent.getStringExtra("dPlace");
         payment = intent.getStringExtra("payment");
-        distance = intent.getDoubleExtra("distance",0);
-        duration = intent.getDoubleExtra("duration",0);
-        realPrice=intent.getIntExtra("realPrice",0);
+
+        realPrice = intent.getIntExtra("realPrice", 0);
         discount = intent.getIntExtra("discount", 0);
-        check = intent.getIntExtra("check",0);
+        check = intent.getIntExtra("check", 0);
         customerId = intent.getStringExtra("custid");
+
 
         init();
 
-        if (payment.equals("cash")){
-            cashTxt.setText("৳ " +price);
-            final_Txt.setText("৳ " +price);
+        if (payment.equals("cash")) {
+            cashTxt.setText("৳ " + price);
+            final_Txt.setText("৳ " + price);
 
-        }else if(payment.equals("wallet")){
-            cashTxt.setText("৳ " +price);
-            final_Txt.setText("৳ " +realPrice);
-            discountTv.setText("৳ " +discount);
+        } else if (payment.equals("wallet")) {
+            cashTxt.setText("৳ " + price);
+            final_Txt.setText("৳ " + realPrice);
+            discountTv.setText("৳ " + discount);
         }
 
         pickupPlaceTV.setText(pickUpPlace);
         destinationPlaceTV.setText(destinationPlace);
 
-        if (check == 1){
-            distanceTv.setText("Distance : "+String.format("%.2f",distance)+" km");
-            durationTv.setText("Duration : "+String.format("%.2f",duration)+"min");
+        if (check == 1) {
+            kmLayout.setVisibility(View.VISIBLE);
+            distance = intent.getDoubleExtra("distance", 0);
+            duration = intent.getDoubleExtra("duration", 0);
+
+            distanceTv.setText("Distance : " + String.format("%.2f", distance) + " km");
+            durationTv.setText("Duration : " + String.format("%.2f", duration) + "min");
+        } else if (check == 2) {
+            hourLayout.setVisibility(View.VISIBLE);
+            hourPrice = intent.getFloatExtra("hour", 0);
+            hourTv.setText("Hour : "+hourPrice+" hrs");
         }
 
         collectBtn.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +109,7 @@ public class ShowCash extends AppCompatActivity {
                     }
                 });
 
-                Intent intent1 = new Intent(ShowCash.this,DriverMapActivity.class);
+                Intent intent1 = new Intent(ShowCash.this, DriverMapActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent1);
                 finish();
@@ -139,6 +150,9 @@ public class ShowCash extends AppCompatActivity {
         discountTv = findViewById(R.id.discount_Txt);
         pickupPlaceTV = findViewById(R.id.pickupPlaceTV);
         destinationPlaceTV = findViewById(R.id.destinationPlaceTV);
+        kmLayout = findViewById(R.id.kmLayout);
+        hourTv = findViewById(R.id.hourTxt);
+        hourLayout = findViewById(R.id.hourLayout);
         cashTxt = findViewById(R.id.cashTxt);
         info = findViewById(R.id.infoIV);
     }
@@ -148,8 +162,7 @@ public class ShowCash extends AppCompatActivity {
         super.onBackPressed();
 
 
-
-        startActivity(new Intent(ShowCash.this,DriverMapActivity.class));
+        startActivity(new Intent(ShowCash.this, DriverMapActivity.class));
         finish();
     }
 
