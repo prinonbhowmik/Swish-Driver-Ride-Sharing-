@@ -810,7 +810,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(HourlyDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_ride_details");
+                    sendNotification(id, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_hourly_ride_details");
                 }
             }
         });
@@ -912,7 +912,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     snackbar.show();
                     addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
-                    sendNotification(id, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
+                    sendNotification(id, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
 
 
                 }

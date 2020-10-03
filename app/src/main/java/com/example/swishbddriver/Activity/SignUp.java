@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -98,6 +99,28 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(terms.isChecked()){
+                    terms.setTextColor(getResources().getColor(R.color.blue));
+                    conditions.setTextColor(Color.BLUE);
+
+                }else
+                    terms.setTextColor(getResources().getColor(R.color.black));
+                conditions.setTextColor(Color.BLACK);
+
+            }
+        });
+        conditions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(SignUp.this,TermsAndConditions.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+            }
+        });
         driverImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

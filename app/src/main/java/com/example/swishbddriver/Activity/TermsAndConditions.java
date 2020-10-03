@@ -19,7 +19,7 @@ public class TermsAndConditions extends AppCompatActivity {
 
         webView=findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://rentcarbd.com/about-us/");
+        webView.loadUrl("https://swish.com.bd/privacy-policy");
 
         WebSettings webSettings=webView.getSettings();
         webSettings.setJavaScriptEnabled(true);

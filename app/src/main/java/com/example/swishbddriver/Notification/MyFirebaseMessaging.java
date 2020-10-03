@@ -56,9 +56,9 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String sent = remoteMessage.getData().get("sent");
+        /*String sent = remoteMessage.getData().get("sent");
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null && sent.equals(firebaseUser.getUid())) {
+        if (firebaseUser != null && sent.equals(firebaseUser.getUid())) {*/
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 sendOreoNotification(remoteMessage);
@@ -66,7 +66,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 sendNotification(remoteMessage);
             }
 
-        }
+       // }
     }
 
     private void updateToken(String refreshToken) {
@@ -82,6 +82,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
         String bookingId = remoteMessage.getData().get("bookingId");
+        String toActivity = remoteMessage.getData().get("toActivity");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
@@ -151,6 +152,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
         String bookingId = remoteMessage.getData().get("bookingId");
+        String toActivity = remoteMessage.getData().get("toActivity");
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
 
