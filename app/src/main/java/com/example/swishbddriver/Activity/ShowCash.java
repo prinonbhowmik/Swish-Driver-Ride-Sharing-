@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
@@ -34,11 +36,11 @@ public class ShowCash extends AppCompatActivity {
 
     Button collectBtn;
     TextView pickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv,hourTv;
-    int price, check, realPrice, discount;
+    int price, check, realPrice, discount,setCoupon,realprice;
     double distance, duration;
     float hourPrice;
     RelativeLayout hourLayout,kmLayout;
-    String pickUpPlace, destinationPlace, driverId, carType, payment, customerId;
+    String pickUpPlace, destinationPlace, driverId, carType, payment, customerID,tripId;
     private ImageView info;
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
@@ -57,23 +59,118 @@ public class ShowCash extends AppCompatActivity {
         pickUpPlace = intent.getStringExtra("pPlace");
         destinationPlace = intent.getStringExtra("dPlace");
         payment = intent.getStringExtra("payment");
-
-        realPrice = intent.getIntExtra("realPrice", 0);
-        discount = intent.getIntExtra("discount", 0);
+        tripId = intent.getStringExtra("tripid");
         check = intent.getIntExtra("check", 0);
-        customerId = intent.getStringExtra("custid");
+        customerID = intent.getStringExtra("custid");
 
 
         init();
 
         if (payment.equals("cash")) {
-            cashTxt.setText("৳ " + price);
-            final_Txt.setText("৳ " + price);
+
+            Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
+            call1.enqueue(new Callback<List<CouponShow>>() {
+                @Override
+                public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
+                    if (response.body() == null){
+                        cashTxt.setText("৳ " + price);
+                        final_Txt.setText("৳ " + price);
+                    }
+                    else{
+                        List<CouponShow> list = response.body();
+                        setCoupon = list.get(0).getSetCoupons();
+                        if (setCoupon == 1){
+                            discount = list.get(0).getAmount();
+                            realprice = (price * discount) / 100;
+
+                            Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+                            getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                @Override
+                                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                                    int wallet = response.body().get(0).getWallet() + realprice;
+
+                                    Call<List<CustomerProfile>> listCall = api.walletValue(customerID, wallet);
+                                    listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                                        @Override
+                                        public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                                @Override
+                                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                                }
+                            });
+
+                            if (check == 1) {
+                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
+                                        .child(customerID).child(tripId);
+                                updateRef.child("price").setValue(String.valueOf(price));
+
+                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
+                                        .child(carType).child(tripId);
+                                newRef.child("price").setValue(String.valueOf(price));
+
+                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(tripId, String.valueOf(price));
+                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                                    @Override
+                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+                                    }
+                                });
+
+                                cashTxt.setText("৳ " + price);
+                                final_Txt.setText("৳ " + price);
+                            }
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CouponShow>> call, Throwable t) {
+
+                }
+            });
+
 
         } else if (payment.equals("wallet")) {
-            cashTxt.setText("৳ " + price);
+
+            Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+            getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                @Override
+                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                    List<CustomerProfile> list = response.body();
+                    int wallet = list.get(0).getWallet();
+                    int halfPrice = price/2;
+
+                    if (wallet <= halfPrice){
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                }
+            });
+
+
+
+            /*cashTxt.setText("৳ " + price);
             final_Txt.setText("৳ " + realPrice);
-            discountTv.setText("৳ " + discount);
+            discountTv.setText("৳ " + discount);*/
         }
 
         pickupPlaceTV.setText(pickUpPlace);
@@ -96,7 +193,7 @@ public class ShowCash extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Call<List<CustomerProfile>> listCall = api.walletValue(customerId, 0);
+                Call<List<CustomerProfile>> listCall = api.walletValue(customerID, 0);
                 listCall.enqueue(new Callback<List<CustomerProfile>>() {
                     @Override
                     public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
