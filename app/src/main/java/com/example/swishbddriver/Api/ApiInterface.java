@@ -10,6 +10,7 @@ import com.example.swishbddriver.Model.CarModleYear;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
+import com.example.swishbddriver.Model.DriverAllRidePrice;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.PayHistoryModel;
@@ -238,6 +239,9 @@ public interface ApiInterface {
 
     @GET("driverbookinglist?")
     Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
+
+    @GET("driverallrideprice?")
+    Call<List<DriverAllRidePrice>> driverAllRidePrice(@Query("id") String driver_id);
 
     @GET("driverhourlylist?")
     Call<List<HourlyRideModel>> driverInsideHistory(@Query("id") String driver_id);

@@ -55,7 +55,7 @@ public class EarningHistory extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(EarningHistory.this,DriverMapActivity.class));
+        startActivity(new Intent(EarningHistory.this,EarningsActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

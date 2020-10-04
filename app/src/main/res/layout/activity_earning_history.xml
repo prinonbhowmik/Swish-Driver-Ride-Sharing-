@@ -31,7 +31,7 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="Earnings" />
+                android:text="My Earnings" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="200dp"

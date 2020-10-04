@@ -60,30 +60,7 @@
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/themColor"
                 android:textSize="18sp" />
-            <TextView
-                android:id="@+id/coma"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/bookingIdTV"
-                android:layout_marginStart="2dp"
-                android:text=","
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@+id/pick_dateTv"
-                android:textColor="@color/themColor"
-                android:textSize="18sp" />
-            <TextView
-                android:id="@+id/pickup_timeTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/bookingIdTV"
-                android:layout_marginStart="2dp"
-                android:text="10:00:00AM"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@+id/coma"
-                android:textColor="@color/themColor"
-                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/earnTv"
                 android:layout_width="wrap_content"

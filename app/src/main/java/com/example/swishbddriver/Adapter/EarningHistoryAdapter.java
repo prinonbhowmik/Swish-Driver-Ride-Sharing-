@@ -11,16 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.DriverAllRidePrice;
 import com.example.swishbddriver.R;
 
 import java.util.List;
 
 public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAdapter.ViewHolder> {
-    private List<BookForLaterModel> bookForLaterModelList;
+    private List<DriverAllRidePrice> driverAllRidePriceList;
     private Context context;
 
-    public EarningHistoryAdapter(List<BookForLaterModel> bookForLaterModelList, Context context) {
-        this.bookForLaterModelList = bookForLaterModelList;
+    public EarningHistoryAdapter(List<DriverAllRidePrice> driverAllRidePriceList, Context context) {
+        this.driverAllRidePriceList = driverAllRidePriceList;
         this.context = context;
     }
 
@@ -33,9 +34,8 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        BookForLaterModel book=bookForLaterModelList.get(position);
+        final DriverAllRidePrice book=driverAllRidePriceList.get(position);
         holder.bookingIdTV.setText(book.getBookingId());
-        holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
         String price=book.getPrice();
         int price1= Integer.parseInt(price);
@@ -46,15 +46,14 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
 
     @Override
     public int getItemCount() {
-        return bookForLaterModelList.size();
+        return driverAllRidePriceList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView bookingIdTV,pickupTimeTV,pickupDate,taka;
+        private TextView bookingIdTV,pickupDate,taka;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             bookingIdTV=itemView.findViewById(R.id.bookingIdTV);
-            pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
             taka = itemView.findViewById(R.id.earnTv);
         }

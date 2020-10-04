@@ -19,6 +19,7 @@ import com.example.swishbddriver.Adapter.EarningHistoryAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.DriverAllRidePrice;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +40,7 @@ public class EarnHistoryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EarningHistoryAdapter adapter;
-    private List<BookForLaterModel> list;
+    private List<DriverAllRidePrice> list;
     private String driverId;
     private TextView noHistoryTxt;
     private String carType;
@@ -64,12 +65,13 @@ public class EarnHistoryFragment extends Fragment {
 
 
     private void getData() {
-        Call<List<BookForLaterModel>> call = api.driverRideHistory(driverId);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        list.clear();
+        Call<List<DriverAllRidePrice>> call = api.driverAllRidePrice(driverId);
+        call.enqueue(new Callback<List<DriverAllRidePrice>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<DriverAllRidePrice>> call, Response<List<DriverAllRidePrice>> response) {
                 if (response.isSuccessful()){
-                    list.clear();
+
                     list = response.body();
                     adapter = new EarningHistoryAdapter(list, getContext());
                     recyclerView.setAdapter(adapter);
@@ -84,7 +86,7 @@ public class EarnHistoryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<DriverAllRidePrice>> call, Throwable t) {
             }
         });
     }
