@@ -81,8 +81,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
             currentDate, rideStatus, pickUpCity, destinationCity, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
 
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
-    private double  travelduration;
-    private double  kmdistance;
+    private double travelduration;
+    private double kmdistance;
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private String driver_name, driver_phone, payment;
@@ -100,7 +100,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price, check, realprice=0, discount=0, setCoupon;
+    private int price, check, realprice = 0, discount = 0, setCoupon;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -263,8 +263,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
 
-        /*DatabaseReference rideAddRef = FirebaseDatabase.getInstance().getReference("DriversProfile").child(driverId);
-        rideAddRef.child("rideCount").setValue(ride + 1);*/
         Call<List<ProfileModel>> call2 = api.getData(driverId);
         call2.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -492,8 +490,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void calculate(String pickUpLat, String pickUpLon, String destinationLat
-            , String destinationLon, String pickupPlace, String destinationPlace) {
+    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace) {
 
 
         String origins = pickUpLat + "," + pickUpLon;
@@ -523,79 +520,79 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     distance = element.getDistance().getValue();
                     trduration = element.getDuration().getValue();
 
-                    kmdistance = distance / 1000;
-                    travelduration = trduration / 60;
 
                 }
 
             }
+
             @Override
             public void onFailure(Call<DistanceResponse> call, Throwable t) {
             }
         });
 
-                    Log.d("checkValue",kmdistance+","+travelduration);
+        kmdistance = distance / 1000;
+        travelduration = trduration / 60;
 
-                    Call<List<RidingRate>> call1 = api.getPrice(carType);
-                    call1.enqueue(new Callback<List<RidingRate>>() {
+        Log.d("checkValue", kmdistance + "," + travelduration);
+
+        Call<List<RidingRate>> call1 = api.getPrice(carType);
+        call1.enqueue(new Callback<List<RidingRate>>() {
+            @Override
+            public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
+                if (response.isSuccessful()) {
+                    List<RidingRate> rate = response.body();
+
+                    int kmRate = rate.get(0).getKm_charge();
+                    int minRate = rate.get(0).getMin_charge();
+                    int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
+
+                    int kmPrice = (int) (kmRate * kmdistance);
+                    int minPrice = (int) (minRate * travelduration);
+
+                    price = kmPrice + minPrice + minimumRate;
+
+                    DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
+                            .child(customerID).child(id);
+                    updateRef.child("price").setValue(String.valueOf(price));
+
+                    DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
+                            .child(carType).child(id);
+                    newRef.child("price").setValue(String.valueOf(price));
+
+                    Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price));
+                    call2.enqueue(new Callback<List<BookForLaterModel>>() {
                         @Override
-                        public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
-                            if (response.isSuccessful()) {
-                                List<RidingRate>  rate = response.body();
+                        public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
 
-                                int kmRate = rate.get(0).getKm_charge();
-                                int minRate = rate.get(0).getMin_charge();
-                                int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
-
-                                int kmPrice = (int) (kmRate * kmdistance);
-                                int minPrice = (int) (minRate * travelduration);
-
-                                price = kmPrice + minPrice + minimumRate;
-
-                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
-                                        .child(customerID).child(id);
-                                updateRef.child("price").setValue(String.valueOf(price));
-
-                                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
-                                        .child(carType).child(id);
-                                newRef.child("price").setValue(String.valueOf(price));
-
-                                Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price));
-                                call2.enqueue(new Callback<List<BookForLaterModel>>() {
-                                    @Override
-                                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
-
-                                    }
-                                });
-
-
-                            }
                         }
 
                         @Override
-                        public void onFailure(Call<List<RidingRate>> call, Throwable t) {
+                        public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
 
                         }
                     });
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RidingRate>> call, Throwable t) {
+
+            }
+        });
+
         Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
-        intent.putExtra("tripId",id);
-        intent.putExtra("customerId",customerID);
+        intent.putExtra("tripId", id);
+        intent.putExtra("customerId", customerID);
         intent.putExtra("check", 1);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         finish();
         startActivity(intent);
 
-
-
-
     }
 
-    private void addAmount(int price,double travelduration,double kmdistance, int realprice,int discount,String payment) {
+    private void addAmount(int price, double travelduration, double kmdistance, int realprice, int discount, String payment) {
 
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
@@ -612,9 +609,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-
-
 
 
     }

@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,9 +19,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -106,10 +109,15 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private int actualIntPrice;
     private int setCoupon;
     private int discount = 0;
-    private float realprice = 0;
     private Date date1, date2;
     private int carTypeRate, actualPrice;
     private String priceRate;
+    private boolean endTripClicked = false;
+    private Dialog dialog;
+    Button collectBtn;
+    RelativeLayout hourLayout,kmLayout;
+    TextView cashpickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv,hourTv;
+    private String hourPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +132,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
         check = intent.getIntExtra("check", 0);
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
 
         getData();
 
@@ -141,13 +157,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
+
 
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,6 +227,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
 
 
+
+
     }
 
     private void init() {
@@ -282,11 +294,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = dialog.create();
         alertDialog.show();
-    }
-
-    public void getDriverRide() {
-
-
     }
 
     private void confirmEndTrip() {
@@ -359,7 +366,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 payment = book.getPayment();
                 SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
                 try {
-
                     date1 = myFormat.parse(pickupTime);
                     date2 = myFormat.parse(endTime);
                 } catch (ParseException e) {
@@ -374,25 +380,40 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 carTypeRate = Integer.parseInt(priceRate);
                 actualPrice = (int) (carTypeRate * price);
                 actualIntPrice = (int) actualPrice;
-                if (price < 2.00) {
 
+                if (price < 2.00) {
                     actualIntPrice = carTypeRate * 2;
                 }
-                Intent intent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
-                intent.putExtra("price", actualIntPrice);
-                intent.putExtra("pPlace", pickupPlace);
-                intent.putExtra("dPlace", destinationPlace);
-                intent.putExtra("hour", price);
-                intent.putExtra("custid", customerID);
-                intent.putExtra("tripid", id);
-                intent.putExtra("check", 2);
-                intent.putExtra("payment", payment);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                        .child(customerID).child(id);
+                updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                        .child(carType).child(id);
+                newRef.child("price").setValue(String.valueOf(actualIntPrice));
+
+                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                    @Override
+                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                    }
+                });
+
+                Intent endTripIntent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
+                endTripIntent.putExtra("customerId", customerID);
+                endTripIntent.putExtra("tripId", id);
+                endTripIntent.putExtra("check", 2);
+
+                endTripIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(endTripIntent);
                 finish();
-                HourlyDetailsActivity.this.startActivity(intent);
-
-
             }
 
             @Override
@@ -503,11 +524,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-                neomorphFrameLayoutStart.setVisibility(View.GONE);
-
-                neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-                endTripBtn.setVisibility(View.VISIBLE);
-
 
             }
         });
@@ -519,6 +535,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = dialog.create();
         alertDialog.show();
+
+        neomorphFrameLayoutStart.setVisibility(View.GONE);
+
+        neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+        endTripBtn.setVisibility(View.VISIBLE);
     }
 
 
@@ -573,8 +594,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     checkDate();
 
                     checkBookingConfirm(bookingStatus);
-
-                    getDriverRide();
 
                     if (rideStatus.equals("Start")) {
                         startTripBtn.setVisibility(View.GONE);
@@ -657,7 +676,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
     }
 
-
     private void confirmAlertDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Confirm");
@@ -739,8 +757,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     private void sendNotification(final String id, final String title, final String message, final String toActivity) {

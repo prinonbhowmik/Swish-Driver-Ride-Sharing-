@@ -136,9 +136,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         checkDriverOnLine();
 
-        // getInstantCustomerData();
-
-        // getRequestCall();
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
