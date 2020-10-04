@@ -526,6 +526,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     kmdistance = distance / 1000;
                     travelduration = trduration / 60;
 
+                }
+
+            }
+            @Override
+            public void onFailure(Call<DistanceResponse> call, Throwable t) {
+            }
+        });
+
                     Log.d("checkValue",kmdistance+","+travelduration);
 
                     Call<List<RidingRate>> call1 = api.getPrice(carType);
@@ -544,9 +552,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                 price = kmPrice + minPrice + minimumRate;
 
-                                takaTV.setText("৳ " + price);
-
-                              /*  DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
+                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
                                         .child(customerID).child(id);
                                 updateRef.child("price").setValue(String.valueOf(price));
 
@@ -565,32 +571,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                     public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
 
                                     }
-                                });*/
-
-                                DatabaseReference payRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(car_type).child(id);
-                                payRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        payment = snapshot.child("payment").getValue().toString();
-                                        Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
-                                        intent.putExtra("price", price);
-                                        intent.putExtra("pPlace", pickupPlace);
-                                        intent.putExtra("dPlace", destinationPlace);
-                                        intent.putExtra("distance", kmdistance);
-                                        intent.putExtra("duration", travelduration);
-                                        intent.putExtra("custid", customerID);
-                                        intent.putExtra("tripid",id);
-                                        intent.putExtra("check", 1);
-                                        intent.putExtra("payment", payment);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        finish();
-                                        startActivity(intent);
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
                                 });
 
 
@@ -602,14 +582,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                         }
                     });
+        Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
+        intent.putExtra("tripId",id);
+        intent.putExtra("customerId",customerID);
+        intent.putExtra("check", 1);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        finish();
+        startActivity(intent);
 
-                }
-
-            }
-            @Override
-            public void onFailure(Call<DistanceResponse> call, Throwable t) {
-            }
-        });
 
 
 

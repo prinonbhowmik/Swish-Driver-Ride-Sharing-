@@ -15,10 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
-import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
-import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.database.DataSnapshot;
@@ -46,28 +43,36 @@ public class ShowCash extends AppCompatActivity {
     private ImageView info;
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
+    private int wallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cash);
-
+        init();
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         api = ApiUtils.getUserService();
         driverId = sharedPreferences.getString("id", "");
         carType = sharedPreferences.getString("carType", "");
 
         Intent intent = getIntent();
-        price = intent.getIntExtra("price", 0);
-        pickUpPlace = intent.getStringExtra("pPlace");
-        destinationPlace = intent.getStringExtra("dPlace");
-        payment = intent.getStringExtra("payment");
-        tripId = intent.getStringExtra("tripid");
+        tripId = intent.getStringExtra("tripId");
+        tripId = intent.getStringExtra("customerId");
         check = intent.getIntExtra("check", 0);
-        customerID = intent.getStringExtra("custid");
 
 
-        init();
+
+        if(check==1){
+            getBookingData();
+        }if(check==2){
+            getHourlyData();
+        }
+
+
+
+
+
+/*
 
         if (payment.equals("cash")) {
 
@@ -378,9 +383,11 @@ public class ShowCash extends AppCompatActivity {
 
 
 
-            /*cashTxt.setText("৳ " + price);
+            */
+/*cashTxt.setText("৳ " + price);
             final_Txt.setText("৳ " + realPrice);
-            discountTv.setText("৳ " + discount);*/
+            discountTv.setText("৳ " + discount);*//*
+
         }
 
         pickupPlaceTV.setText(pickUpPlace);
@@ -398,6 +405,7 @@ public class ShowCash extends AppCompatActivity {
             hourPrice = intent.getFloatExtra("hour", 0);
             hourTv.setText("Hour : "+hourPrice+" hrs");
         }
+*/
 
         collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,6 +444,46 @@ public class ShowCash extends AppCompatActivity {
 
     }
 
+    private void getHourlyData() {
+    }
+
+    private void getBookingData() {
+        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
+                .child(carType).child(tripId);
+        newRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    pickupPlaceTV.setText(snapshot.child("pickUpPlace").getValue().toString());
+                    destinationPlaceTV.setText(snapshot.child("destinationPlace").getValue().toString());
+                    cashTxt.setText(snapshot.child("price").getValue().toString());
+
+                    String method=snapshot.child("payment").getValue().toString();
+                    if(method.equals("cash")){
+
+                        discountTv.setText("0");
+                        final_Txt.setText(snapshot.child("price").getValue().toString());
+                    }else if(method.equals("wallet")){
+                        getCustomerWallet();
+                        String S_Price=snapshot.child("price").getValue().toString();
+                        int TotalPrice=Integer.parseInt(S_Price);
+                        int discount=TotalPrice/2;
+                        if(discount>=wallet){
+                            discountTv.setText(""+discount);
+                        }
+                        final_Txt.setText(TotalPrice-discount);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void init() {
         collectBtn = findViewById(R.id.collectBtn);
         final_Txt = findViewById(R.id.final_Txt);
@@ -466,5 +514,20 @@ public class ShowCash extends AppCompatActivity {
 
     }
 
+    private  void getCustomerWallet(){
+        Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+        getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+            @Override
+            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                List<CustomerProfile> list = response.body();
+                wallet = list.get(0).getWallet();
+            }
+
+            @Override
+            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+            }
+        });
+    }
 
 }
