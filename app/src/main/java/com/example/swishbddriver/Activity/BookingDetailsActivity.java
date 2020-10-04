@@ -329,7 +329,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        rideRef.addValueEventListener(new ValueEventListener() {
+       /* rideRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String rideStatus = snapshot.child("rideStatus").getValue().toString();
@@ -360,7 +360,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
         calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace);
 
@@ -495,23 +495,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void calculate(String pickUpLat, String pickUpLon, String destinationLat
             , String destinationLon, String pickupPlace, String destinationPlace) {
 
-        /*Locale locale = new Locale("en");
-        Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
-        List<Address> addresses = null;
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(pickUpLat), Double.parseDouble(pickUpLon), 1);
-            pickUpCity = addresses.get(0).getLocality();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(destinationLat), Double.parseDouble(destinationLon), 1);
-            destinationCity = addresses.get(0).getLocality();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
 
         String origins = pickUpLat + "," + pickUpLon;
         String destination = destinationLat + "," + destinationLon;
@@ -563,7 +546,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                 takaTV.setText("৳ " + price);
 
-                                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
+                              /*  DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides")
                                         .child(customerID).child(id);
                                 updateRef.child("price").setValue(String.valueOf(price));
 
@@ -582,7 +565,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                     public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
 
                                     }
-                                });
+                                });*/
 
                                 DatabaseReference payRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(car_type).child(id);
                                 payRef.addValueEventListener(new ValueEventListener() {
@@ -595,6 +578,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                         intent.putExtra("dPlace", destinationPlace);
                                         intent.putExtra("distance", kmdistance);
                                         intent.putExtra("duration", travelduration);
+                                        intent.putExtra("custid", customerID);
                                         intent.putExtra("tripid",id);
                                         intent.putExtra("check", 1);
                                         intent.putExtra("payment", payment);
@@ -619,11 +603,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         }
                     });
 
-
                 }
 
             }
-
             @Override
             public void onFailure(Call<DistanceResponse> call, Throwable t) {
             }
@@ -926,7 +908,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> my_response) {
                                     if (my_response.code() == 200) {
                                         if (my_response.body().success != 1) {
-                                            Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }

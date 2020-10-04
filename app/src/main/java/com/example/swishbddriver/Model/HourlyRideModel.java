@@ -14,12 +14,12 @@ public class HourlyRideModel {
     private String driverId;
     private String rideStatus;
     private String endTime;
+    private String payment;
 
     public HourlyRideModel() {
     }
 
-    public HourlyRideModel(String bookingId, String pickUpLat, String pickUpLon, String pickUpPlace,
-                           String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime) {
+    public HourlyRideModel(String bookingId, String pickUpLat, String pickUpLon, String pickUpPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment) {
         this.bookingId = bookingId;
         this.pickUpLat = pickUpLat;
         this.pickUpLon = pickUpLon;
@@ -33,6 +33,7 @@ public class HourlyRideModel {
         this.driverId = driverId;
         this.rideStatus = rideStatus;
         this.endTime = endTime;
+        this.payment = payment;
     }
 
     public String getBookingId() {
@@ -85,5 +86,9 @@ public class HourlyRideModel {
 
     public String getEndTime() {
         return endTime;
+    }
+
+    public String getPayment() {
+        return payment;
     }
 }

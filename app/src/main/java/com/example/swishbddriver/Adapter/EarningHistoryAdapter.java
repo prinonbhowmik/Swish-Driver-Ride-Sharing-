@@ -35,13 +35,13 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final DriverAllRidePrice book=driverAllRidePriceList.get(position);
-        holder.bookingIdTV.setText(book.getBookingId());
+       /* holder.bookingIdTV.setText(book.getBookingId());
         holder.pickupDate.setText(book.getPickUpDate());
         String price=book.getPrice();
         int price1= Integer.parseInt(price);
         int commission=(price1*15)/100;
         holder.taka.setText("৳ "+(price1-commission));
-
+*/
     }
 
     @Override
