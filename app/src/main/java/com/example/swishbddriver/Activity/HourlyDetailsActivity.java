@@ -1281,6 +1281,19 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         DatabaseReference ref2 = databaseReference.child("CustomerHourRides").child(customerID).child(id);
         ref2.child("bookingStatus").setValue("Pending");
         ref2.child("driverId").setValue("");
+
+        Call<List<HourlyRideModel>> call = api.confirmHourRide(id, "Pending", "");
+        call.enqueue(new Callback<List<HourlyRideModel>>() {
+            @Override
+            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void getDriverRat() {

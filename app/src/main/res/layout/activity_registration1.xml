@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/tool"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/text"
@@ -126,6 +126,8 @@
                 android:hint="Plate Number"
                 android:textColorHint="#000"
                 app:boxBackgroundMode="outline"
+                app:helperText="Example: Dhaka Metro Ga 12-1234"
+                app:helperTextEnabled="true"
                 app:boxCornerRadiusBottomStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp">
 

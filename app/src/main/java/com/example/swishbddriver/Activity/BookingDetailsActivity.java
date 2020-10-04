@@ -993,6 +993,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
         DatabaseReference ref2 = databaseReference.child("CustomerRides").child(customerID).child(id);
         ref2.child("bookingStatus").setValue("Pending");
         ref2.child("driverId").setValue("");
+
+        Call<List<BookForLaterModel>> call = api.confirmRide(id, "Pending", "");
+        call.enqueue(new Callback<List<BookForLaterModel>>() {
+            @Override
+            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void getDriverRat() {

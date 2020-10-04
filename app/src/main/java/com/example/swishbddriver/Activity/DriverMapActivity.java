@@ -434,7 +434,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                     dialog.setTitle("Alert..!!");
                     dialog.setIcon(R.drawable.ic_leave_24);
-                    dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                    dialog.setMessage("You didn't complete your registration. If you have submitted your documents, then please wait for approval.");
                     dialog.setCancelable(false);
                     dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override

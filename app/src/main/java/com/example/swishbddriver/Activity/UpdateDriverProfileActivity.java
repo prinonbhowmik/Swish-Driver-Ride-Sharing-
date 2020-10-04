@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +84,8 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     private ApiInterface api;
     private static int SPLASH_TIME_OUT2=5000;
     private static int SPLASH_TIME_OUT=1000;
+    private RadioGroup genderGroup;
+    private RadioButton radioMale,radioFemale,radioOther;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +105,33 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         gender_Et.setText(gender1);
         date_Et.setText(dob1);
 
+        if(gender1.equals("Male")){
+            radioMale.setChecked(true);
+        }if(gender1.equals("Female")){
+            radioFemale.setChecked(true);
+        }if(gender1.equals("Other")){
+            radioOther.setChecked(true);
+        }
+
+
+        genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i){
+                    case R.id.radioMale:
+                        gender = "Male";
+                        break;
+                    case R.id.radioFemale:
+                        gender = "Female";
+                        break;
+                    case R.id.radioOther:
+                        gender = "Other";
+                        break;
+                }
+                gender_Et.setText(gender);
+
+            }
+        });
         getDriverInformation();
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,9 +174,6 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
                 } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     email_Et.setError("Enter valid email");
                     email_Et.requestFocus();
-                }else if (TextUtils.isEmpty(gender)) {
-                    gender_Et.setError("Enter Gender");
-                    gender_Et.requestFocus();
                 }else if (TextUtils.isEmpty(dob)) {
                     date_Et.setError("Select Date Of Birth");
                     date_Et.requestFocus();
@@ -307,6 +335,10 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         progressBar = findViewById(R.id.progrssbar);
+        genderGroup=findViewById(R.id.radio);
+        radioMale=findViewById(R.id.radioMale);
+        radioFemale=findViewById(R.id.radioFemale);
+        radioOther=findViewById(R.id.radioOther);
     }
 
 
