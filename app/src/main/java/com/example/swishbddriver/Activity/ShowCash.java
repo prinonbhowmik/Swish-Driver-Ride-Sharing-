@@ -481,8 +481,10 @@ g
                         });
                     }
                 }
-                else if(check==2){
+
+                if(check==2){
                     if (couponActive==true){
+                        Toast.makeText(ShowCash.this, ""+addWalletBalance, Toast.LENGTH_SHORT).show();
                         Call<List<CustomerProfile>> listCall = api.walletValue(customerID, walletBalance+addWalletBalance);
                         listCall.enqueue(new Callback<List<CustomerProfile>>() {
                             @Override
@@ -571,10 +573,6 @@ g
                     }
                 }
 
-
-
-
-
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("wallet", 0);
                 editor.commit();
@@ -642,7 +640,6 @@ g
         cashTxt = findViewById(R.id.cashTxt);
         info = findViewById(R.id.infoIV);
     }
-
 
     private void getHourlyData() {
         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
