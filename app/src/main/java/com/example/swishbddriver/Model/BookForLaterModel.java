@@ -17,11 +17,17 @@ public class BookForLaterModel {
     private String rideStatus;
     private String endTime;
     private String payment;
+    private String discount;
+    private String updatePrice;
 
     public BookForLaterModel() {
     }
 
-    public BookForLaterModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment) {
+    public BookForLaterModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat,
+                             String destinationLon, String pickUpPlace, String destinationPlace,
+                             String pickUpDate, String pickUpTime, String customerId, String price,
+                             String carType, String bookingStatus, String driverId, String rideStatus,
+                             String endTime, String payment, String discount, String updatePrice) {
         this.bookingId = bookingId;
         this.pickUpLat = pickUpLat;
         this.pickUpLon = pickUpLon;
@@ -39,6 +45,8 @@ public class BookForLaterModel {
         this.rideStatus = rideStatus;
         this.endTime = endTime;
         this.payment = payment;
+        this.discount = discount;
+        this.updatePrice = updatePrice;
     }
 
     public String getBookingId() {
@@ -107,5 +115,13 @@ public class BookForLaterModel {
 
     public String getPayment() {
         return payment;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public String getUpdatePrice() {
+        return updatePrice;
     }
 }
