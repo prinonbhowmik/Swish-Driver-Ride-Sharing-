@@ -682,7 +682,7 @@ g
                         halfPrice = price / 2;
 
                         if (walletBalance <= halfPrice) {
-                            Toast.makeText(ShowCash.this, ""+walletBalance, Toast.LENGTH_SHORT).show();
+
                             walletLow = true;
                             actualPrice = price - walletBalance;
                             discount = walletBalance;
