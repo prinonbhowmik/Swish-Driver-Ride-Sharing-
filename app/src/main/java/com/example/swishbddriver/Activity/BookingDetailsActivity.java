@@ -519,10 +519,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Element element = response.body().getRows().get(0).getElements().get(0);
                     distance = element.getDistance().getValue();
                     trduration = element.getDuration().getValue();
-
-
                 }
-
             }
 
             @Override
