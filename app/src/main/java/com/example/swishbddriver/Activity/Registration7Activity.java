@@ -47,6 +47,10 @@ public class Registration7Activity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(oPhone)) {
                     ownerPhoneET.setError("Enter Owner Phone Number");
                     ownerPhoneET.requestFocus();
+                }else if (oPhone.length() != 11) {
+                    ownerPhoneET.setError("Please Provide Correct Phone Number");
+                    ownerPhoneET.requestFocus();
+
                 } else if (TextUtils.isEmpty(oAddress)) {
                     ownerAddressET.setError("Enter Owner Address");
                     ownerAddressET.requestFocus();
