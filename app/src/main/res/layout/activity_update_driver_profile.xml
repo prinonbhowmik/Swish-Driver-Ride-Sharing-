@@ -269,7 +269,7 @@
             android:layout_toEndOf="@id/genderTxt"
             android:outlineSpotShadowColor="@color/colorPrimary"
             android:outlineAmbientShadowColor="@color/colorPrimary"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <RadioButton
                 android:id="@+id/radioMale"

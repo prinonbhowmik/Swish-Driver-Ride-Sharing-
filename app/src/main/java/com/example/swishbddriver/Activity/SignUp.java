@@ -95,6 +95,10 @@ public class SignUp extends AppCompatActivity {
                     case R.id.radioFemale:
                         gender = "Female";
                         break;
+
+                    case R.id.radioOther:
+                        gender = "Other";
+                        break;
                 }
             }
         });

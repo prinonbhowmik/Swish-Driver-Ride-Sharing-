@@ -199,6 +199,14 @@
                     android:text="Female"
                     android:textColor="@color/themColor"
                     android:textSize="20dp" />
+                <RadioButton
+                    android:id="@+id/radioOther"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="Other"
+                    android:textColor="@color/themColor"
+                    android:textSize="20dp" />
 
             </RadioGroup>
             <RelativeLayout

@@ -409,12 +409,14 @@ g
 
                             }
                         });
+
                     }
-                }else if (payment.equals("wallet")){
+                }
+                else if (payment.equals("wallet")){
                     if (walletHigh) {
                     if (check == 1) {
                         //BookForLater
-                        Call<List<BookForLaterModel>> call2 = api.priceUpdate(tripId, String.valueOf(actualPrice));
+                        Call<List<BookForLaterModel>> call2 = api.priceUpdate(tripId, String.valueOf(price),String.valueOf(discount),String.valueOf(actualPrice));
                         call2.enqueue(new Callback<List<BookForLaterModel>>() {
                             @Override
                             public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
@@ -445,7 +447,7 @@ g
                     else if (check == 2) {
                         //Hourly Ride
 
-                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(tripId, String.valueOf(actualPrice));
+                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(tripId, String.valueOf(price),String.valueOf(discount),String.valueOf(actualPrice));
                         call2.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
                             public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -476,7 +478,7 @@ g
                     if (check == 1) {
 
 
-                        Call<List<BookForLaterModel>> call2 = api.priceUpdate(tripId, String.valueOf(actualPrice));
+                        Call<List<BookForLaterModel>> call2 = api.priceUpdate(tripId, String.valueOf(price),String.valueOf(discount),String.valueOf(actualPrice));
                         call2.enqueue(new Callback<List<BookForLaterModel>>() {
                             @Override
                             public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
@@ -505,7 +507,7 @@ g
                     }
                     else if (check == 2) {
 
-                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(tripId, String.valueOf(actualPrice));
+                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(tripId, String.valueOf(price),String.valueOf(discount),String.valueOf(actualPrice));
                         call2.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
                             public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -628,7 +630,6 @@ g
                                     cashTxt.setText("৳ " + price);
                                     final_Txt.setText("৳ " + price);
                                     discountTv.setText("0");
-                                    addWalletBalance = (price * 15) / 100;
                                 } else {
                                     List<CouponShow> list = response.body();
                                     setCoupon = list.get(0).getSetCoupons();
@@ -641,8 +642,6 @@ g
                                         cashTxt.setText("৳ " + price);
                                         final_Txt.setText("৳ " + price);
                                         discountTv.setText("0");
-                                    }else{
-                                        addWalletBalance = (price * 15) / 100;
                                     }
                                 }
                             }
@@ -693,8 +692,6 @@ g
 
     private void getBookingData() {
 
-
-
         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater")
                 .child(carType).child(tripId);
         newRef.addValueEventListener(new ValueEventListener() {
@@ -708,36 +705,30 @@ g
 
 
                     if (payment.equals("cash")) {
+                        getwalletData();
                         Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
                         call1.enqueue(new Callback<List<CouponShow>>() {
                             @Override
                             public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
-                                if (response.body() == null) {
-                                    cashTxt.setText("৳ " + price);
-                                    final_Txt.setText("৳ " + price);
-                                    discountTv.setText("0");
-                                    addWalletBalance = (price * 15) / 100;
-                                } else {
+                                if (response.body() != null) {
                                     List<CouponShow> list = response.body();
                                     setCoupon = list.get(0).getSetCoupons();
                                     if (setCoupon == 1) {
+                                        couponActive = true;
                                         discount = list.get(0).getAmount();
                                         addWalletBalance = (price * discount) / 100;
-                                        couponActive = true;
-                                        cashTxt.setText("৳ " + price);
-                                        final_Txt.setText("৳ " + price);
-                                        discountTv.setText("0");
-                                    }else{
-                                        addWalletBalance = (price * 15) / 100;
+
                                     }
                                 }
                             }
-
                             @Override
                             public void onFailure(Call<List<CouponShow>> call, Throwable t) {
 
                             }
                         });
+                        cashTxt.setText("৳ " + price);
+                        final_Txt.setText("৳ " + price);
+                        discountTv.setText("0");
                     }
 
                     else if (payment.equals("wallet")) {

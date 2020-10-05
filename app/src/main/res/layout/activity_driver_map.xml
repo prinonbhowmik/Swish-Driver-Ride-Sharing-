@@ -62,9 +62,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="40dp"
-            android:backgroundTint="@android:color/white"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/themColor2"
             android:clickable="true"
+            app:fabSize="mini"
             android:src="@drawable/ic_location_searching_24" />
 
 

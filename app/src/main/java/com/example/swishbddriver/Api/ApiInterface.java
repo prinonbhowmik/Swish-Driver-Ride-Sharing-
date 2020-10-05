@@ -154,12 +154,16 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("priceupdate/{bookingId}")
     Call<List<BookForLaterModel>> priceUpdate(@Path("bookingId") String bookingId,
-                                              @Field("price") String price);
+                                              @Field("price") String price,
+                                              @Field("discount") String discount,
+                                              @Field("updatedPrice") String updatedPrice);
 
     @FormUrlEncoded
     @PUT("hourlypriceupdate/{bookingId}")
     Call<List<HourlyRideModel>> hourpriceUpdate(@Path("bookingId") String bookingId,
-                                                @Field("price") String price);
+                                                @Field("price") String price,
+                                                @Field("discount") String discount,
+                                                @Field("updatedPrice") String updatedPrice);
 
     @FormUrlEncoded
     @PUT("rideCountUpdate/{driver_id}")

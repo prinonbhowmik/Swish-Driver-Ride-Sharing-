@@ -399,7 +399,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         .child(carType).child(id);
                 newRef.child("price").setValue(String.valueOf(actualIntPrice));
 
-                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice));
+                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice),"0","0");
                 call2.enqueue(new Callback<List<HourlyRideModel>>() {
                     @Override
                     public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {

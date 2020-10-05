@@ -13,9 +13,11 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,6 +93,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private double currentLat, currentLon;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
+    private RelativeLayout loadingLayout;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private APIService apiService;
@@ -116,7 +119,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         check = intent.getIntExtra("check", 0);
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
-
 
         getData();
 
@@ -563,7 +565,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             .child(carType).child(id);
                     newRef.child("price").setValue(String.valueOf(price));
 
-                    Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price));
+                    Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price),"0","0");
                     call2.enqueue(new Callback<List<BookForLaterModel>>() {
                         @Override
                         public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
@@ -586,13 +588,23 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
-        intent.putExtra("tripId", id);
-        intent.putExtra("customerId", customerID);
-        intent.putExtra("check", 1);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        finish();
-        startActivity(intent);
+
+        loadingLayout.setVisibility(View.VISIBLE);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(BookingDetailsActivity.this, ShowCash.class);
+                intent.putExtra("tripId", id);
+                intent.putExtra("customerId", customerID);
+                intent.putExtra("check", 1);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                finish();
+                startActivity(intent);
+            }
+        },5000);
+
+
 
     }
 
@@ -753,6 +765,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         neomorphFrameLayoutEnd = findViewById(R.id.endTripNFL);
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         details = findViewById(R.id.detailsNFL);
+        loadingLayout = findViewById(R.id.loadingLayout);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
 
