@@ -162,15 +162,21 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //checkDate();
-                if (!(rat > 2)) {
-                    blockAlert();
-                } else {
+                if (ride < 5) {
                     if (hasDateMatch) {
                         dateMatchAlertDialog();
-                        //Toasty.info(HourlyDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
                     } else {
                         confirmAlertDialog();
+                    }
+                } else {
+                    if (!(rat > 2.0)) {
+                        blockAlert();
+                    } else {
+                        if (hasDateMatch) {
+                            dateMatchAlertDialog();
+                        } else {
+                            confirmAlertDialog();
+                        }
                     }
                 }
             }
@@ -283,7 +289,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id, "End Trip", "Your trip has Ended.", "show_cash");
+                sendNotification(id,customerID, "End Trip", "Your trip has Ended.", "show_cash");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -524,7 +530,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-
+                sendNotification(id,customerID, "Start Trip", "Your trip has started.", "running_trip");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -656,17 +662,44 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    String driver_id = String.valueOf(data.child("driverId").getValue());
-                    if (driver_id.equals(driverId)) {
-                        String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
 
-                        //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
 
-                        hasDateMatch = pickupDate.equals(pickup_date2);
+                            hasDateMatch = pickupDate.equals(pickup_date2);
+
+                        }
                     }
-                }
+                if (!hasDateMatch) {
+                    DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                            if (dataSnapshot1.exists()){
+                                for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                    String driver_id = String.valueOf(data.child("driverId").getValue());
+                                    if (driver_id.equals(driverId)) {
+                                        String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
 
+                                        //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+                                        hasDateMatch = pickupDate.equals((pickup_date2));
+                                    }
+                                }
+                        }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
             }
 
             @Override
@@ -736,7 +769,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(HourlyDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_hourly_ride_details");
+                    sendNotification(id,customerID, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_hourly_ride_details");
                 }
             }
         });
@@ -759,17 +792,17 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void sendNotification(final String id, final String title, final String message, final String toActivity) {
+    private void sendNotification(final String id,final String receiverId, final String title, final String message, final String toActivity) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
-        Query query = tokens.orderByKey().equalTo(customerID);
-
+        Query query = tokens.orderByKey().equalTo(receiverId);
+        String receiverId1=receiverId;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(id, R.mipmap.ic_noti_foreground, message, title, customerID, toActivity);
+                    Data data = new Data(id, R.mipmap.ic_noti_foreground, message, title, receiverId1, toActivity);
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -836,7 +869,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     snackbar.show();
                     addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
-                    sendNotification(id, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
+                    sendNotification(id,customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
 
 
                 }
@@ -870,6 +903,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     list = response.body();
                     rating = list.get(0).getRating();
                     ratingCount = list.get(0).getRatingCount();
+                    ride=list.get(0).getRideCount();
                     rat = rating / ratingCount;
 
                 }

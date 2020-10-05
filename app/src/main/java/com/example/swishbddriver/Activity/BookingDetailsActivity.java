@@ -123,17 +123,24 @@ public class BookingDetailsActivity extends AppCompatActivity {
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (!(rat > 2)) {
-                    blockAlert();
-                } else {
+                if (ride < 5) {
                     if (hasDateMatch) {
                         dateMatchAlertDialog();
-                        //Toasty.info(BookingDetailsActivity.this, "You have already a ride on this date.", Toasty.LENGTH_SHORT).show();
                     } else {
                         confirmAlertDialog();
                     }
+                } else {
+                    if (!(rat > 2.0)) {
+                        blockAlert();
+                    } else {
+                        if (hasDateMatch) {
+                            dateMatchAlertDialog();
+                        } else {
+                            confirmAlertDialog();
+                        }
+                    }
                 }
+
             }
         });
 
@@ -235,7 +242,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id, "End Trip", "Your trip has Ended.", "show_cash");
+                sendNotification(id,customerID, "End Trip", "Your trip has Ended.", "show_cash");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -476,7 +483,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
                 navigationIntent.setPackage("com.google.android.apps.maps");
                 startActivity(navigationIntent);
-                sendNotification(id, "Start Trip", "Your trip has started.", "running_trip");
+                sendNotification(id,customerID, "Start Trip", "Your trip has started.", "running_trip");
 
             }
         });
@@ -632,55 +639,56 @@ public class BookingDetailsActivity extends AppCompatActivity {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
+                        pickupPlace = book.getPickUpPlace();
+                        destinationPlace = book.getDestinationPlace();
+                        pickupDate = book.getPickUpDate();
+                        pickupTime = book.getPickUpTime();
+                        carType = book.getCarType();
+                        taka = book.getPrice();
+                        pickUpLat = book.getPickUpLat();
+                        pickUpLon = book.getPickUpLon();
+                        destinationLat = book.getDestinationLat();
+                        destinationLon = book.getDestinationLon();
+                        bookingStatus = book.getBookingStatus();
+                        rideStatus = book.getRideStatus();
+                        payment = book.getPayment();
 
-                    BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
-                    pickupPlace = book.getPickUpPlace();
-                    destinationPlace = book.getDestinationPlace();
-                    pickupDate = book.getPickUpDate();
-                    pickupTime = book.getPickUpTime();
-                    carType = book.getCarType();
-                    taka = book.getPrice();
-                    pickUpLat = book.getPickUpLat();
-                    pickUpLon = book.getPickUpLon();
-                    destinationLat = book.getDestinationLat();
-                    destinationLon = book.getDestinationLon();
-                    bookingStatus = book.getBookingStatus();
-                    rideStatus = book.getRideStatus();
-                    payment = book.getPayment();
+                        pickupPlaceTV.setText(pickupPlace);
+                        destinationTV.setText(destinationPlace);
+                        pickupDateTV.setText(pickupDate);
+                        pickupTimeTV.setText(pickupTime);
+                        carTypeTV.setText(carType);
+                        takaTV.setText(taka);
 
-                    pickupPlaceTV.setText(pickupPlace);
-                    destinationTV.setText(destinationPlace);
-                    pickupDateTV.setText(pickupDate);
-                    pickupTimeTV.setText(pickupTime);
-                    carTypeTV.setText(carType);
-                    takaTV.setText(taka);
-
-                    if (!driverId.equals("")) {
-                        if (!driverId.equals(driverId)) {
-                            confirmBtn.setVisibility(View.GONE);
-                            cancelBtn.setVisibility(View.GONE);
-                            customerDetailsBtn.setVisibility(View.GONE);
-                            //Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_SHORT).show();
-                            finish();
+                        if (!driverId.equals("")) {
+                            if (!driverId.equals(driverId)) {
+                                confirmBtn.setVisibility(View.GONE);
+                                cancelBtn.setVisibility(View.GONE);
+                                customerDetailsBtn.setVisibility(View.GONE);
+                                //Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
                         }
-                    }
-                    checkDate();
-                    checkBookingConfirm(bookingStatus);
+                        checkDate();
+                        checkBookingConfirm(bookingStatus);
 
-                    getDriverRide();
+                        getDriverRide();
 
-                    if (rideStatus.equals("Start")) {
-                        startTripBtn.setVisibility(View.GONE);
-                        neomorphFrameLayoutStart.setVisibility(View.GONE);
-                        neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-                        endTripBtn.setVisibility(View.VISIBLE);
-                        cancelBtn.setVisibility(View.GONE);
-                    } else if (rideStatus.equals("End")) {
-                        startTripBtn.setVisibility(View.GONE);
-                        neomorphFrameLayoutStart.setVisibility(View.GONE);
-                        neomorphFrameLayoutEnd.setVisibility(View.GONE);
-                        endTripBtn.setVisibility(View.GONE);
-                        cancelBtn.setVisibility(View.GONE);
+                        if (rideStatus.equals("Start")) {
+                            startTripBtn.setVisibility(View.GONE);
+                            neomorphFrameLayoutStart.setVisibility(View.GONE);
+                            neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+                            endTripBtn.setVisibility(View.VISIBLE);
+                            cancelBtn.setVisibility(View.GONE);
+                        } else if (rideStatus.equals("End")) {
+                            startTripBtn.setVisibility(View.GONE);
+                            neomorphFrameLayoutStart.setVisibility(View.GONE);
+                            neomorphFrameLayoutEnd.setVisibility(View.GONE);
+                            endTripBtn.setVisibility(View.GONE);
+                            cancelBtn.setVisibility(View.GONE);
+                        }
                     }
                 }
 
@@ -756,13 +764,41 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    String driver_id = String.valueOf(data.child("driverId").getValue());
-                    if (driver_id.equals(driverId)) {
-                        String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String pickup_date1 = String.valueOf(data.child("pickUpDate").getValue());
 
-                        //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-                        hasDateMatch = pickupDate.equals((pickup_date2));
+                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+                            hasDateMatch = pickupDate.equals((pickup_date1));
+
+                        }
+                    }
+                    if (!hasDateMatch) {
+                        DatabaseReference ref1 = databaseReference.child("BookHourly").child(carType);
+                        ref1.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                if (dataSnapshot1.exists()) {
+                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                        if (driver_id.equals(driverId)) {
+                                            String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
+
+                                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+
+                                            hasDateMatch = pickupDate.equals(pickup_date2);
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
                 }
 
@@ -836,7 +872,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(BookingDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
+                    sendNotification(id,customerID, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
                 }
             }
         });
@@ -859,17 +895,17 @@ public class BookingDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void sendNotification(final String id, final String title, final String message, final String toActivity) {
+    private void sendNotification(final String id, final String receiverId, final String title, final String message, final String toActivity) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
-        Query query = tokens.orderByKey().equalTo(customerID);
-
+        Query query = tokens.orderByKey().equalTo(receiverId);
+        String receiverId1=receiverId;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(id, R.mipmap.ic_noti_foreground, message, title, customerID, toActivity);
+                    Data data = new Data(id, R.mipmap.ic_noti_foreground, message, title, receiverId1, toActivity);
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -935,7 +971,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     snackbar.show();
                     addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
-                    sendNotification(id, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
+                    sendNotification(id,customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
 
 
                 }
@@ -969,6 +1005,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     list = response.body();
                     rating = list.get(0).getRating();
                     ratingCount = list.get(0).getRatingCount();
+                    ride = list.get(0).getRideCount();
                     rat = rating / ratingCount;
 
                 }
