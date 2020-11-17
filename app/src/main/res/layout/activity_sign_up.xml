@@ -15,21 +15,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/driverImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:transitionName="imageTransition"
+                android:id="@+id/text11"
+                android:text="Sign Up"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/ic_camera_24"/>
-
+                android:textColor="@color/themColor"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_LT"
                 style="@style/Edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/driverImage"
+                android:layout_below="@+id/text11"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
@@ -172,11 +173,44 @@
                     app:passwordToggleTint="@color/colorPrimary" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/referral_LT"
+                style="@style/Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/password_LT"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                android:hint="Referral"
+                app:helperText="Optional"
+                app:helperTextEnabled="true"
+                android:textColorHint="#000"
+                app:boxBackgroundMode="outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/referral_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:textColor="#000"
+                    android:textSize="21sp"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/colorPrimary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
             <RadioGroup
                 android:id="@+id/radio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/password_LT"
+                android:layout_below="@+id/referral_LT"
                 android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -223,14 +257,23 @@
                     android:text=" I agree all "
                     android:layout_marginLeft="30dp" />
                 <TextView
-                    android:id="@+id/conditions"
+                    android:id="@+id/policy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="21sp"
                     android:textColor="@android:color/black"
                     android:layout_toEndOf="@+id/termsCheckBox"
-                    android:text="@string/terms_and_conditions"
+                    android:text="@string/privacy"
                     android:layout_toRightOf="@+id/termsCheckBox" />
+                <TextView
+                    android:id="@+id/conditions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="21sp"
+                    android:textColor="@android:color/black"
+                    android:text="@string/terms_and_conditions"
+                    android:layout_marginStart="70dp"
+                    android:layout_below="@+id/policy"/>
             </RelativeLayout>
 
             <Button
@@ -243,7 +286,8 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="50dp"
                 android:background="@drawable/btn_background"
-                android:text="Log in"
+                android:text="Sign Up"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"/>
         </RelativeLayout>
 

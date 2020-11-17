@@ -1,10 +1,12 @@
 package com.example.swishbddriver.Activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -65,6 +67,7 @@ public class Registration1Activity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private RelativeLayout relativeLayout1,relativeLayout2;
     private boolean b=false;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +77,9 @@ public class Registration1Activity extends AppCompatActivity {
         init();
         hideKeyBoard(getApplicationContext());
 
-        checkRegistered();
+
         ShowCarNameInSpinner();
         ShowModelYear();
-
-
 
         ownerRadioGp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -118,23 +119,36 @@ public class Registration1Activity extends AppCompatActivity {
                 }  else if(plateNumber.equals("")){
                     Toast.makeText(Registration1Activity.this, "Please Provide car plate number!", Toast.LENGTH_LONG).show();
                 }else {
+                    progressDialog=new ProgressDialog(Registration1Activity.this);
+                    progressDialog.setMessage("Uploading.....");
+                    progressDialog.show();
                     if (carOwner.equals("yes")) {
-                    Call<List<DriverInfo>> call = ApiUtils.getUserService().driverCarInfo(driverId,Car_Name,Car_Model,productionYear,plateNumber,carOwner,"","","");
-                    call.enqueue(new Callback<List<DriverInfo>>() {
-                        @Override
-                        public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
 
-                        }
+                        Call<List<DriverInfo>> call = ApiUtils.getUserService().driverCarInfo(driverId,Car_Name,Car_Model,productionYear,plateNumber,carOwner,"","","");
+                        call.enqueue(new Callback<List<DriverInfo>>() {
+                            @Override
+                            public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
 
-                        @Override
-                        public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
 
-                        startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
+                            }
+                        });
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                                startActivity(new Intent(Registration1Activity.this, Registration2Activity.class));
+                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                finish();
+                            }
+                        },1000);
                     }
                     else if(carOwner.equals("no")) {
+
                         Call<List<DriverInfo>> call = ApiUtils.getUserService().driverCarInfoWithOwner(driverId,Car_Name,Car_Model,productionYear,plateNumber,carOwner);
                         call.enqueue(new Callback<List<DriverInfo>>() {
                             @Override
@@ -147,43 +161,23 @@ public class Registration1Activity extends AppCompatActivity {
 
                             }
                         });
-                        startActivity(new Intent(Registration1Activity.this, Registration7Activity.class));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                                startActivity(new Intent(Registration1Activity.this, Registration7Activity.class));
+                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                finish();
+                            }
+                        },1000);
                     }
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
+
                 }
             }
         });
     }
 
-    private void checkRegistered() {
-        Call<List<ProfileModel>> call = api.getData(driverId);
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()) {
-                    list = response.body();
 
-                    checkRegistered=list.get(0).getStatus();
-                    if(checkRegistered.equals("Active")){
-                        relativeLayout1.setVisibility(View.GONE);
-                        relativeLayout2.setVisibility(View.VISIBLE);
-                        registrationNumber.setText(driverId);
-                    }else{
-                        relativeLayout1.setVisibility(View.VISIBLE);
-                        relativeLayout2.setVisibility(View.GONE);
-                    }
-
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-                Log.d("kahiniKi", t.getMessage());
-            }
-        });
-    }
 
     private void getData() {
         Call<List<DriverInfo>> call=api.getRegistrationData(driverId);
@@ -208,10 +202,8 @@ public class Registration1Activity extends AppCompatActivity {
                         plateNumber=info.get(0).getPlate_number();
                         plateNumberET.setText(plateNumber);
                         indexName=carNameList.indexOf(Car_Name);
-                        //indexModel=carModelList.indexOf(Car_Model);
                         indexYear=carYearList.indexOf(productionYear);
                         carNameSpinner.setSelection(indexName);
-                        //carModelSpinner.setSelection(indexModel);
                         productionYearSpinner.setSelection(indexYear);
                     }else {
                         ShowCarNameInSpinner();
@@ -293,8 +285,6 @@ public class Registration1Activity extends AppCompatActivity {
         info = new ArrayList<>();
         api = ApiUtils.getUserService();
         relativeLayout1=findViewById(R.id.relative1);
-        relativeLayout2=findViewById(R.id.relative2);
-        registrationNumber=findViewById(R.id.registrationNumber);
     }
 
     private void ShowCarNameInSpinner() {
@@ -323,8 +313,6 @@ public class Registration1Activity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        /*startActivity(new Intent(CarInfoActivity.this,DriverInformationActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
         finish();
     }
 

@@ -1,8 +1,8 @@
 package com.example.swishbddriver.Api;
 
-import android.database.Observable;
 
-import com.example.swishbddriver.Activity.DriverProfile;
+
+
 import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
@@ -11,20 +11,19 @@ import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverAllRidePrice;
+import com.example.swishbddriver.Model.DriverEarnings;
 import com.example.swishbddriver.Model.DriverInfo;
+import com.example.swishbddriver.Model.EarningsShowModel;
 import com.example.swishbddriver.Model.HourlyRideModel;
+import com.example.swishbddriver.Model.NotificationModel;
 import com.example.swishbddriver.Model.PayHistoryModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
-
-import org.json.JSONArray;
 
 import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -42,10 +41,18 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<List<CheckModel>> checkNo(@Field("phone_no") String phone_no);
 
+    @POST("dforgotpassword")
+    @FormUrlEncoded
+    Call<List<CheckModel>> forgotPassword(@Field("phone_no") String phone_no);
+
+    @PUT("dpasswordupdate/{customer_id}")
+    @FormUrlEncoded
+    Call<List<ProfileModel>> resetPassword(@Path("customer_id") String customer_id,
+                                           @Field("password") String password);
+
     @Multipart
     @POST("driversave")
-    Call<List<ProfileModel>> register(@Part("car_owner") int car_owner,
-                                      @Part("details") RequestBody details,
+    Call<List<ProfileModel>> register(@Part("details") RequestBody details,
                                       @Part("date") RequestBody date,
                                       @Part("full_name") RequestBody name,
                                       @Part("gender") RequestBody gender,
@@ -56,12 +63,13 @@ public interface ApiInterface {
                                       @Part("remember_token") RequestBody remember_token,
                                       @Part("status") RequestBody status,
                                       @Part("carType") RequestBody carType,
-                                      @Part MultipartBody.Part image,
                                       @Part("rating") float rating,
                                       @Part("ratingCount") int ratingCount,
                                       @Part("rideCount") int rideCount,
                                       @Part("token") RequestBody token,
-                                      @Part("editable") RequestBody editable);
+                                      @Part("editable") RequestBody editable,
+                                      @Part("referral") RequestBody referral);
+
 
     @GET("driver?")
     Call<List<ProfileModel>> getData(@Query("id") String id);
@@ -156,14 +164,17 @@ public interface ApiInterface {
     Call<List<BookForLaterModel>> priceUpdate(@Path("bookingId") String bookingId,
                                               @Field("price") String price,
                                               @Field("discount") String discount,
-                                              @Field("updatedPrice") String updatedPrice);
+                                              @Field("updatedPrice") String updatedPrice,
+                                              @Field("totalDistance") String km,
+                                              @Field("totalTime") String time);
 
     @FormUrlEncoded
     @PUT("hourlypriceupdate/{bookingId}")
     Call<List<HourlyRideModel>> hourpriceUpdate(@Path("bookingId") String bookingId,
                                                 @Field("price") String price,
                                                 @Field("discount") String discount,
-                                                @Field("updatedPrice") String updatedPrice);
+                                                @Field("updatedPrice") String updatedPrice,
+                                                @Field("totalTime") String time);
 
     @FormUrlEncoded
     @PUT("rideCountUpdate/{driver_id}")
@@ -183,7 +194,6 @@ public interface ApiInterface {
 
     @GET("carmodelsearch?car_name=")
     Call<List<CarModel>> getCarModel(@Query("car_name") String car_name);
-
 
     @GET("carmodelyear")
     Call<List<CarModleYear>> getCarYear();
@@ -219,33 +229,45 @@ public interface ApiInterface {
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverNid1(@Part("driver_id") RequestBody driver_id,
-                                      @Part MultipartBody.Part nidFront);
+                                      @Part MultipartBody.Part nid_front);
 
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverNid2(@Part("driver_id") RequestBody driver_id,
-                                      @Part MultipartBody.Part nidBack);
+                                      @Part MultipartBody.Part nid_back);
 
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverLicense1(@Part("driver_id") RequestBody driver_id,
-                                          @Part MultipartBody.Part licenseFront);
+                                          @Part MultipartBody.Part driving_license_photosF);
 
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> driverLicense2(@Part("driver_id") RequestBody driver_id,
-                                          @Part MultipartBody.Part licenseBack);
+                                          @Part MultipartBody.Part driving_license_photosB);
 
     @Multipart
     @POST("drivernid")
     Call<List<DriverInfo>> selfie(@Part("driver_id") RequestBody driver_id,
                                   @Part MultipartBody.Part selfie);
 
+    @FormUrlEncoded
+    @POST("driverearningspost")
+    Call<List<DriverEarnings>> DriverEarnings(@Field("ride_id") String ride_id,
+                                              @Field("customer_id") String customer_id,
+                                              @Field("driver_id") String driver_id,
+                                              @Field("ride_type") String ride_type,
+                                              @Field("total_amount") int total_amount,
+                                              @Field("pay_type") String pay_type,
+                                              @Field("discount_amount") int discount_amount,
+                                              @Field("commission") int commission,
+                                              @Field("update_price") int update_price);
+
     @GET("driverbookinglist?")
     Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
 
-    @GET("driverallrideprice?")
-    Call<List<DriverAllRidePrice>> driverAllRidePrice(@Query("id") String driver_id);
+    @GET("driverearninghistory?")
+    Call<List<DriverAllRidePrice>> driverAllRidePrice(@Query("driver_id") String driver_id);
 
     @GET("driverhourlylist?")
     Call<List<HourlyRideModel>> driverInsideHistory(@Query("id") String driver_id);
@@ -260,6 +282,19 @@ public interface ApiInterface {
     @PUT("walletupdate/{id}")
     Call<List<CustomerProfile>> walletValue(@Path("id") String customer_id,
                                             @Field("wallet") int wallet);
+    @FormUrlEncoded
+    @PUT("hourlycashreceived/{bookingId}")
+    Call<List<BookForLaterModel>> hourlyCashReceived(@Path("bookingId") String bookingId,
+                                                     @Field("cashReceived") String cashReceived);
+    @FormUrlEncoded
+    @PUT("bookingcashreceived/{bookingId}")
+    Call<List<BookForLaterModel>> BookingCashReceived(@Path("bookingId") String bookingId,
+                                                      @Field("cashReceived") String cashReceived);
 
+    @GET("driverearningstotal?")
+    Call<List<EarningsShowModel>> getEarningsData(@Query("driver_id") String driver_id);
+
+    @GET("driver-noti-list?")
+    Call<List<NotificationModel>> getNotificationData(@Query("driver_id") String driver_id);
 
 }

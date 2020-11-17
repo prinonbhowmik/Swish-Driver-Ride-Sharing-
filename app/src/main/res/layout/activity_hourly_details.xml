@@ -222,7 +222,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/card_view5"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:layout_marginTop="-5dp"
             android:layerType="software"
             app:neomorph_background_color="@color/neomorph_background_color"
@@ -391,6 +390,34 @@
 
 
         </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/loadingLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_centerInParent="true">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/progrssbar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="30dp"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="loading2.json" />
+            <TextView
+                android:layout_below="@+id/progrssbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Calculating your fare..."
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

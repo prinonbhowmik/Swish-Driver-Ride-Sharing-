@@ -35,7 +35,7 @@
             android:layout_marginBottom="10dp"
             android:text="Total Earnings"
             android:textColor="@color/white"
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
         <ImageView
             android:id="@+id/history"
@@ -56,9 +56,9 @@
             app:neomorph_background_color="@color/neomorph_background_color"
             app:neomorph_corner_radius="10dp"
             app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="#000"
-            app:neomorph_shadow_color="#000"
-            app:neomorph_shadow_type="outer"
+            app:neomorph_highlight_color="#469FE4"
+            app:neomorph_shadow_color="#469FE4"
+            app:neomorph_shadow_type="inner"
             app:neomorph_view_type="rectangular">
 
             <RelativeLayout

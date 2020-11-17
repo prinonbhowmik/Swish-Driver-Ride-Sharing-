@@ -8,12 +8,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.swishbddriver.Api.ApiInterface;
+import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.EarningsShowModel;
 import com.example.swishbddriver.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,15 +25,21 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EarningsActivity extends AppCompatActivity {
 
     private TextView todayEarnTV,totalEarnTV,todayPayableTv,totalPayableTV,todayDueTV,totalDueTV;
     private ImageView history;
-    private String driverId,currentDate;
-    private int todayEarn=0,totalEarn=0,todayPayable=0,totalPayable=0,todayDue=0,totalDue=0;
+    private String driverId,currentDate,payable;
+    private int todayEarn=0,totalEarn=0,todayDue=0,totalDue=0;
     private RatingBar ratingBar;
     private SharedPreferences sharedPreferences;
+    private ApiInterface api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +47,32 @@ public class EarningsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_earnings);
 
         init();
+
+
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId=sharedPreferences.getString("id","");
-        currentDate = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
-        gatTodayEarn();
-        gatTotalEarn();
-        getTotalDue();
-        getTodayDue();
+        Call<List<EarningsShowModel>> call = api.getEarningsData(driverId);
+        call.enqueue(new Callback<List<EarningsShowModel>>() {
+            @Override
+            public void onResponse(Call<List<EarningsShowModel>> call, Response<List<EarningsShowModel>> response) {
+                todayEarn = response.body().get(0).getTodayEarn();
+                totalEarn = response.body().get(0).getTotalEarn();
+                payable = response.body().get(0).getTotalPayable();
+                totalDue = response.body().get(0).getTotalDue();
+
+                todayEarnTV.setText(""+todayEarn);
+                totalEarnTV.setText(""+totalEarn);
+                totalPayableTV.setText(payable);
+                totalDueTV.setText(""+totalDue);
+            }
+
+            @Override
+            public void onFailure(Call<List<EarningsShowModel>> call, Throwable t) {
+
+            }
+        });
+
 
         history.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,98 +83,10 @@ public class EarningsActivity extends AppCompatActivity {
             }
         });
 
-       /* ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                Toast.makeText(EarningsActivity.this, ""+ratingBar.getRating(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
+
     }
 
-    private void getTodayDue() {
-        DatabaseReference sumRef = FirebaseDatabase.getInstance().getReference("Earnings").child(driverId).child("Pay");
-        sumRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for(DataSnapshot data: snapshot.getChildren()){
-                    totalDue += data.child("pay").getValue(Integer.class);
-                }
-                totalDue=totalPayable-totalDue;
-                totalDueTV.setText("৳ "+totalDue);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-
-    private void getTotalDue() {
-        DatabaseReference sumRef = FirebaseDatabase.getInstance().getReference("Earnings").child(driverId).child("Pay");
-        sumRef.orderByChild("date").equalTo(currentDate).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for(DataSnapshot data: snapshot.getChildren()){
-                    todayDue += data.child("pay").getValue(Integer.class);
-                }
-                todayDue=todayPayable-todayDue;
-                todayDueTV.setText("৳ "+todayDue);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-
-    private void gatTotalEarn() {
-        DatabaseReference sumRef = FirebaseDatabase.getInstance().getReference("Earnings").child(driverId).child("Earn");
-        sumRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-                for(DataSnapshot data: snapshot.getChildren()){
-                    totalEarn += data.child("price").getValue(Integer.class);
-                }
-                totalEarnTV.setText("৳ "+totalEarn);
-
-                for(DataSnapshot data: snapshot.getChildren()){
-                    totalPayable += data.child("due").getValue(Integer.class);
-                }
-                totalPayableTV.setText("৳ "+totalPayable);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private void gatTodayEarn() {
-        DatabaseReference sumRef = FirebaseDatabase.getInstance().getReference("Earnings").child(driverId).child("Earn");
-        sumRef.orderByChild("date").equalTo(currentDate).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for(DataSnapshot data: snapshot.getChildren()){
-                    todayEarn += data.child("price").getValue(Integer.class);
-                }
-                todayEarnTV.setText("৳ "+todayEarn);
-
-                for(DataSnapshot data: snapshot.getChildren()){
-                    todayPayable += data.child("due").getValue(Integer.class);
-                }
-                todayPayableTv.setText("৳ "+todayPayable);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void init() {
         todayEarnTV = findViewById(R.id.todayEarnTV);
@@ -157,7 +96,7 @@ public class EarningsActivity extends AppCompatActivity {
         todayDueTV=findViewById(R.id.todayDueTV);
         totalDueTV=findViewById(R.id.totalDueTV);
         history = findViewById(R.id.history);
-       //ratingBar=findViewById(R.id.ratingBar);
+        api = ApiUtils.getUserService();
     }
     @Override
     public void onBackPressed() {

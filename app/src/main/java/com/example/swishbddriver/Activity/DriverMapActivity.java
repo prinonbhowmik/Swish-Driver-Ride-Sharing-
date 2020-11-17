@@ -10,11 +10,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -39,6 +41,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.CustomerProfile;
+import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
@@ -52,6 +55,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -122,7 +126,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
     private Button rejectBtn, accptBtn, callCustomerBtn, cancelbtn, pickUpbtn;
     private double pickUpLat, pickUpLon;
+    private List<DriverInfo> list;
+    private int locationPermissionCheckMsg;
+    private Dialog dialog;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,9 +140,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         carType = sharedPreferences.getString("carType", "");
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
+        //navigationView.getMenu().getItem(2).setActionView(R.layout.registration_counter);
         navHeaderData();
-
+        checkAppVersion();
         checkDriverOnLine();
+        checkLocationPermission();
+
+
+        sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
+        dark = sharedPreferences.getBoolean("dark", false);
 
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
@@ -152,6 +166,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 startActivity(new Intent(DriverMapActivity.this, DriverProfile.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
+                finish();
             }
         });
 
@@ -215,6 +230,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
+
                 getCurrentLocation();
             }
         });
@@ -255,27 +271,78 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    /*private void getInstantCustomerData() {
-        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
-        tripRef.addValueEventListener(new ValueEventListener() {
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(DriverMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (DriverMapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            dialog = new Dialog(DriverMapActivity.this);
+            dialog.setContentView(R.layout.location_message_layout);
+            TextView agreeTv = dialog.findViewById(R.id.agreeTv);
+            TextView denyTv = dialog.findViewById(R.id.denyTv);
+
+            agreeTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    ActivityCompat.requestPermissions(DriverMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return;
+                }
+            });
+            denyTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.setCancelable(false);
+            if (!isFinishing()) {
+                dialog.show();
+            }
+        }else{
+            getCurrentLocation();
+        }
+    }
+
+    private void checkAppVersion() {
+        PackageInfo pinfo = null;
+        try {
+            pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int versionNumber = pinfo.versionCode;
+        String versionName = pinfo.versionName;
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Version").child("DriverApp");
+        database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot data : snapshot.getChildren()) {
-                        accptDriverId = String.valueOf(data.child("driverId").getValue());
-                        if (accptDriverId.equals(driverId)) {
-                            tripStatus = data.child("status").getValue().toString();
-                            if (tripStatus.equals("accepted")) {
-                                HourlyRideModel model = data.getValue(HourlyRideModel.class);
-                                customerId = model.getCustomerId();
-                                bookingId = model.getBookingId();
-                                pickUpLat = model.getPickUpLat();
-                                pickUpLon = model.getPickUpLon();
-                                getAcceptedCustomerData(customerId,bookingId);
-                            }
+                String versionName2 = snapshot.child("versionName").getValue().toString();
+                if (!versionName2.equals(versionName)) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("New Version!");
+                    dialog.setIcon(R.drawable.logo_circle);
+                    dialog.setMessage("New version is available. Please update for latest features.");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/apps/details?id=com.hydertechno.swishdriver")));
+                            System.exit(0);
                         }
-                    }
-
+                    });
+                    dialog.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            System.exit(0);
+                        }
+                    });
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
                 }
             }
 
@@ -284,7 +351,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
-    }*/
+    }
 
     private void getRequestCall() {
         DatabaseReference checkReqRef = FirebaseDatabase.getInstance().getReference("InstantHourlyRide").child(carType);
@@ -362,7 +429,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
                     if (response.isSuccessful()) {
-
                         List<CustomerProfile> list = response.body();
 
                         Picasso.get().load(Config.CUSTOMER_LINE + list.get(0).getImage()).into(passengerIV, new com.squareup.picasso.Callback() {
@@ -372,7 +438,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                             @Override
                             public void onError(Exception e) {
-                                Log.d("kiKahini", e.getMessage());
                             }
                         });
 
@@ -389,7 +454,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                                 } catch (ActivityNotFoundException activityException) {
                                     Toasty.error(DriverMapActivity.this, "" + activityException.getMessage(), Toasty.LENGTH_SHORT).show();
-                                    Log.e("Calling a Phone Number", "Call failed", activityException);
+
                                 }
                             }
                         });
@@ -417,8 +482,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 }
             });
         }
-
-
     }
 
     private void RegistrationCheck() {
@@ -454,13 +517,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
             }
         });
     }
 
     private void checkDriverOnLine() {
-
         carType = sharedPreferences.getString("carType", "");
         DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType);
         dRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -478,7 +539,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -528,18 +588,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if (response.isSuccessful()) {
                     List<ProfileModel> list = new ArrayList<>();
                     list = response.body();
-
-                    Picasso.get().load(Config.IMAGE_LINE + list.get(0).getImage()).into(profileImage, new com.squareup.picasso.Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.d("kiKahini", e.getMessage());
-                        }
-                    });
-
                     UserName.setText(list.get(0).getFull_name());
                     if (!list.get(0).getCarType().equals("notSet")) {
                         carType = list.get(0).getCarType();
@@ -560,6 +608,34 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+            }
+        });
+        Call<List<DriverInfo>> call1 = apiInterface.getRegistrationData(driverId);
+        call1.enqueue(new Callback<List<DriverInfo>>() {
+            @Override
+            public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
+                if (response.isSuccessful()) {
+                    List<DriverInfo> list2 = new ArrayList<>();
+                    list2 = response.body();
+                    if (list2.get(0).getSelfie()!=null){
+                        Picasso.get().load(Config.REG_LINE + list2.get(0).getSelfie()).into(profileImage, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Log.d("kiKahini", e.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
 
             }
         });
@@ -626,7 +702,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
                 if (response.body().get(0).getCarType() != null) {
                     carType = response.body().get(0).getCarType();
-
+                    status =response.body().get(0).getStatus();
                     FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                         @Override
                         public void onSuccess(InstanceIdResult instanceIdResult) {
@@ -667,7 +743,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         map = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        CameraUpdate point = CameraUpdateFactory.newLatLngZoom(new LatLng(23.9978113, 90.4651143),7);
+        map.moveCamera(point);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             return;
         }
         map.setMyLocationEnabled(true);
@@ -676,7 +755,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         if (dark == true) {
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_aubergine));
         } else {
-            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.light));
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.retro));
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -699,14 +778,101 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 startActivity(new Intent(DriverMapActivity.this, DriverProfile.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
+                finish();
                 break;
             case R.id.advance_book:
                 drawerLayout.closeDrawers();
+                switch (status) {
+                    case "Active":{
+                        startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        drawerLayout.closeDrawers();
+                        finish();
+                        break;
+                    }
+                    case "Deactive": {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                        dialog.setTitle("Alert..!!");
+                        dialog.setIcon(R.drawable.ic_leave_24);
+                        dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = dialog.create();
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Payment Lock": {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                        dialog.setTitle("Alert..!!");
+                        dialog.setIcon(R.drawable.ic_leave_24);
+                        dialog.setMessage("Please clear your due to activate your profile again.");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = dialog.create();
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Report Lock": {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                        dialog.setTitle("Lock..!!");
+                        dialog.setIcon(R.drawable.ic_leave_24);
+                        dialog.setMessage("Your account is temporary lock due to violation of code of conduct.");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = dialog.create();
+                        alertDialog.show();
+                        break;
+                    }
+                }
+                break;
+            case R.id.registration:
+                list = new ArrayList<>();
+                Call<List<DriverInfo>> call = apiInterface.getRegistrationData(driverId);
+                call.enqueue(new Callback<List<DriverInfo>>() {
+                    @Override
+                    public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
+                        list = response.body();
+                        if(list.get(0).getCar_owner().equals("Notset")){
+                            drawerLayout.closeDrawers();
+                            startActivity(new Intent(DriverMapActivity.this, Registration1Activity.class));
+
+                        }else{
+                            drawerLayout.closeDrawers();
+                            startActivity(new Intent(DriverMapActivity.this, AllVerificationActivity.class));
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<DriverInfo>> call, Throwable t) {
+
+                    }
+                });
+
+
+                break;
+
+            case R.id.referral:
                 if (!carType.equals("Notset")) {
-                    startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                    startActivity(new Intent(DriverMapActivity.this, ReferralActivity.class).putExtra("driverId", driverId));
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     drawerLayout.closeDrawers();
-                } else {
+                }else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                     dialog.setTitle("Alert..!!");
                     dialog.setIcon(R.drawable.ic_leave_24);
@@ -718,43 +884,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             dialog.dismiss();
                         }
                     });
-
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
-
                 }
-                //driverRegisterCheck2();
-                break;
-            case R.id.registration:
-                drawerLayout.closeDrawers();
-                startActivity(new Intent(DriverMapActivity.this, Registration1Activity.class));
-
                 break;
 
-            case R.id.logout:
-
-                DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
-                dRef.removeValue();
-                buttonOff.setVisibility(View.VISIBLE);
-                buttonOn.setVisibility(View.GONE);
-
-                if (!carType.equals("Notset")) {
-                    DatabaseReference tokeRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
-                    tokeRef.removeValue();
-                } else {
-                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
-                    userRef.removeValue();
-                }
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("loggedIn", false);
-                editor.putString("id", "");
-                editor.putString("carType", "");
-                editor.commit();
-                Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-                break;
             case R.id.earnings:
                 drawerLayout.closeDrawers();
                 if (!carType.equals("Notset")) {
@@ -762,7 +896,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     startActivity(intent2);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     drawerLayout.closeDrawers();
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
@@ -787,7 +920,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     startActivity(intent2);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     drawerLayout.closeDrawers();
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
@@ -804,18 +936,75 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
                 }
-
                 break;
             case R.id.emergency:
                 startActivity(new Intent(DriverMapActivity.this, Emergency.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
                 drawerLayout.closeDrawers();
-
                 break;
             case R.id.settings:
                 startActivity(new Intent(DriverMapActivity.this, Settings.class).putExtra("mymode", String.valueOf(dark)));
-
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                drawerLayout.closeDrawers();
+                finish();
                 break;
+            case R.id.notification:
+                startActivity(new Intent(DriverMapActivity.this, NotificationsActivity.class).putExtra("mymode", String.valueOf(dark)));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                drawerLayout.closeDrawers();
+                finish();
+                break;
+            case R.id.logout:
+                DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
+                dRef.removeValue();
+                buttonOff.setVisibility(View.VISIBLE);
+                buttonOn.setVisibility(View.GONE);
+                if (!carType.equals("Notset")) {
+                    DatabaseReference tokeRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child(carType).child(driverId);
+                    tokeRef.removeValue();
+                } else {
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
+                    userRef.removeValue();
+                }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("loggedIn", false);
+                editor.putString("id", "");
+                editor.putString("carType", "");
+                editor.commit();
+                Intent intent = new Intent(DriverMapActivity.this, PhoneNoActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.support:
+                try{
+                    Intent intent1 = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "support@swish.com.bd"));
+                    intent1.putExtra(Intent.EXTRA_SUBJECT, "your_subject");
+                    intent1.putExtra(Intent.EXTRA_TEXT, "your_text");
+                    startActivity(intent1);
+                }catch(ActivityNotFoundException e){
+                    //TODO
+                    Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            if (doublePressToExit + 2000 > System.currentTimeMillis()) {
+                backToasty.cancel();
+                super.onBackPressed();
+                return;
+            } else {
+                backToasty = Toasty.normal(getApplicationContext(), "Press again to exit", Toasty.LENGTH_LONG);
+                backToasty.show();
+            }
+        }
+        doublePressToExit = System.currentTimeMillis();
     }
 }

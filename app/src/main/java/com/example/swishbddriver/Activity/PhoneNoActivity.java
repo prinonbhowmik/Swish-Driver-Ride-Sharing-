@@ -48,6 +48,7 @@ public class PhoneNoActivity extends AppCompatActivity {
 
         init();
 
+
         loggedIn = sharedPreferences.getBoolean("loggedIn", false);
 
         if (loggedIn == true) {
@@ -88,24 +89,27 @@ public class PhoneNoActivity extends AppCompatActivity {
                                 phn_LT.setErrorEnabled(false);
                                 if (status.equals("1")) {
                                     startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
-                                            .putExtra("id", list.get(0).getDriver_id()).putExtra("status", list.get(0).getActivationStatus()));
+                                            .putExtra("id", list.get(0).getDriver_id())
+                                            .putExtra("phone", phone)
+                                            .putExtra("status", list.get(0).getActivationStatus()));
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                     progressBar.setVisibility(View.GONE);
-
+                                    finish();
                                 } else if (status.equals("0")) {
                                     startActivity(new Intent(PhoneNoActivity.this, Otp_Activity.class)
                                             .putExtra("phone", phone)
-                                            .putExtra("otp", list.get(0).getOtp()));
+                                            .putExtra("otp", list.get(0).getOtp())
+                                            .putExtra("check",1));
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                     progressBar.setVisibility(View.GONE);
-
+                                    finish();
                                 }
                             }
                         }
 
                         @Override
                         public void onFailure(Call<List<CheckModel>> call, Throwable t) {
-                            Log.d("check", t.getMessage());
+
                         }
                     });
                 }
@@ -115,6 +119,8 @@ public class PhoneNoActivity extends AppCompatActivity {
 
 
     }
+
+
 
     private void init() {
         editText = findViewById(R.id.phnNoEt);

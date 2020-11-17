@@ -84,7 +84,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, endTime, carType,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,
             currentDate, rideStatus, pickUpCity, destinationCity, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
-
+    private RelativeLayout loadingLayout;
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
     private int kmdistance, travelduration;
     private DatabaseReference databaseReference;
@@ -118,6 +118,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     RelativeLayout hourLayout,kmLayout;
     TextView cashpickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv,hourTv;
     private String hourPrice;
+    private int walletBalance,halfPrice,finalPrice,updatewallet;
+    private float totalHours;
+    private String driverID2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +128,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hourly_details);
 
         init();
+
+
 
         //getDriverInformation();
         Intent intent = getIntent();
@@ -148,7 +153,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 priceRate = snapshot.getValue().toString();
-                takaTV.setText(priceRate + " per hour");
             }
 
             @Override
@@ -156,8 +160,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-
 
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,20 +203,20 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-
         pickupPlaceTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HourlyDetailsActivity.this, BookLaterMapActivity.class);
-                intent.putExtra("pLat", pickUpLat);
-                intent.putExtra("pLon", pickUpLon);
-                intent.putExtra("pPlace", pickupPlace);
-                intent.putExtra("check", 4);
-                intent.putExtra("id", id);
-                intent.putExtra("carType", car_type);
-                intent.putExtra("rideStatus", "regular");
-                startActivity(intent);
-                Log.d("checkLat", pickupPlace + pickUpLat + pickUpLon);
+                if(check==1){
+                    Intent intent = new Intent(HourlyDetailsActivity.this, BookLaterMapActivity.class);
+                    intent.putExtra("pLat", pickUpLat);
+                    intent.putExtra("pLon", pickUpLon);
+                    intent.putExtra("pPlace", pickupPlace);
+                    intent.putExtra("check", 4);
+                    intent.putExtra("id", id);
+                    intent.putExtra("carType", car_type);
+                    intent.putExtra("rideStatus", "regular");
+                    startActivity(intent);
+                }
             }
         });
 
@@ -232,10 +234,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
+
+
 
     private void init() {
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
@@ -254,6 +255,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         endTripBtn = findViewById(R.id.endTripBtn);
         neomorphFrameLayoutStart = findViewById(R.id.startTripNFL);
         neomorphFrameLayoutEnd = findViewById(R.id.endTripNFL);
+        loadingLayout = findViewById(R.id.loadingLayout);
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         details = findViewById(R.id.detailsNFL);
         list = new ArrayList<>();
@@ -267,7 +269,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
         dialog.setTitle("Block!!");
         dialog.setIcon(R.drawable.ic_block);
-        dialog.setMessage("Yor rating is below 2.5. You can't take any ride from now.");
+        dialog.setMessage("Your rating is below 2.5. You can't take any ride from now.");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -282,14 +284,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private void endAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
         dialog.setTitle("End Trip!!");
-        dialog.setIcon(R.drawable.logo);
-        dialog.setMessage("Did you want to end this trip ?");
+        dialog.setIcon(R.drawable.logo_circle);
+        dialog.setMessage("Do you want to end this trip ?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id,customerID, "End Trip", "Your trip has Ended.", "show_cash");
+                sendNotification(id,customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash2");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -344,10 +346,13 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
         rideRef.child("endTime").setValue(currentTime);
+        rideRef.child("endTime").setValue(currentTime);
+        rideRef.child("destinationPlace").setValue(destinationPlace);
 
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
         userRef.child("rideStatus").setValue("End");
         userRef.child("endTime").setValue(currentTime);
+        rideRef.child("destinationPlace").setValue(destinationPlace);
 
         Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
         call.enqueue(new Callback<List<HourlyRideModel>>() {
@@ -362,77 +367,158 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
-        //  DatabaseReference cashRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-        rideRef.addValueEventListener(new ValueEventListener() {
+
+        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+        try {
+            date1 = myFormat.parse(pickupTime);
+            date2 = myFormat.parse(currentTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long difference = date2.getTime() - date1.getTime();
+
+        float hours = (float) difference / (1000 * 60 * 60);
+        totalHours = Math.abs(hours);
+
+
+        carTypeRate = Integer.parseInt(priceRate);
+        actualPrice = (int) (carTypeRate * totalHours);
+        actualIntPrice = (int) actualPrice;
+
+        if (totalHours < 2.00) {
+            actualIntPrice = carTypeRate * 2;
+        }
+
+        showPrice(actualIntPrice,totalHours);
+
+    }
+
+    private void showPrice(int actualIntPrice,float totalHours) {
+
+        if (payment.equals("cash")) {
+            float totalHour=totalHours;
+            Log.d("showHour",""+totalHour);
+
+            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
+                    .child(customerID).child(id);
+            updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+            updateRef.child("discount").setValue("0");
+            updateRef.child("finalPrice").setValue(String.valueOf(actualIntPrice));
+            updateRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+
+            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
+                    .child(carType).child(id);
+            newRef.child("price").setValue(String.valueOf(actualIntPrice));
+            newRef.child("discount").setValue("0");
+            newRef.child("finalPrice").setValue(String.valueOf(actualIntPrice));
+            newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+
+            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice),"0"
+                    ,String.valueOf(actualIntPrice),String.format("%.2f", totalHour));
+            call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                @Override
+                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                }
+            });
+
+        }
+
+        else if (payment.equals("wallet")) {
+            float totalHour=totalHours;
+
+            Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
+            getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                @Override
+                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                    if (response.isSuccessful()){
+                        List<CustomerProfile> list = response.body();
+                        walletBalance = list.get(0).getWallet();
+                        halfPrice = actualIntPrice / 2;
+
+                        if (walletBalance < halfPrice) {
+
+                            finalPrice = actualIntPrice - walletBalance;
+                            discount = walletBalance;
+                            updatewallet=0;
+                        }
+                        else if(walletBalance >= halfPrice) {
+                            finalPrice = halfPrice;
+                            discount = halfPrice;
+                            updatewallet = walletBalance - halfPrice;
+
+                        }
+
+                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
+                        updateRef.child("price").setValue(String.valueOf(actualIntPrice));
+                        updateRef.child("discount").setValue(String.valueOf(discount));
+                        updateRef.child("finalPrice").setValue(String.valueOf(finalPrice));
+                        updateRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+                        newRef.child("price").setValue(String.valueOf(actualIntPrice));
+                        newRef.child("discount").setValue(String.valueOf(discount));
+                        newRef.child("finalPrice").setValue(String.valueOf(finalPrice));
+                        newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+
+                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice)
+                                ,String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
+                        call2.enqueue(new Callback<List<HourlyRideModel>>() {
+                            @Override
+                            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                            }
+                        });
+
+                        Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                        listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                            @Override
+                            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                            }
+                        });
+
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+                }
+            });
+
+        }
+
+        loadingLayout.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
-                pickupTime = book.getPickUpTime();
-                endTime = book.getEndTime();
-                payment = book.getPayment();
-                SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-                try {
-                    date1 = myFormat.parse(pickupTime);
-                    date2 = myFormat.parse(endTime);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                long difference = date2.getTime() - date1.getTime();
-
-                float hours = (float) difference / (1000 * 60 * 60);
-                float price = Math.abs(hours);
-
-
-                carTypeRate = Integer.parseInt(priceRate);
-                actualPrice = (int) (carTypeRate * price);
-                actualIntPrice = (int) actualPrice;
-
-                if (price < 2.00) {
-                    actualIntPrice = carTypeRate * 2;
-                }
-
-                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
-                        .child(customerID).child(id);
-                updateRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
-                        .child(carType).child(id);
-                newRef.child("price").setValue(String.valueOf(actualIntPrice));
-
-                Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice),"0","0");
-                call2.enqueue(new Callback<List<HourlyRideModel>>() {
-                    @Override
-                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-                    }
-                });
-
-                Intent endTripIntent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
-                endTripIntent.putExtra("customerId", customerID);
-                endTripIntent.putExtra("tripId", id);
-                endTripIntent.putExtra("check", 2);
-
-                endTripIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(endTripIntent);
+            public void run() {
+                Intent intent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
+                intent.putExtra("tripId", id);
+                intent.putExtra("customerId", customerID);
+                intent.putExtra("check", 2);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 finish();
+                startActivity(intent);
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        },5000);
     }
 
-    private void addEarning(int actualIntPrice, String pickupPlace, String destinationPlace, int actualPrice, float price, int discount, String payment) {
-
-    }
 
     private void checkDriverOnLine() {
         DatabaseReference dRef = databaseReference.child("OnLineDrivers");
@@ -460,7 +546,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
         dialog.setTitle("Offline..!!");
-        dialog.setIcon(R.drawable.logo);
+        dialog.setIcon(R.drawable.logo_circle);
         dialog.setMessage("You are currently offline.\nDid you want to go online?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Go OnLine", new DialogInterface.OnClickListener() {
@@ -487,9 +573,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private void startTripAlert() {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
-        dialog.setTitle("Alert..!!");
-        dialog.setIcon(R.drawable.logo);
-        dialog.setMessage("Did you picked up your passenger?");
+        dialog.setTitle("Confirmation!!");
+        dialog.setIcon(R.drawable.logo_circle);
+        dialog.setMessage("Did you pick up your passenger?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -548,71 +634,57 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         endTripBtn.setVisibility(View.VISIBLE);
     }
 
-
-    private void getDriverInformation() {
-        DatabaseReference driverRef = databaseReference.child("DriversProfile").child(driverId);
-        driverRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ProfileModel model = snapshot.getValue(ProfileModel.class);
-                d_name = model.getFull_name();
-                d_phone = model.getPhone();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-
     private void getData() {
         if (check == 1) {
             DatabaseReference reference = databaseReference.child("BookHourly").child(car_type).child(id);
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+                        HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
+                        pickupPlace = book.getPickUpPlace();
+                        pickupDate = book.getPickUpDate();
+                        pickupTime = book.getPickUpTime();
+                        carType = book.getCarType();
+                        pickUpLat = book.getPickUpLat();
+                        pickUpLon = book.getPickUpLon();
+                        bookingStatus = book.getBookingStatus();
+                        rideStatus = book.getRideStatus();
+                        price = book.getPrice();
+                        driverID2 = book.getDriverId();
+                        payment = book.getPayment();
+                        pickupPlaceTV.setText(pickupPlace);
+                        pickupDateTV.setText(pickupDate);
+                        pickupTimeTV.setText(pickupTime);
+                        carTypeTV.setText(carType);
+                        takaTV.setText(price);
 
-                    HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
-                    pickupPlace = book.getPickUpPlace();
-                    pickupDate = book.getPickUpDate();
-                    pickupTime = book.getPickUpTime();
-                    carType = book.getCarType();
-                    pickUpLat = book.getPickUpLat();
-                    pickUpLon = book.getPickUpLon();
-                    bookingStatus = book.getBookingStatus();
-                    rideStatus = book.getRideStatus();
-                    price = book.getPrice();
-                    pickupPlaceTV.setText(pickupPlace);
-                    pickupDateTV.setText(pickupDate);
-                    pickupTimeTV.setText(pickupTime);
-                    carTypeTV.setText(carType);
-                    takaTV.setText(price);
-
-                    if (!driverId.equals("")) {
-                        if (!driverId.equals(driverId)) {
-                            confirmBtn.setVisibility(View.GONE);
-                            cancelBtn.setVisibility(View.GONE);
-                            customerDetailsBtn.setVisibility(View.GONE);
-                            //Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_SHORT).show();
-                            finish();
+                        if (!driverID2.equals("")) {
+                            if (!driverId.equals(driverID2)) {
+                                confirmBtn.setVisibility(View.GONE);
+                                cancelBtn.setVisibility(View.GONE);
+                                customerDetailsBtn.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), "Sorry! This ride had taken by another driver.", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
                         }
-                    }
-                    checkDate();
+                        checkDate();
 
-                    checkBookingConfirm(bookingStatus);
+                        checkBookingConfirm(bookingStatus);
 
-                    if (rideStatus.equals("Start")) {
-                        startTripBtn.setVisibility(View.GONE);
-                        neomorphFrameLayoutStart.setVisibility(View.GONE);
-                        neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-                        endTripBtn.setVisibility(View.VISIBLE);
-                        cancelBtn.setVisibility(View.GONE);
-                    } else if (rideStatus.equals("End")) {
-                        startTripBtn.setVisibility(View.GONE);
-                        neomorphFrameLayoutStart.setVisibility(View.GONE);
-                        neomorphFrameLayoutEnd.setVisibility(View.GONE);
-                        endTripBtn.setVisibility(View.GONE);
-                        cancelBtn.setVisibility(View.GONE);
+                        if (rideStatus.equals("Start")) {
+                            startTripBtn.setVisibility(View.GONE);
+                            neomorphFrameLayoutStart.setVisibility(View.GONE);
+                            neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+                            endTripBtn.setVisibility(View.VISIBLE);
+                            cancelBtn.setVisibility(View.GONE);
+                        } else if (rideStatus.equals("End")) {
+                            startTripBtn.setVisibility(View.GONE);
+                            neomorphFrameLayoutStart.setVisibility(View.GONE);
+                            neomorphFrameLayoutEnd.setVisibility(View.GONE);
+                            endTripBtn.setVisibility(View.GONE);
+                            cancelBtn.setVisibility(View.GONE);
+                        }
                     }
                 }
 
@@ -646,7 +718,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
-            String todayDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
             if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
@@ -674,32 +746,31 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
                         }
                     }
-                if (!hasDateMatch) {
-                    DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
-                    ref.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
-                            if (dataSnapshot1.exists()){
-                                for (DataSnapshot data : dataSnapshot1.getChildren()) {
-                                    String driver_id = String.valueOf(data.child("driverId").getValue());
-                                    if (driver_id.equals(driverId)) {
-                                        String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
+                    if (!hasDateMatch) {
+                        DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                if (dataSnapshot1.exists()){
+                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                        if (driver_id.equals(driverId)) {
+                                            String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
 
-                                        //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-                                        hasDateMatch = pickupDate.equals((pickup_date2));
+                                            hasDateMatch = pickupDate.equals((pickup_date2));
+                                        }
                                     }
                                 }
-                        }
 
-                        }
+                            }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
             }
 
             @Override
@@ -868,7 +939,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     Snackbar snackbar = Snackbar.make(scrollLayout, "You are cancel this ride", Snackbar.LENGTH_SHORT);
                     snackbar.show();
                     addRating();
-                    //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
                     sendNotification(id,customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
 
 

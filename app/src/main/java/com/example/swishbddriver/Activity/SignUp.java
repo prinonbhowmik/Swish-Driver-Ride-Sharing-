@@ -4,25 +4,23 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -31,47 +29,43 @@ import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import com.google.android.material.textfield.TextInputLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import es.dmoral.toasty.Toasty;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignUp extends AppCompatActivity {
-
-    private TextInputEditText nameEt, emailEt, dobEt, addressEt,passwordEt;
-    private ImageView driverImage;
+    private TextInputEditText nameEt, emailEt, dobEt, addressEt,passwordEt,referralEt;
     private Button logIn;
     private RadioGroup radioGroup;
     private Uri imageUri, iUri, uploadUri;
-    private String name, email,image, dob, address, phone, password, gender = "Male";
+    private String name, email,image, dob, address, phone, password, gender = "Male",referral="";
     private String userId;
     private Bitmap bitmap;
     private CheckBox terms;
-    private TextView conditions;
+    private TextView conditions,policy;
     private ApiInterface api;
     private List<ProfileModel> list;
     private LottieAnimationView progressBar;
+    private String currentDate;
+    private RequestBody  referralBody;
+    private String blockCharacterSet = "~#^|$%&*!-_(){}[]/;:',=+?%.";
+    private TextInputLayout password_LT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
 
         Intent intent = getIntent();
         phone = intent.getStringExtra("phone");
@@ -109,10 +103,12 @@ public class SignUp extends AppCompatActivity {
                 if(terms.isChecked()){
                     terms.setTextColor(getResources().getColor(R.color.blue));
                     conditions.setTextColor(Color.BLUE);
+                    policy.setTextColor(Color.BLACK);
 
                 }else
                     terms.setTextColor(getResources().getColor(R.color.black));
                 conditions.setTextColor(Color.BLACK);
+                policy.setTextColor(Color.BLACK);
 
             }
         });
@@ -120,22 +116,23 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(SignUp.this,TermsAndConditions.class);
+                intent.putExtra("terms","https://swish.com.bd/terms-and-conditions");
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
             }
         });
-        driverImage.setOnClickListener(new View.OnClickListener() {
+        policy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CropImage.activity()
-                        .setFixAspectRatio(true)
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setCropShape(CropImageView.CropShape.OVAL)
-                        .start(SignUp.this);
+                Intent intent=new Intent(SignUp.this,TermsAndConditions.class);
+                intent.putExtra("terms","https://swish.com.bd/privacy-policy");
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
             }
         });
+
 
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +143,7 @@ public class SignUp extends AppCompatActivity {
                 email = emailEt.getText().toString();
                 password = passwordEt.getText().toString();
                 address = addressEt.getText().toString();
-
+                referral=referralEt.getText().toString();
                 if (TextUtils.isEmpty(name)) {
                     nameEt.setError("Enter name");
                     nameEt.requestFocus();
@@ -169,9 +166,10 @@ public class SignUp extends AppCompatActivity {
                     passwordEt.setError("At least 6 characters!", null);
                     passwordEt.requestFocus();
                 } else if (!terms.isChecked()) {
-                    Toast.makeText(SignUp.this, "Agree terms and conditions.", Toast.LENGTH_SHORT).show();
-                } else {
-                    signUp(name, email, dob, address, phone, password);
+                    Toast.makeText(SignUp.this, "Agree privacy policy & terms and conditions.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    signUp(name, email, dob, address, phone, password,referral);
 
                 }
 
@@ -179,26 +177,30 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
-    private void signUp(String name, String email, String dob, String address, final String phone, String password) {
+    private InputFilter filter = new InputFilter() {
 
-       /* ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] imgByte = byteArrayOutputStream.toByteArray();
-        image = Base64.encodeToString(imgByte, Base64.DEFAULT);*/
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
-       progressBar.setVisibility(View.VISIBLE);
-       hideKeyBoard(getApplicationContext());
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                password_LT.setErrorEnabled(true);
+                password_LT.setError("Special Characters are not acceptable!");
+                passwordEt.requestFocus();
+                return "";
+            }else{
+                password_LT.setErrorEnabled(false);
+            }
+            return null;
+        }
+    };
 
-        File file = new File(imageUri.getPath());
+    private void signUp(String name, String email, String dob, String address, final String phone, String password,String referral) {
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
+        progressBar.setVisibility(View.VISIBLE);
+        hideKeyBoard(getApplicationContext());
         RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
         RequestBody  details = RequestBody .create(MediaType.parse("text/plain"), "No bio!");
-        RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+        RequestBody  genderBody = RequestBody .create(MediaType.parse("text/plain"), gender);
         RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
         RequestBody  addressBody = RequestBody .create(MediaType.parse("text/plain"), address);
         RequestBody  phoneBody = RequestBody .create(MediaType.parse("text/plain"), phone);
@@ -207,29 +209,50 @@ public class SignUp extends AppCompatActivity {
         RequestBody  status = RequestBody .create(MediaType.parse("text/plain"), "Deactive");
         RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
         RequestBody  tokenBody = RequestBody .create(MediaType.parse("text/plain"), "");
-        RequestBody  editBody = RequestBody .create(MediaType.parse("text/plain"), "false");
+        RequestBody  editBody = RequestBody .create(MediaType.parse("text/plain"), "true");
         RequestBody  carTypeBody = RequestBody .create(MediaType.parse("text/plain"), "Notset");
+        if (referral.equals("")) {
+            referralBody = RequestBody.create(MediaType.parse("text/plain"), "");
+        }else{
+            referralBody = RequestBody.create(MediaType.parse("text/plain"), referral);
 
+        }
         logIn.setEnabled(true);
-
-        Call<List<ProfileModel>> call =  api.register(0,details,dobBody,fullName,genderbody,emailBody,addressBody,phoneBody,passBody,rem_tokenBody,status,carTypeBody,body,
-                0,0,0,tokenBody,editBody);
-
+        Call<List<ProfileModel>> call =  api.register(details,dobBody,fullName,genderBody,emailBody,addressBody,phoneBody,passBody,rem_tokenBody,status,carTypeBody,
+                0,0,0,tokenBody,editBody,referralBody);
         call.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                //Toast.makeText(SignUp.this, "Registration Complete!", Toast.LENGTH_LONG).show();
+                if (response.isSuccessful()){
+                    progressBar.setVisibility(View.VISIBLE);
+                    String done = response.body().get(0).getDone();
+                    if (done.equals("1")){
+                        String driver_id = response.body().get(0).getDriver_id();
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("id", driver_id);
+                        editor.putBoolean("loggedIn", true);
+                        editor.commit();
+
+                        Toasty.success(SignUp.this,"Sign Up Successful!",Toasty.LENGTH_LONG).show();
+                        startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
+                        finish();
+                    }
+                }
 
             }
-
             @Override
             public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
             }
         });
-        startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));
-        finish();
-        progressBar.setVisibility(View.VISIBLE);
+
+       /* new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        },3000);*/
 
 
 
@@ -240,8 +263,8 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                String currentDate = day + "/" + month + "/" + year;
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                currentDate = day + "-" + month + "-" + year;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Date date = null;
 
                 try {
@@ -254,10 +277,10 @@ public class SignUp extends AppCompatActivity {
         };
 
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -18);
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
 
         datePickerDialog.show();
@@ -266,47 +289,24 @@ public class SignUp extends AppCompatActivity {
     private void init() {
         nameEt = findViewById(R.id.name_Et);
         passwordEt = findViewById(R.id.password_Et);
+        passwordEt.setFilters(new InputFilter[] { filter });
         radioGroup = findViewById(R.id.radio);
         emailEt = findViewById(R.id.email_Et);
         addressEt = findViewById(R.id.address_Et);
         dobEt = findViewById(R.id.dob_Et);
-        driverImage = findViewById(R.id.driverImage);
         logIn = findViewById(R.id.loginBtn);
+        referralEt=findViewById(R.id.referral_ET);
         terms = findViewById(R.id.termsCheckBox);
         conditions = findViewById(R.id.conditions);
+        policy = findViewById(R.id.policy);
         api = ApiUtils.getUserService();
         list = new ArrayList<>();
         progressBar = findViewById(R.id.progrssbar);
+        password_LT = findViewById(R.id.password_LT);
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-
-                Uri resultUri = result.getUri();
-                if (resultUri!=null) {
-                    imageUri = resultUri;
-                    driverImage.setImageURI(imageUri);
-                   /* try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),resultUri);
-                        driverImage.setImageBitmap(bitmap);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-                Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     public void hideKeyBoard(Context context) {
         InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);

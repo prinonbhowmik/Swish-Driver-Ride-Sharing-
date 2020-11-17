@@ -12,127 +12,66 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/r1"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/neomorph_background_color"
-            app:layout_collapseMode="parallax">
-            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                android:id="@+id/backNFL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:neomorph_view_type="circular"
-                app:neomorph_shadow_type="outer"
-                app:neomorph_elevation="5dp"
-                app:neomorph_corner_radius="10dp"
-                android:layout_marginStart="10dp"
-                android:layerType="software"
-                app:neomorph_background_color="@color/neomorph_background_color"
-                app:neomorph_shadow_color="@color/neomorph_shadow_color"
-                app:neomorph_highlight_color="@color/neomorph_highlight_color"
-                android:layout_marginBottom="5dp">
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:onClick="backPressUp"
-                    android:padding="7dp"
-                    android:background="@drawable/round_stroke2"
-                    android:src="@drawable/ic_arrow_gray"/>
-            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                android:id="@+id/editNFL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:layerType="software"
-                app:neomorph_background_color="@color/neomorph_background_color"
-                app:neomorph_corner_radius="10dp"
-                app:neomorph_elevation="5dp"
-                app:neomorph_highlight_color="@color/neomorph_highlight_color"
-                app:neomorph_shadow_color="@color/neomorph_shadow_color"
-                app:neomorph_shadow_type="outer"
-                app:neomorph_view_type="circular">
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/backNFL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:neomorph_view_type="circular"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_elevation="5dp"
+            app:neomorph_corner_radius="10dp"
+            android:layout_marginStart="10dp"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            android:layout_marginBottom="5dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:onClick="backPressUp"
+                android:padding="7dp"
+                android:background="@drawable/round_stroke2"
+                android:src="@drawable/ic_arrow_gray"/>
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/updateBtnCIV"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/round_stroke2"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_tick_gray" />
-            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+            android:id="@+id/editNFL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layerType="software"
+            app:neomorph_background_color="@color/neomorph_background_color"
+            app:neomorph_corner_radius="10dp"
+            app:neomorph_elevation="5dp"
+            app:neomorph_highlight_color="@color/neomorph_highlight_color"
+            app:neomorph_shadow_color="@color/neomorph_shadow_color"
+            app:neomorph_shadow_type="outer"
+            app:neomorph_view_type="circular">
 
-            <FrameLayout
-                android:id="@+id/frame_layout1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/updateBtnCIV"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/round_stroke2"
+                android:padding="6dp"
+                android:src="@drawable/ic_tick_gray" />
+        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-                <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                    android:id="@+id/profileNFL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layerType="software"
-                    app:neomorph_background_color="@color/neomorph_background_color"
-                    app:neomorph_corner_radius="10dp"
-                    app:neomorph_elevation="6dp"
-                    app:neomorph_highlight_color="@color/neomorph_highlight_color"
-                    app:neomorph_shadow_color="@color/neomorph_shadow_color"
-                    app:neomorph_shadow_type="outer"
-                    app:neomorph_view_type="circular">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/driverProfileIV"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:background="@drawable/round_stroke"
-                        android:src="@drawable/ic_person_24" />
-                </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-                <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                    android:id="@+id/cameraNFL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:layerType="software"
-                    app:neomorph_background_color="@color/neomorph_background_color"
-                    app:neomorph_corner_radius="10dp"
-                    app:neomorph_elevation="2dp"
-                    app:neomorph_highlight_color="@android:color/transparent"
-                    app:neomorph_shadow_color="@color/neomorph_shadow_color"
-                    app:neomorph_shadow_type="outer"
-                    app:neomorph_view_type="circular">
-
-                    <ImageView
-                        android:id="@+id/cameraIV"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/custom_round2"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_photo_camera_black_24" />
-                </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
-
-            </FrameLayout>
-
-        </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/name_LT"
             style="@style/Edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/r1"
+            android:layout_below="@+id/backNFL"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"

@@ -2,9 +2,11 @@ package com.example.swishbddriver.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -29,12 +31,14 @@ public class Registration7Activity extends AppCompatActivity {
     private List<DriverInfo> info;
     private ApiInterface api;
     private SharedPreferences sharedPreferences;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration7);
         init();
+
         ownerNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +67,11 @@ public class Registration7Activity extends AppCompatActivity {
         getData();
     }
 
+
     private void sendData(String oName, String oPhone, String oAddress) {
+        progressDialog=new ProgressDialog(Registration7Activity.this);
+        progressDialog.setMessage("Uploading.....");
+        progressDialog.show();
         Call<List<DriverInfo>> call = api.partnerInfo(driverId,oName,oPhone,oAddress);
         call.enqueue(new Callback<List<DriverInfo>>() {
             @Override
@@ -76,9 +84,16 @@ public class Registration7Activity extends AppCompatActivity {
 
             }
         });
-        startActivity(new Intent(Registration7Activity.this, Registration2Activity.class));
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        finish();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                startActivity(new Intent(Registration7Activity.this, Registration2Activity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();            }
+        },1000);
+
     }
 
     private void init() {
@@ -99,12 +114,12 @@ public class Registration7Activity extends AppCompatActivity {
             public void onResponse(Call<List<DriverInfo>> call, Response<List<DriverInfo>> response) {
                 if (response.isSuccessful()) {
                     info = response.body();
-                        oName=info.get(0).getPartner_name();
-                        oPhone = info.get(0).getPartner_phone();
-                        oAddress = info.get(0).getPartner_address();
-                        ownerNameET.setText(oName);
-                        ownerPhoneET.setText(oPhone);
-                        ownerAddressET.setText(oAddress);
+                    oName=info.get(0).getPartner_name();
+                    oPhone = info.get(0).getPartner_phone();
+                    oAddress = info.get(0).getPartner_address();
+                    ownerNameET.setText(oName);
+                    ownerPhoneET.setText(oPhone);
+                    ownerAddressET.setText(oAddress);
 
 
                 }
@@ -122,7 +137,7 @@ public class Registration7Activity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(Registration7Activity.this, DriverMapActivity.class));
+        startActivity(new Intent(Registration7Activity.this, Registration1Activity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

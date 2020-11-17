@@ -9,7 +9,11 @@ public class DriverInfo {
     private String partner_address;
     private String dl_number;
     private String driving_license_photosF;
+    private String dlpfs;
+    private String dlpfc;
     private String driving_license_photosB;
+    private String dlpbs;
+    private String dlpbc;
     private String dl_expire_date;
     private String tax_token_photos;
     private String tt_number;
@@ -25,7 +29,11 @@ public class DriverInfo {
     private String rp_expire_date;
     private String road_permit_photos;
     private String nid_front;
+    private String nidfs;
+    private String nidfc;
     private String nid_back;
+    private String nidbs;
+    private String nidbc;
     private String car_inside_photos1;
     private String car_inside_photos2;
     private String car_outside_photos1;
@@ -33,18 +41,23 @@ public class DriverInfo {
     private String car_outside_photos3;
     private String car_outside_photos4;
     private String selfie;
+    private String status;
+    private String selfies;
+    private String selfiec;
     public DriverInfo() {
     }
 
     public DriverInfo(int id, String driver_id, String car_owner, String partner_name, String partner_phone,
-                      String partner_address, String dl_number, String driving_license_photosF,
-                      String driving_license_photosB, String dl_expire_date, String tax_token_photos,
-                      String tt_number, String tt_expire_date, String car_name, String car_model,
-                      String production_year, String registration_year, String car_registration_photos,
-                      String plate_number, String ins_expire_date, String insurance_photos, String rp_expire_date,
-                      String road_permit_photos, String nid_front, String nid_back, String car_inside_photos1,
-                      String car_inside_photos2, String car_outside_photos1, String car_outside_photos2,
-                      String car_outside_photos3, String car_outside_photos4, String selfie) {
+                      String partner_address, String dl_number, String driving_license_photosF, String dlpfs,
+                      String dlpfc, String driving_license_photosB, String dlpbs, String dlpbc,
+                      String dl_expire_date, String tax_token_photos, String tt_number, String tt_expire_date,
+                      String car_name, String car_model, String production_year, String registration_year,
+                      String car_registration_photos, String plate_number, String ins_expire_date,
+                      String insurance_photos, String rp_expire_date, String road_permit_photos,
+                      String nid_front, String nidfs, String nidfc, String nid_back, String nidbs,
+                      String nidbc, String car_inside_photos1, String car_inside_photos2,
+                      String car_outside_photos1, String car_outside_photos2, String car_outside_photos3,
+                      String car_outside_photos4, String selfie, String status, String selfies, String selfiec) {
         this.id = id;
         this.driver_id = driver_id;
         this.car_owner = car_owner;
@@ -53,7 +66,11 @@ public class DriverInfo {
         this.partner_address = partner_address;
         this.dl_number = dl_number;
         this.driving_license_photosF = driving_license_photosF;
+        this.dlpfs = dlpfs;
+        this.dlpfc = dlpfc;
         this.driving_license_photosB = driving_license_photosB;
+        this.dlpbs = dlpbs;
+        this.dlpbc = dlpbc;
         this.dl_expire_date = dl_expire_date;
         this.tax_token_photos = tax_token_photos;
         this.tt_number = tt_number;
@@ -69,7 +86,11 @@ public class DriverInfo {
         this.rp_expire_date = rp_expire_date;
         this.road_permit_photos = road_permit_photos;
         this.nid_front = nid_front;
+        this.nidfs = nidfs;
+        this.nidfc = nidfc;
         this.nid_back = nid_back;
+        this.nidbs = nidbs;
+        this.nidbc = nidbc;
         this.car_inside_photos1 = car_inside_photos1;
         this.car_inside_photos2 = car_inside_photos2;
         this.car_outside_photos1 = car_outside_photos1;
@@ -77,6 +98,9 @@ public class DriverInfo {
         this.car_outside_photos3 = car_outside_photos3;
         this.car_outside_photos4 = car_outside_photos4;
         this.selfie = selfie;
+        this.status = status;
+        this.selfies = selfies;
+        this.selfiec = selfiec;
     }
 
     public int getId() {
@@ -111,8 +135,24 @@ public class DriverInfo {
         return driving_license_photosF;
     }
 
+    public String getDlpfs() {
+        return dlpfs;
+    }
+
+    public String getDlpfc() {
+        return dlpfc;
+    }
+
     public String getDriving_license_photosB() {
         return driving_license_photosB;
+    }
+
+    public String getDlpbs() {
+        return dlpbs;
+    }
+
+    public String getDlpbc() {
+        return dlpbc;
     }
 
     public String getDl_expire_date() {
@@ -175,8 +215,24 @@ public class DriverInfo {
         return nid_front;
     }
 
+    public String getNidfs() {
+        return nidfs;
+    }
+
+    public String getNidfc() {
+        return nidfc;
+    }
+
     public String getNid_back() {
         return nid_back;
+    }
+
+    public String getNidbs() {
+        return nidbs;
+    }
+
+    public String getNidbc() {
+        return nidbc;
     }
 
     public String getCar_inside_photos1() {
@@ -205,5 +261,17 @@ public class DriverInfo {
 
     public String getSelfie() {
         return selfie;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getSelfies() {
+        return selfies;
+    }
+
+    public String getSelfiec() {
+        return selfiec;
     }
 }

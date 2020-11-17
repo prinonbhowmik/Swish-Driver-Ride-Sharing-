@@ -105,11 +105,15 @@ public class WelcomeScreen extends AppCompatActivity {
         itemEatTogether.setTitle("Pick Up");
         itemEatTogether.setDescription("Pick your passenger from his/her desired location.");
 
+        OnboardingItem locationPermission = new OnboardingItem();
+        locationPermission.setImage(R.drawable.location_permission);
+        locationPermission.setTitle("Use Your Location");
+        locationPermission.setDescription("SWISH will use location in the background to show your location on map.");
+
         onboardingItems.add(itemOnTheWay);
         onboardingItems.add(itemPayOnline);
-
         onboardingItems.add(itemEatTogether);
-
+        onboardingItems.add(locationPermission);
         onboardingAdapter = new OnboardingAdapter(onboardingItems);
 
 

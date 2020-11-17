@@ -47,6 +47,8 @@ public class EarningHistory extends AppCompatActivity {
         });
     }
 
+
+
     private void init() {
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);

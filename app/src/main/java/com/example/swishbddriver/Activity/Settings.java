@@ -3,6 +3,8 @@ package com.example.swishbddriver.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +17,7 @@ import com.example.swishbddriver.R;
 public class Settings extends AppCompatActivity {
 
     private ImageView backBtn;
-    private TextView modeTxt;
+    private TextView modeTxt,versionName;
     private static Switch switchBtn;
     private SharedPreferences sharedpreferences;
     private SharedPreferences.Editor editor;
@@ -28,6 +30,7 @@ public class Settings extends AppCompatActivity {
 
         init();
 
+        getVersionName();
         sharedpreferences = getSharedPreferences("MyRef",Context.MODE_PRIVATE);
         darkMode = sharedpreferences.getBoolean("dark",false);
 
@@ -40,10 +43,24 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Settings.this,DriverMapActivity.class));
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 finish();
             }
         });
 
+    }
+
+
+    private void getVersionName() {
+        PackageInfo pinfo = null;
+        try {
+            pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String versionName1 = pinfo.versionName;
+        versionName.setText("Version "+versionName1);
     }
 
     private void init() {
@@ -51,6 +68,7 @@ public class Settings extends AppCompatActivity {
         switchBtn = findViewById(R.id.switchBtn);
         sharedpreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         editor = sharedpreferences.edit();
+        versionName=findViewById(R.id.versionCodeTv);
     }
 
     public void switchChange(View view) {
@@ -73,6 +91,7 @@ public class Settings extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(Settings.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }
 }

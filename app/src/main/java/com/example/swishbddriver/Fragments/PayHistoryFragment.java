@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -69,6 +70,7 @@ public class PayHistoryFragment extends Fragment {
                         noHistoryTxt.setText("No Payment History");
                         recyclerView.setVisibility(View.GONE);
                     }
+                    Collections.reverse(model);
                     adapter.notifyDataSetChanged();
                 }
 

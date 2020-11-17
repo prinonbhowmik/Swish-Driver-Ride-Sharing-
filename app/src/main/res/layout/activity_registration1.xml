@@ -28,7 +28,7 @@
                 android:id="@+id/titleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registration"
+                android:text="Verification"
                 android:layout_marginLeft="50dp"
                 android:textColor="@android:color/white"
                 android:layout_centerVertical="true"
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/tool"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/text"
@@ -241,56 +241,5 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relative2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tool"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/registration"
-                android:layout_marginTop="10dp"
-                android:id="@+id/regIV"/>
-
-            <TextView
-                android:id="@+id/title1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_below="@+id/regIV"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center"
-                android:text="Your Registration Is Complete"
-                android:textColor="@color/themColor"
-                android:textSize="21sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/title2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/title1"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="Your Registration Number Is"
-                android:textColor="@color/themColor"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/registrationNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/title2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="@color/themColor"
-                android:textSize="18sp" />
-        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

@@ -63,7 +63,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
-            android:backgroundTint="@color/themColor2"
+            android:backgroundTint="@color/themColor"
             android:clickable="true"
             app:fabSize="mini"
             android:src="@drawable/ic_location_searching_24" />
@@ -288,35 +288,27 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_drawer_header"
-        app:itemIconTint="@color/themColor2"
+        app:itemIconTint="@color/themColor"
         app:itemTextColor="@color/themColor2"
         app:menu="@menu/nav_options">
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="10dp"
             android:orientation="vertical"
             android:padding="5dp">
-
             <TextView
                 android:id="@+id/eamil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="support@swish.com.bd" />
-
-            <TextView
-                android:id="@+id/contact"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="www.swish.com.bd" />
-        </LinearLayout>
+        </LinearLayout>-->
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

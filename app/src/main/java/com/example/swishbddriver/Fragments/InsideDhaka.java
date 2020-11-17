@@ -33,8 +33,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
@@ -62,6 +66,8 @@ public class InsideDhaka extends Fragment {
     private List<ProfileModel> list;
 
     private RadioRealButtonGroup radioGroup;
+    private Date d1,d2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,7 +112,7 @@ public class InsideDhaka extends Fragment {
 
                         }
                     }
-                    //  notificationCount.setVisibility(View.GONE);
+
                     Collections.reverse(hourlyRideModelList);
                     bookHourlyAdapter.notifyDataSetChanged();
                 }
@@ -154,9 +160,29 @@ public class InsideDhaka extends Fragment {
                     hourlyRideModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         bookingStatus=data.child("bookingStatus").getValue().toString();
+                        String date1 = data.child("pickUpDate").getValue().toString();
+                        String tripId = data.child("bookingId").getValue().toString();
+                        String customerID = data.child("customerId").getValue().toString();
                         if(bookingStatus.equals("Pending")){
                             HourlyRideModel book = data.getValue(HourlyRideModel.class);
                             hourlyRideModelList.add(book);
+                        }
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
+                        try {
+                            d1 = dateFormat.parse(date1);
+                            d2 = dateFormat.parse(currentDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (d2.compareTo(d1) > 0){
+                            DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID);
+                            delRef.child(tripId).removeValue();
+                            DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
+                            del1Ref.child(tripId).removeValue();
                         }
                     }
                     //counter(carType);
@@ -176,4 +202,5 @@ public class InsideDhaka extends Fragment {
             }
         });
     }
+
 }

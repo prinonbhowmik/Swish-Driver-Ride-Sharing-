@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
-
-
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_person_24"
@@ -13,8 +11,12 @@
             android:title="Advance Booking" />
         <item
             android:id="@+id/registration"
-            android:title="Registration"
+            android:title="Verification"
             android:icon="@drawable/ic_website"/>
+        <item
+            android:id="@+id/referral"
+            android:icon="@drawable/ic_referral"
+            android:title="Referral" />
         <item
             android:id="@+id/earnings"
             android:title="Earnings"
@@ -24,28 +26,30 @@
             android:id="@+id/history"
             android:icon="@drawable/ic_history2"
             android:title="History" />
-
-
-
-
     </group>
+
     <group
         android:id="@+id/bottom"
         android:checkableBehavior="single">
-
-        <item
-            android:id="@+id/settings"
-            android:title="Settings"
-            android:icon="@drawable/ic_baseline_settings_24"/>
         <item
             android:id="@+id/emergency"
             android:icon="@drawable/ic_emergency"
             android:title="Emergency" />
         <item
+            android:id="@+id/settings"
+            android:title="Settings"
+            android:icon="@drawable/ic_baseline_settings_24"/>
+        <item
+            android:id="@+id/notification"
+            android:title="Notifications"
+            android:icon="@drawable/ic_notification"/>
+        <item
             android:id="@+id/logout"
             android:title="logout"
             android:icon="@drawable/ic_logout"/>
-
     </group>
+
+    <item android:id="@+id/support"
+        android:title="support@swish.com.bd"/>
 
 </menu>

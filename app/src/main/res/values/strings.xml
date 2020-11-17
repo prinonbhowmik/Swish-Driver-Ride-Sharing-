@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Swish Driver</string>
+    <string name="app_name">Swish BD Driver</string>
     <string name="terms_and_conditions"><u>terms and conditions</u></string>
+    <string name="privacy"><u>privacy policy &amp;</u></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="description">999 Emergency services is an emergency call center run by the Bangladesh Police.
@@ -9,4 +10,10 @@
         The call center is open 24 hours a day, 7 days a week. 999 is a toll free number.
         The caller does not have to spend any money to call this number. Their trained call center agents
         are always ready for your emergency call, Bangladesh Police. Stay well, stay safe.</string>
+    <string name="referral_title_text">Do you have friends who wants to drive and earn as well ?
+        Why not refer them with your personal referral id ?
+        You will get amazing cash back while each of your friends will complete 1 trip.</string>
+    <string name="support">support@swish.com.bd</string>
+    <string name="location_msg">"SWISH DRIVER" collects location data to correctly identify your position and provide an accurate fare policy, even when the app is closed or not in use. </string>
+
 </resources>

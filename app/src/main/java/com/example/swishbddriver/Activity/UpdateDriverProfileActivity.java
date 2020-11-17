@@ -68,16 +68,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UpdateDriverProfileActivity extends AppCompatActivity {
+
     private FirebaseAuth auth;
     private DatabaseReference databaseReference;
     private String driverId, name, email, phone, image,address,gender,dob;
     private TextView name_Et, email_Et, gender_Et,date_Et;
-    private CircleImageView driverProfileIV,updateBtn;
+    private CircleImageView updateBtn;
     private StorageReference storageReference;
     private FirebaseStorage storage;
     private String name1, email1, gender1,dob1;
     private SharedPreferences sharedPreferences;
-    private FrameLayout frameLayout;
     private Uri imageUri;
     private List<ProfileModel> list;
     private LottieAnimationView progressBar;
@@ -132,17 +132,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
             }
         });
-        getDriverInformation();
-        frameLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CropImage.activity()
-                        .setFixAspectRatio(true)
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setCropShape(CropImageView.CropShape.OVAL)
-                        .start(UpdateDriverProfileActivity.this);
-            }
-        });
+
 
         date_Et.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +174,9 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         });
     }
 
+
+
+
     private TextWatcher textWatcher=new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -211,81 +204,84 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
         hideKeyboardFrom(getApplicationContext());
-       if (imageUri!=null){
-           File file = new File(imageUri.getPath());
+        if (imageUri!=null){
+            File file = new File(imageUri.getPath());
 
-           RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
 
-           // MultipartBody.Part is used to send also the actual file name
-           MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
-
-           RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
-           RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
-           RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
-           RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
-           RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
-
-           Call<List<ProfileModel>> call = api.updateData(idbody,body,fullName,emailBody,genderbody,dobBody);
-           call.enqueue(new Callback<List<ProfileModel>>() {
-               @Override
-               public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                  if (response.isSuccessful()){
-
-                  }
-               }
-
-               @Override
-               public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-                   Log.d("Dekhbo", t.getMessage());
-               }
-           });
-
-           new Handler().postDelayed(new Runnable() {
-               @Override
-               public void run() {
-                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
-                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
-                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                   finish();
-               }
-           },SPLASH_TIME_OUT2);
-
-       }
-       else if (imageUri==null){
-           RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
-           RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
-           RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
-           RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
-           RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
-
-           Call<List<ProfileModel>> call = api.updateDatawithoutimage(idbody,fullName,emailBody,genderbody,dobBody);
-           call.enqueue(new Callback<List<ProfileModel>>() {
-               @Override
-               public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                   if (response.isSuccessful()){
-
-                   }
-               }
-
-               @Override
-               public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
-               }
-           });
+            // MultipartBody.Part is used to send also the actual file name
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
 
-           new Handler().postDelayed(new Runnable() {
-               @Override
-               public void run() {
-                   Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
-                   startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
-                   overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                   finish();
-               }
-           },SPLASH_TIME_OUT);
+            RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+            RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
+            RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+            RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+            RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
 
-       }
+            Call<List<ProfileModel>> call = api.updateData(idbody,body,fullName,emailBody,genderbody,dobBody);
+            call.enqueue(new Callback<List<ProfileModel>>() {
+                @Override
+                public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                    if (response.isSuccessful()){
+                        if (response.body().get(0).getDone().equals("1")){
+                            progressBar.setVisibility(View.GONE);
+                            Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                            startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                            finish();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                    Log.d("Dekhbo", t.getMessage());
+                }
+            });
+
+        }
+        else if (imageUri==null){
+            RequestBody  fullName = RequestBody .create(MediaType.parse("text/plain"), name);
+            RequestBody  idbody = RequestBody .create(MediaType.parse("text/plain"), driverId);
+            RequestBody  emailBody = RequestBody .create(MediaType.parse("text/plain"), email);
+            RequestBody  genderbody = RequestBody .create(MediaType.parse("text/plain"), gender);
+            RequestBody  dobBody = RequestBody .create(MediaType.parse("text/plain"), dob);
+
+            Call<List<ProfileModel>> call = api.updateDatawithoutimage(idbody,fullName,emailBody,genderbody,dobBody);
+            call.enqueue(new Callback<List<ProfileModel>>() {
+                @Override
+                public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+                    if (response.isSuccessful()){
+                        if (response.body().get(0).getDone().equals("1")){
+                            progressBar.setVisibility(View.GONE);
+                            Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                            startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                            finish();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+                }
+            });
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toasty.success(UpdateDriverProfileActivity.this,"Update Success", Toasty.LENGTH_SHORT).show();
+                    startActivity(new Intent(UpdateDriverProfileActivity.this,DriverProfile.class));
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    finish();
+                }
+            },SPLASH_TIME_OUT);
+
+        }
 
 
 
@@ -329,9 +325,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
         gender_Et=findViewById(R.id.updateGenderET);
         date_Et=findViewById(R.id.UpdateDateET);
         sharedPreferences=getSharedPreferences("MyRef",MODE_PRIVATE);
-        driverProfileIV=findViewById(R.id.driverProfileIV);
         updateBtn=findViewById(R.id.updateBtnCIV);
-        frameLayout=findViewById(R.id.frame_layout1);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         progressBar = findViewById(R.id.progrssbar);
@@ -342,50 +336,7 @@ public class UpdateDriverProfileActivity extends AppCompatActivity {
     }
 
 
-    private void getDriverInformation() {
 
-        Call<List<ProfileModel>> call = api.getData(driverId);
-        call.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                if (response.isSuccessful()) {
-                    list = response.body();
-
-                    Picasso.get().load(Config.IMAGE_LINE+list.get(0).getImage()).into(driverProfileIV, new com.squareup.picasso.Callback() {
-                        @Override
-                        public void onSuccess() {}
-                        @Override
-                        public void onError(Exception e) {
-                            Log.d("kiKahini", e.getMessage());
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                imageUri = resultUri;
-                driverProfileIV.setImageURI(imageUri);
-                updateBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_tick_green));
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-               // progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(UpdateDriverProfileActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void uploadImage() {
         if (imageUri != null) {

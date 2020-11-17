@@ -129,7 +129,9 @@
         app:neomorph_background_color="@color/neomorph_background_color"
         app:neomorph_corner_radius="10dp"
         app:neomorph_elevation="8dp"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/locationLayout"
         app:neomorph_highlight_color="@color/neomorph_shadow_color"
         app:neomorph_shadow_color="@color/neomorph_shadow_color"
         app:neomorph_shadow_type="outer"
@@ -149,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_baseline_info_24"
-                    android:layout_margin="10dp"/>
+                    android:padding="15dp"/>
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/lottie"
                     android:layout_width="150dp"
@@ -179,7 +181,6 @@
                     android:layout_below="@+id/lottie"
                     android:id="@+id/cashTxt"
                     android:layout_marginEnd="10dp"
-                    android:text="1000"
                     android:layout_alignParentEnd="true"
                     android:textSize="18sp"
                     android:textColor="#000"
@@ -200,7 +201,6 @@
                     android:layout_below="@+id/totalTxt"
                     android:id="@+id/discount_Txt"
                     android:layout_marginEnd="10dp"
-                    android:text="0.0"
                     android:layout_alignParentEnd="true"
                     android:textSize="18sp"
                     android:textColor="#000"
@@ -212,7 +212,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/discount_Txt"
                     android:id="@+id/final_Txt"
-                    android:text="BDT 600"
                     android:layout_centerHorizontal="true"
                     android:textSize="30sp"
                     android:layout_marginTop="15dp"

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -19,10 +20,11 @@ import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.tabs.TabLayout;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvanceBookingActivity extends AppCompatActivity  {
+public class AdvanceBookingActivity extends AppCompatActivity {
     private String driverId;
     private String bookingStatus,driverCarType;
     private CardView cardView;
@@ -86,6 +88,9 @@ public class AdvanceBookingActivity extends AppCompatActivity  {
         viewPager = findViewById(R.id.bookingViewPager);
 
     }
+
+
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

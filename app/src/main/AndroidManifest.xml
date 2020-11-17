@@ -6,9 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -26,46 +23,111 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.RideHistoryActivity"></activity>
-        <activity android:name=".Activity.HourlyDetailsActivity" />
-        <activity android:name=".Activity.Registration6Activity" />
-        <activity android:name=".Activity.Registration5Activity" />
-        <activity android:name=".Activity.Registration4Activity" />
-        <activity android:name=".Activity.Registration7Activity" />
-        <activity android:name=".Activity.EditDriverBio" />
-        <activity android:name=".Activity.DriverMapActivity" />
-        <activity android:name=".Activity.AdvanceBookingActivity" />
-        <activity android:name=".Activity.BookingDetailsActivity" />
-        <activity android:name=".Activity.Registration2Activity" />
-        <activity android:name=".Activity.UpdateDriverProfileActivity" />
-        <activity android:name=".Activity.WelcomeScreen" />
-        <activity android:name=".Activity.Registration3Activity" />
-        <activity android:name=".Activity.BookLaterMapActivity" />
-        <activity android:name=".Activity.Registration1Activity" />
-        <activity android:name=".Activity.EarningHistory" />
-        <activity android:name=".Activity.FareDetails" />
-        <activity android:name=".Activity.EarningsActivity" />
-        <activity android:name=".Activity.RideRequestActivity" />
-        <activity android:name=".Activity.Settings" />
-        <activity android:name=".Activity.PhoneNoActivity" />
-        <activity android:name=".Activity.TermsAndConditions" />
-        <activity android:name=".Activity.ShowCash" />
-        <activity android:name=".Activity.ChangePassword" />
-        <activity android:name=".Activity.DriverProfile" />
-        <activity android:name=".Activity.Otp_Activity" />
-        <activity android:name=".Activity.PasswordActivity" />
-        <activity android:name=".Activity.Emergency" />
-        <activity android:name=".Activity.SignUp" />
+        <activity android:name=".Activity.ReferralActivity"/>
+        <activity android:name=".Activity.NotificationsActivity" />
+        <activity android:name=".Activity.AllVerificationActivity" />
+        <activity android:name=".Activity.ResetPassword" />
+        <activity
+            android:name=".Activity.RideHistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.HourlyDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration6Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration5Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration4Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration7Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.EditDriverBio"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.DriverMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.AdvanceBookingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.BookingDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration2Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.UpdateDriverProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.WelcomeScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration3Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.BookLaterMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Registration1Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.EarningHistory"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.FareDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.EarningsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.RideRequestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.PhoneNoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.TermsAndConditions"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.ShowCash"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.ChangePassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.DriverProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Otp_Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.PasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Emergency"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SignUp"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".Activity.SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

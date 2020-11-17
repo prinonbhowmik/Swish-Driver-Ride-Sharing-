@@ -3,15 +3,12 @@ package com.example.swishbddriver.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
@@ -39,8 +36,6 @@ public class ChangePassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
         init();
-
-
         driverID = sharedPreferences.getString("id","");
 
         savePassword.setOnClickListener(new View.OnClickListener() {
@@ -54,10 +49,7 @@ public class ChangePassword extends AppCompatActivity {
                 if (TextUtils.isEmpty(pass1)) {
                     currentPassword.setError("Enter Current Password!");
                     currentPassword.requestFocus();
-                } /*else if (currentPassword.length() < 6) {
-                    currentPassword.setError("At least 6 characters!", null);
-                    currentPassword.requestFocus();
-                }*/ else if (TextUtils.isEmpty(pass2)) {
+                }  else if (TextUtils.isEmpty(pass2)) {
                     changePass1.setError("Enter New Password!");
                     changePass1.requestFocus();
                 } else if (changePass1.length() < 6) {
@@ -77,6 +69,7 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
     }
+
 
     private void changePassword(final String pass1, String pass2, final String pass3) {
         Call<List<ProfileModel>> call = api.getData(driverID);
@@ -103,6 +96,7 @@ public class ChangePassword extends AppCompatActivity {
                         });
                         Toast.makeText(ChangePassword.this, "Password change successful!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(ChangePassword.this, DriverProfile.class));
+                        finish();
                     } else {
                         Toast.makeText(ChangePassword.this, "Password doesn't matched!", Toast.LENGTH_SHORT).show();
                     }

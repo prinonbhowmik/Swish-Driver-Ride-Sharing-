@@ -75,7 +75,6 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
 
                 } catch (ActivityNotFoundException activityException) {
                     Toasty.error(getContext(),""+activityException.getMessage(), Toasty.LENGTH_SHORT).show();
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
                 }
             }
         });
@@ -101,25 +100,6 @@ public class CustomerDetailsBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-
-
-        /*DatabaseReference ref=databaseReference.child("profile").child(customerId);
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                custName = snapshot.child("name").getValue().toString();
-                custPhone = snapshot.child("phone").getValue().toString();
-                customerName.setText(custName);
-                customerPhone.setText(custPhone);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
     }
 
     private void init(View view) {

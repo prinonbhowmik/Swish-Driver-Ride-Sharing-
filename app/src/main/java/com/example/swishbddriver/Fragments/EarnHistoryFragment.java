@@ -37,7 +37,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EarnHistoryFragment extends Fragment {
-
     private RecyclerView recyclerView;
     private EarningHistoryAdapter adapter;
     private List<DriverAllRidePrice> list;
@@ -51,18 +50,10 @@ public class EarnHistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_earn_history, container, false);
-
         init(view);
-
-
         getData();
-
-
-
-
         return view;
     }
-
 
     private void getData() {
         list.clear();
@@ -71,7 +62,6 @@ public class EarnHistoryFragment extends Fragment {
             @Override
             public void onResponse(Call<List<DriverAllRidePrice>> call, Response<List<DriverAllRidePrice>> response) {
                 if (response.isSuccessful()){
-
                     list = response.body();
                     adapter = new EarningHistoryAdapter(list, getContext());
                     recyclerView.setAdapter(adapter);
@@ -81,10 +71,9 @@ public class EarnHistoryFragment extends Fragment {
                         recyclerView.setVisibility(View.GONE);
                     }
                 }
-
+                Collections.reverse(list);
                 adapter.notifyDataSetChanged();
             }
-
             @Override
             public void onFailure(Call<List<DriverAllRidePrice>> call, Throwable t) {
             }

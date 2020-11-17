@@ -18,16 +18,16 @@ public class BookForLaterModel {
     private String endTime;
     private String payment;
     private String discount;
-    private String updatePrice;
+    private String finalPrice;
+    private String cashReceived;
+    private String totalTime;
+    private String totalDestination;
+    private float rating;
 
     public BookForLaterModel() {
     }
 
-    public BookForLaterModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat,
-                             String destinationLon, String pickUpPlace, String destinationPlace,
-                             String pickUpDate, String pickUpTime, String customerId, String price,
-                             String carType, String bookingStatus, String driverId, String rideStatus,
-                             String endTime, String payment, String discount, String updatePrice) {
+    public BookForLaterModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDestination, float rating) {
         this.bookingId = bookingId;
         this.pickUpLat = pickUpLat;
         this.pickUpLon = pickUpLon;
@@ -46,7 +46,11 @@ public class BookForLaterModel {
         this.endTime = endTime;
         this.payment = payment;
         this.discount = discount;
-        this.updatePrice = updatePrice;
+        this.finalPrice = finalPrice;
+        this.cashReceived = cashReceived;
+        this.totalTime = totalTime;
+        this.totalDestination = totalDestination;
+        this.rating = rating;
     }
 
     public String getBookingId() {
@@ -121,7 +125,23 @@ public class BookForLaterModel {
         return discount;
     }
 
-    public String getUpdatePrice() {
-        return updatePrice;
+    public String getFinalPrice() {
+        return finalPrice;
+    }
+
+    public String getCashReceived() {
+        return cashReceived;
+    }
+
+    public String getTotalTime() {
+        return totalTime;
+    }
+
+    public String getTotalDestination() {
+        return totalDestination;
+    }
+
+    public float getRating() {
+        return rating;
     }
 }

@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 
-
 import com.example.swishbddriver.ForMap.FetchURL;
 import com.example.swishbddriver.ForMap.TaskLoadedCallback;
 import com.example.swishbddriver.R;
@@ -46,11 +45,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +69,7 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
     private String apiKey = "AIzaSyDy8NWL5x_v5AyQkcM9-4wqAWBp27pe9Bk", destinationPlace, pickUpPlace,currentPlace,carType,id,userId,rideType;
     private Geocoder geocoder;
     private Locale locale;
-    private boolean isGPS = false, isContinue = false;
+    private boolean isGPS = false, isContinue = false,dark=false,confirmed=false;
     private StringBuilder stringBuilder;
     private Polyline currentPolyline;
     private MarkerOptions place1, place2;
@@ -94,6 +93,10 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
                 isGPS = isGPSEnable;
             }
         });
+
+        sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
+        dark = sharedPreferences.getBoolean("dark", false);
+
 
         locationCallback = new LocationCallback() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -134,45 +137,47 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
-        Log.d("getResult",currentLat+","+currentLon);
 
         Intent intent = getIntent();
         check = intent.getIntExtra("check",0);
-        
+
         if (check==2){
             destinationLat = Double.parseDouble(intent.getStringExtra("dLat"));
             destinationLon = Double.parseDouble(intent.getStringExtra("dLon"));
             destinationPlace = intent.getStringExtra("dPlace");
         }
 
-       if (check==1){
-           pickUpLat = Double.parseDouble(intent.getStringExtra("pLat"));
-           pickUpLon = Double.parseDouble(intent.getStringExtra("pLon"));
-           pickUpPlace = intent.getStringExtra("pPlace");
-           id = intent.getStringExtra("id");
-           carType = intent.getStringExtra("carType");
-           rideType = intent.getStringExtra("rideStatus");
-       }
-       if (check==4){
-           pickUpLat = Double.parseDouble(intent.getStringExtra("pLat"));
-           pickUpLon = Double.parseDouble(intent.getStringExtra("pLon"));
-           pickUpPlace = intent.getStringExtra("pPlace");
-           id = intent.getStringExtra("id");
-           carType = intent.getStringExtra("carType");
-           rideType = intent.getStringExtra("rideStatus");
-       }
+        if (check==1){
+            pickUpLat = Double.parseDouble(intent.getStringExtra("pLat"));
+            pickUpLon = Double.parseDouble(intent.getStringExtra("pLon"));
+            pickUpPlace = intent.getStringExtra("pPlace");
+            id = intent.getStringExtra("id");
+            confirmed = intent.getBooleanExtra("confirm",false);
+            carType = intent.getStringExtra("carType");
+            rideType = intent.getStringExtra("rideStatus");
+        }
+        if (check==4){
+            pickUpLat = Double.parseDouble(intent.getStringExtra("pLat"));
+            pickUpLon = Double.parseDouble(intent.getStringExtra("pLon"));
+            pickUpPlace = intent.getStringExtra("pPlace");
+            id = intent.getStringExtra("id");
+            carType = intent.getStringExtra("carType");
+            rideType = intent.getStringExtra("rideStatus");
+        }
 
-       passengerNav.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               Uri navigation = Uri.parse("google.navigation:q=" + pickUpLat + "," + pickUpLon + "&mode=d");
-               Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
-               navigationIntent.setPackage("com.google.android.apps.maps");
-               startActivity(navigationIntent);
-           }
-       });
+        passengerNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri navigation = Uri.parse("google.navigation:q=" + pickUpLat + "," + pickUpLon + "&mode=d");
+                Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
+                navigationIntent.setPackage("com.google.android.apps.maps");
+                startActivity(navigationIntent);
+            }
+        });
 
     }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void getCurrentLocation() {
@@ -217,6 +222,12 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
             return;
         }
 
+        if (dark) {
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_aubergine));
+        } else {
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.retro));
+        }
+
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(false);
 
@@ -246,6 +257,13 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
                         if (driverId.equals(userId)){
                             passengerNav.setVisibility(View.VISIBLE);
                             showPickUpRoute();
+                        }else{
+                            BitmapDescriptor markerIcon = vectorToBitmap(R.drawable.userpickup);
+                            placeNameTV.setText(pickUpPlace);
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pickUpLat,pickUpLon),13));
+                            place1 = new MarkerOptions().icon(markerIcon)
+                                    .position(new LatLng(pickUpLat,pickUpLon)).title(pickUpPlace);
+                            map.addMarker(place1);
                         }
                     }
 
@@ -322,28 +340,8 @@ public class BookLaterMapActivity extends AppCompatActivity implements OnMapRead
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-       // DrawableCompat.setTint(vectorDrawable);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-    private void showDirections() {
-
-        place1 = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                .position(new LatLng(currentLat,currentLon)).title(pickUpPlace);
-
-        place2 = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                .position(new LatLng(pickUpLat, pickUpLon)).title(destinationPlace);
-
-        new FetchURL(BookLaterMapActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),
-                "driving"), "driving");
-
-        map.addMarker(place1);
-        map.addMarker(place2);
-
-
-        map.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
-
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
