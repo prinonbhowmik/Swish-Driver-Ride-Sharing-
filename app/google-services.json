@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:472494743105:android:b5e3a4142feb1d0e8770c0",
+        "mobilesdk_app_id": "1:472494743105:android:b076d5658ebbfca28770c0",
         "android_client_info": {
           "package_name": "com.example.swishbddriver"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "472494743105-kj9v3r6ikk97tigmdtkb2pjpkg2d60jc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.swishbddriver",
-            "certificate_hash": "066c5cb8aad62b89515039475d06418d2c4d5196"
-          }
-        },
         {
           "client_id": "472494743105-iii2jbhplgiuv14htljffmhpe34g9qmc.apps.googleusercontent.com",
           "client_type": 3
