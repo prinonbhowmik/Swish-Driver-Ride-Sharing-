@@ -75,7 +75,7 @@ public class PayHistoryFragment extends Fragment {
                 }
 
 
-            }
+            } 
 
             @Override
             public void onFailure(Call<List<PayHistoryModel>> call, Throwable t) {

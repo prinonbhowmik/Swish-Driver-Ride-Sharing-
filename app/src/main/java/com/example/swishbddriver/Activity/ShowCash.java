@@ -307,6 +307,7 @@ public class ShowCash extends AppCompatActivity {
                     pickupPlaceTV.setText(snapshot.child("pickUpPlace").getValue().toString());
                     destinationPlaceTV.setText(snapshot.child("destinationPlace").getValue().toString());
                     price=snapshot.child("price").getValue().toString();
+                    customerID = snapshot.child("customerId").getValue().toString();
                     cashTxt.setText(price);
                     price1=Integer.parseInt(price);
                     discount=snapshot.child("discount").getValue().toString();
@@ -338,6 +339,7 @@ public class ShowCash extends AppCompatActivity {
                     pickupPlaceTV.setText(snapshot.child("pickUpPlace").getValue().toString());
                     destinationPlaceTV.setText(snapshot.child("destinationPlace").getValue().toString());
                     price=snapshot.child("price").getValue().toString();
+                    customerID = snapshot.child("customerId").getValue().toString();
                     cashTxt.setText(price);
                     price1=Integer.parseInt(price);
                     discount=snapshot.child("discount").getValue().toString();
