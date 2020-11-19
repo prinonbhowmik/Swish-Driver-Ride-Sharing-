@@ -37,7 +37,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ShowCash extends AppCompatActivity {
-
     private Button collectBtn;
     private TextView pickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv, hourTv;
     private int price1, check, commission,finalCommission,finalPrice1, discount1, addWalletBalance;
@@ -74,7 +73,7 @@ public class ShowCash extends AppCompatActivity {
         customerID = intent.getStringExtra("customerId");
         check = intent.getIntExtra("check", 0);
 
-        getwalletData();
+        //getWalletData();
 
         if (check == 1) {
             getBookingData();
@@ -90,9 +89,7 @@ public class ShowCash extends AppCompatActivity {
                     call1.enqueue(new Callback<List<CouponShow>>() {
                         @Override
                         public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
-                            if (response.body() == null) {
-                                return;
-                            }else{
+                            if (response.body() != null) {
                                 List<CouponShow> list = response.body();
                                 setCoupon = list.get(0).getSetCoupons();
                                 couponActive = true;
@@ -127,7 +124,6 @@ public class ShowCash extends AppCompatActivity {
                         });
                     } else if (check == 2) {
                         //Hourly Ride
-
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(tripId);
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(tripId);
@@ -233,21 +229,19 @@ public class ShowCash extends AppCompatActivity {
     }
 
     private void newWalletBalance(int addWalletBalance) {
-        Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
-        getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+        Call<List<CustomerProfile>> newWalletCall = api.getCustomerData(customerID);
+        newWalletCall.enqueue(new Callback<List<CustomerProfile>>() {
             @Override
             public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
                 if (response.isSuccessful()) {
                     List<CustomerProfile> list = response.body();
                     walletBalance = list.get(0).getWallet();
-                    int newWallet = addWalletBalance + walletBalance;
-                    Call<List<CustomerProfile>> listCall = api.walletValue(customerID, newWallet);
+                    updatewallet = addWalletBalance + walletBalance;
+                    Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
                     listCall.enqueue(new Callback<List<CustomerProfile>>() {
                         @Override
                         public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-
                         }
-
                         @Override
                         public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
 
@@ -261,12 +255,11 @@ public class ShowCash extends AppCompatActivity {
 
             }
         });
-
     }
 
-    private void getwalletData() {
-        Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
-        getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+    /*private void getWalletData() {
+        Call<List<CustomerProfile>> getWalletCall = api.getCustomerData(customerID);
+        getWalletCall.enqueue(new Callback<List<CustomerProfile>>() {
             @Override
             public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
                 walletBalance = response.body().get(0).getWallet();
@@ -281,7 +274,7 @@ public class ShowCash extends AppCompatActivity {
         });
 
 
-    }
+    }*/
 
     private void init() {
         collectBtn = findViewById(R.id.collectBtn);

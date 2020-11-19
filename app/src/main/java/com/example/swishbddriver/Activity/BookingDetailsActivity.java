@@ -271,11 +271,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void getDriverRide() {
-
-
-    }
-
     private void confirmEndTrip() {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
