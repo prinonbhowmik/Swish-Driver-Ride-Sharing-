@@ -16,31 +16,17 @@ public class HourlyRideModel {
     private String endTime;
     private String payment;
     private String discount;
-    private String updatePrice;
+    private String finalPrice;
+    private String cashReceived;
+    private String totalTime;
+    private String totalDestination;
+    private float rating;
 
     public HourlyRideModel() {
     }
 
-    public HourlyRideModel(String bookingId, String pickUpLat, String pickUpLon, String pickUpPlace,
-                           String pickUpDate, String pickUpTime, String customerId, String price,
-                           String carType, String bookingStatus, String driverId, String rideStatus,
-                           String endTime, String payment, String discount, String updatePrice) {
+    public HourlyRideModel(String bookingId) {
         this.bookingId = bookingId;
-        this.pickUpLat = pickUpLat;
-        this.pickUpLon = pickUpLon;
-        this.pickUpPlace = pickUpPlace;
-        this.pickUpDate = pickUpDate;
-        this.pickUpTime = pickUpTime;
-        this.customerId = customerId;
-        this.price = price;
-        this.carType = carType;
-        this.bookingStatus = bookingStatus;
-        this.driverId = driverId;
-        this.rideStatus = rideStatus;
-        this.endTime = endTime;
-        this.payment = payment;
-        this.discount = discount;
-        this.updatePrice = updatePrice;
     }
 
     public String getBookingId() {
@@ -103,7 +89,23 @@ public class HourlyRideModel {
         return discount;
     }
 
-    public String getUpdatePrice() {
-        return updatePrice;
+    public String getFinalPrice() {
+        return finalPrice;
+    }
+
+    public String getCashReceived() {
+        return cashReceived;
+    }
+
+    public String getTotalTime() {
+        return totalTime;
+    }
+
+    public String getTotalDestination() {
+        return totalDestination;
+    }
+
+    public float getRating() {
+        return rating;
     }
 }

@@ -21,6 +21,8 @@ import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -77,6 +79,7 @@ public class OutsideDhakaHistoryFragment extends Fragment {
                         recyclerView.setVisibility(View.GONE);
                     }
                 }
+                Collections.reverse(list);
                 adapter.notifyDataSetChanged();
             }
 

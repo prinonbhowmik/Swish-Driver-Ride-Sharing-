@@ -22,6 +22,8 @@ import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -79,6 +81,7 @@ public class InsideDhakaHistoryFragment extends Fragment {
                         noHistoryTxt.setText("No History");
                         recyclerView.setVisibility(View.GONE);
                     }
+                    Collections.reverse(list);
                     adapter.notifyDataSetChanged();
                 }
 

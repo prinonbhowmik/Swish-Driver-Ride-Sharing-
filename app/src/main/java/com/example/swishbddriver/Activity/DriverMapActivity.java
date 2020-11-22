@@ -90,7 +90,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-
     private ImageButton menuImageBtn;
     private DrawerLayout drawerLayout;
     private GoogleMap map;
@@ -589,11 +588,27 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     List<ProfileModel> list = new ArrayList<>();
                     list = response.body();
                     UserName.setText(list.get(0).getFull_name());
-                    if (!list.get(0).getCarType().equals("notSet")) {
+
                         carType = list.get(0).getCarType();
-                        userPhone.setText(carType);
-                    } else {
-                        userPhone.setText("Not selected yet!");
+                    switch (carType) {
+                        case "Sedan":
+                            userPhone.setText("Sedan");
+                            break;
+                        case "SedanPremiere":
+                            userPhone.setText("Sedan Premiere");
+                            break;
+                        case "SedanBusiness":
+                            userPhone.setText("Sedan Business");
+                            break;
+                        case "Micro7":
+                            userPhone.setText("Micro 7");
+                            break;
+                        case "Micro11":
+                            userPhone.setText("Micro 11");
+                            break;
+                        case "Notset":
+                            userPhone.setText("Unregistered");
+                            break;
                     }
                     rating = list.get(0).getRating();
                     ratingCount = list.get(0).getRatingCount();
@@ -660,7 +675,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         //databaseReference = FirebaseDatabase.getInstance().getReference();
         profileImage = navigationView.getHeaderView(0).findViewById(R.id.navProfileImage);
         UserName = navigationView.getHeaderView(0).findViewById(R.id.namefromNavigation);
-        userPhone = navigationView.getHeaderView(0).findViewById(R.id.phone_fromNavigation);
+        userPhone = navigationView.getHeaderView(0).findViewById(R.id.carTypeNavigation);
         ratingBar = navigationView.getHeaderView(0).findViewById(R.id.headerRatingBar);
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
@@ -984,7 +999,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     intent1.putExtra(Intent.EXTRA_TEXT, "your_text");
                     startActivity(intent1);
                 }catch(ActivityNotFoundException e){
-                    //TODO
                     Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         }

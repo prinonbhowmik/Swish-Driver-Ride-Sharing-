@@ -727,8 +727,25 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         destinationTV.setText(destinationPlace);
                         pickupDateTV.setText(pickupDate);
                         pickupTimeTV.setText(pickupTime);
-                        carTypeTV.setText(carType);
                         takaTV.setText(taka);
+
+                        switch (carType) {
+                            case "Sedan":
+                                carTypeTV.setText("Sedan");
+                                break;
+                            case "SedanPremiere":
+                                carTypeTV.setText("Sedan Premiere");
+                                break;
+                            case "SedanBusiness":
+                                carTypeTV.setText("Sedan Business");
+                                break;
+                            case "Micro7":
+                                carTypeTV.setText("Micro 7");
+                                break;
+                            case "Micro11":
+                                carTypeTV.setText("Micro 11");
+                                break;
+                        }
 
                         if (!driverID2.equals("")) {
                             if (!driverId.equals(driverID2)) {

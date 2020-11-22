@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
 
     private List<BookForLaterModel> bookForLaterModelList;
     private Context context;
-
+    private String car_type,carType;
     public OutsideDhakaHistoryAdapter(List<BookForLaterModel> bookForLaterModelList, Context context) {
         this.bookForLaterModelList = bookForLaterModelList;
         this.context = context;
@@ -29,7 +30,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.booking_list_design,parent,false);
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.outside_dhaka_history_layout_design,parent,false);
         return new OutsideDhakaHistoryAdapter.ViewHolder(view);
     }
 
@@ -40,12 +41,31 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
         holder.pickupLocationTV.setText(book.getPickUpPlace());
+        holder.ratingBar.setRating(book.getRating());
+        car_type=book.getCarType();
+        switch (car_type) {
+            case "Sedan":
+                carType="Sedan";
+                break;
+            case "SedanPremiere":
+                carType="Sedan Premiere";
+                break;
+            case "SedanBusiness":
+                carType="Sedan Business";
+                break;
+            case "Micro7":
+                carType="Micro 7";
+                break;
+            case "Micro11":
+                carType="Micro 11";
+                break;
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, BookingDetailsActivity.class);
                 intent.putExtra("bookingId",book.getBookingId());
-                intent.putExtra("carType",book.getCarType());
+                intent.putExtra("carType",carType);
                 intent.putExtra("userId",book.getCustomerId());
                 intent.putExtra("pickUpPlace",book.getPickUpPlace());
                 intent.putExtra("destinationPlace",book.getDestinationPlace());
@@ -67,9 +87,10 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate;
+        private RatingBar ratingBar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            ratingBar=itemView.findViewById(R.id.ratingBar);
             pickupLocationTV=itemView.findViewById(R.id.pickup_TV);
             destinationTV=itemView.findViewById(R.id.destination_TV);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
