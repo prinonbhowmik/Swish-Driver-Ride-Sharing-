@@ -3,6 +3,7 @@ package com.example.swishbddriver.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -99,4 +100,9 @@ public class AdvanceBookingActivity extends AppCompatActivity {
         finish();
     }
 
+    public void rideBack(View view) {
+        startActivity(new Intent(AdvanceBookingActivity.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
+    }
 }

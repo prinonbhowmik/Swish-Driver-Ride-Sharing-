@@ -2,6 +2,7 @@ package com.example.swishbddriver.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -93,5 +94,9 @@ public class FareDetails extends AppCompatActivity {
         kiloTv=findViewById(R.id.kiloTv);
         minuteTv=findViewById(R.id.minuteTv);
         api = ApiUtils.getUserService();
+    }
+
+    public void fareDetailsBack(View view) {
+        finish();
     }
 }
