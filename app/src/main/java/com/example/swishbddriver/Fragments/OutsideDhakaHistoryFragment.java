@@ -13,19 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.swishbddriver.Adapter.EarningHistoryAdapter;
 import com.example.swishbddriver.Adapter.OutsideDhakaHistoryAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,7 +30,7 @@ import retrofit2.Response;
 public class OutsideDhakaHistoryFragment extends Fragment {
     private RecyclerView recyclerView;
     private OutsideDhakaHistoryAdapter adapter;
-    private List<BookForLaterModel> list;
+    private List<BookRegularModel> list;
     private String driverId;
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
@@ -64,10 +61,10 @@ public class OutsideDhakaHistoryFragment extends Fragment {
 
     private void getData() {
         list.clear();
-        Call<List<BookForLaterModel>> call = api.driverRideHistory(driverId);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<BookRegularModel>> call = api.driverRideHistory(driverId);
+        call.enqueue(new Callback<List<BookRegularModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
                 if (response.isSuccessful()){
 
                     list = response.body();
@@ -84,7 +81,7 @@ public class OutsideDhakaHistoryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
             }
         });
     }

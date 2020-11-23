@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -25,7 +24,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvanceBookingActivity extends AppCompatActivity {
+public class AllRidesActivity extends AppCompatActivity {
     private String driverId;
     private String bookingStatus,driverCarType;
     private CardView cardView;
@@ -44,7 +43,7 @@ public class AdvanceBookingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_advance_booking);
+        setContentView(R.layout.activity_all_rides);
 
         init();
 
@@ -95,13 +94,13 @@ public class AdvanceBookingActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(AdvanceBookingActivity.this,DriverMapActivity.class));
+        startActivity(new Intent(AllRidesActivity.this,DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }
 
     public void rideBack(View view) {
-        startActivity(new Intent(AdvanceBookingActivity.this,DriverMapActivity.class));
+        startActivity(new Intent(AllRidesActivity.this,DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

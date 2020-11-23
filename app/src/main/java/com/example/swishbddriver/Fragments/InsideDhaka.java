@@ -13,17 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.swishbddriver.Adapter.BookForLaterAdapter;
 import com.example.swishbddriver.Adapter.BookHourlyAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
@@ -43,9 +39,6 @@ import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class InsideDhaka extends Fragment {
     private DatabaseReference databaseReference;

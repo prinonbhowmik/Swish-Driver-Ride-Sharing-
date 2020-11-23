@@ -1,7 +1,6 @@
 package com.example.swishbddriver.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.swishbddriver.Model.BookForLaterModel;
+
 import com.example.swishbddriver.Model.DriverAllRidePrice;
 import com.example.swishbddriver.R;
 
@@ -35,13 +34,9 @@ public class EarningHistoryAdapter extends RecyclerView.Adapter<EarningHistoryAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final DriverAllRidePrice book=driverAllRidePriceList.get(position);
-       /* holder.bookingIdTV.setText(book.getBookingId());
-        holder.pickupDate.setText(book.getPickUpDate());
-        String price=book.getPrice();
-        int price1= Integer.parseInt(price);
-        int commission=(price1*15)/100;
-        holder.taka.setText("৳ "+(price1-commission));
-*/
+        holder.bookingIdTV.setText(book.getRideId());
+        holder.pickupDate.setText(book.getDate());
+        holder.taka.setText("৳ "+(book.getTotalEarn()));
     }
 
     @Override

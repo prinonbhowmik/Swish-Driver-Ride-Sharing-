@@ -16,15 +16,12 @@ import android.graphics.Rect;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.example.swishbddriver.Activity.AdvanceBookingActivity;
+import com.example.swishbddriver.Activity.AllRidesActivity;
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
-import com.example.swishbddriver.Activity.DriverMapActivity;
-import com.example.swishbddriver.Activity.HourlyDetailsActivity;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -95,7 +92,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
 
         if(toActivity.equals("booking_details")) {
-            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -110,7 +107,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
             }
             oreoNotification.getManager().notify(i, builder.build());
         }else if (toActivity.equals("hourly_details")) {
-            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -198,7 +195,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
             noti.notify(i, builder.build());
         } else if(toActivity.equals("hourly_details") ){
-            Intent intent = new Intent(getApplicationContext(), AdvanceBookingActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())

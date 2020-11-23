@@ -7,26 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.swishbddriver.Activity.EarningHistory;
 import com.example.swishbddriver.Adapter.EarningHistoryAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.DriverAllRidePrice;
 import com.example.swishbddriver.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;

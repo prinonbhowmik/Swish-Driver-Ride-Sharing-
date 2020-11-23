@@ -1,5 +1,5 @@
 package com.example.swishbddriver.Model;
-public class BookForLaterModel {
+public class BookRegularModel {
     private String bookingId;
     private String pickUpLat;
     private String pickUpLon;
@@ -24,10 +24,10 @@ public class BookForLaterModel {
     private String totalDestination;
     private float rating;
 
-    public BookForLaterModel() {
+    public BookRegularModel() {
     }
 
-    public BookForLaterModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDestination, float rating) {
+    public BookRegularModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDestination, float rating) {
         this.bookingId = bookingId;
         this.pickUpLat = pickUpLat;
         this.pickUpLon = pickUpLon;

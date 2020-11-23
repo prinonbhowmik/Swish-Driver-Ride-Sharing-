@@ -33,7 +33,7 @@
         <activity android:name=".Activity.AllVerificationActivity" />
         <activity android:name=".Activity.ResetPassword" />
         <activity
-            android:name=".Activity.RideHistoryActivity"
+            android:name=".Activity.AllRidesHistoryActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.HourlyDetailsActivity"
@@ -57,7 +57,7 @@
             android:name=".Activity.DriverMapActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.AdvanceBookingActivity"
+            android:name=".Activity.AllRidesActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.BookingDetailsActivity"

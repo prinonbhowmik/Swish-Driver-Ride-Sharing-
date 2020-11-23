@@ -5,25 +5,27 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.R;
 
 import java.util.List;
 
-public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapter.ViewHolder> {
+public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.ViewHolder> {
 
-    private List<BookForLaterModel> bookForLaterModelList;
+    private List<BookRegularModel> bookRegularModelList;
     private Context context;
 
-    public BookForLaterAdapter(List<BookForLaterModel> bookForLaterModelList, Context context) {
-        this.bookForLaterModelList = bookForLaterModelList;
+    public BookRegularAdapter(List<BookRegularModel> bookRegularModelList, Context context) {
+        this.bookRegularModelList = bookRegularModelList;
         this.context = context;
     }
 
@@ -36,7 +38,7 @@ public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final BookForLaterModel book=bookForLaterModelList.get(position);
+        final BookRegularModel book= bookRegularModelList.get(position);
         holder.destinationTV.setText(book.getDestinationPlace());
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
@@ -52,15 +54,20 @@ public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapte
                 context.startActivity(intent);
             }
         });
+        String rideStatus=book.getRideStatus();
+        if(rideStatus.equals("Start")){
+            holder.parentLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.green1));
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return bookForLaterModelList.size();
+        return bookRegularModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        private RelativeLayout parentLayout;
         private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +75,7 @@ public class BookForLaterAdapter extends RecyclerView.Adapter<BookForLaterAdapte
             destinationTV=itemView.findViewById(R.id.destination_TV);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
+            parentLayout=itemView.findViewById(R.id.parentLayout);
         }
     }
 }

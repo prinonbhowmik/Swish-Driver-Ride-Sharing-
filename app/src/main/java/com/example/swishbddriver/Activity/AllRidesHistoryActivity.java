@@ -13,14 +13,14 @@ import com.example.swishbddriver.Fragments.OutsideDhakaHistoryFragment;
 import com.example.swishbddriver.R;
 import com.google.android.material.tabs.TabLayout;
 
-public class RideHistoryActivity extends AppCompatActivity {
+public class AllRidesHistoryActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ride_history);
+        setContentView(R.layout.activity_all_rides_history);
         init();
         TabPaggerAdapter tabPaggerAdapter = new TabPaggerAdapter(getSupportFragmentManager());
         tabPaggerAdapter.addFragment(new OutsideDhakaHistoryFragment());
@@ -50,13 +50,13 @@ public class RideHistoryActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(RideHistoryActivity.this,DriverMapActivity.class));
+        startActivity(new Intent(AllRidesHistoryActivity.this,DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }
 
     public void rideHistoryBack(View view) {
-        startActivity(new Intent(RideHistoryActivity.this,DriverMapActivity.class));
+        startActivity(new Intent(AllRidesHistoryActivity.this,DriverMapActivity.class));
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }

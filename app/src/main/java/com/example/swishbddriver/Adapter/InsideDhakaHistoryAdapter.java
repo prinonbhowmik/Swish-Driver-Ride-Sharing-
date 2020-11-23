@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Activity.HourlyDetailsActivity;
-import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.R;
 

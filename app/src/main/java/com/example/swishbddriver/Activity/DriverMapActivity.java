@@ -42,7 +42,6 @@ import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
-import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -799,7 +798,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 switch (status) {
                     case "Active":{
-                        startActivity(new Intent(DriverMapActivity.this, AdvanceBookingActivity.class));
+                        startActivity(new Intent(DriverMapActivity.this, AllRidesActivity.class));
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         drawerLayout.closeDrawers();
                         finish();
@@ -931,7 +930,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             case R.id.history:
                 drawerLayout.closeDrawers();
                 if (!carType.equals("Notset")) {
-                    Intent intent2 = new Intent(DriverMapActivity.this, RideHistoryActivity.class);
+                    Intent intent2 = new Intent(DriverMapActivity.this, AllRidesHistoryActivity.class);
                     startActivity(intent2);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     finish();

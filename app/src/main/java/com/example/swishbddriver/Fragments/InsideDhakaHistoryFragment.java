@@ -14,15 +14,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.swishbddriver.Adapter.InsideDhakaHistoryAdapter;
-import com.example.swishbddriver.Adapter.OutsideDhakaHistoryAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

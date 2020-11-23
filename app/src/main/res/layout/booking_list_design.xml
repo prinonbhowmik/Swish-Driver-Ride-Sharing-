@@ -18,6 +18,7 @@
         app:neomorph_view_type="rectangular">
 
         <RelativeLayout
+            android:id="@+id/parentLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/stroke">

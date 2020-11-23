@@ -26,8 +26,8 @@
         android:id="@+id/emergencyBackBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="15dp"
         android:onClick="fareDetailsBack"
         android:src="@drawable/ic_baseline_arrow_back_24" />
 
@@ -35,8 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/layout_background"
-        android:layout_below="@+id/text"
-        >
+        android:layout_below="@+id/text">
         <RelativeLayout
             android:id="@+id/layout2"
             android:layout_width="match_parent"

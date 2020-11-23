@@ -3,7 +3,7 @@ package com.example.swishbddriver.Api;
 
 
 
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
 import com.example.swishbddriver.Model.CarModleYear;
@@ -110,9 +110,9 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @PUT("bookingconfirm/{bookingId}")
-    Call<List<BookForLaterModel>> confirmRide(@Path("bookingId") String bookingId,
-                                              @Field("bookingStatus") String bookingStatus,
-                                              @Field("driverId") String driverId);
+    Call<List<BookRegularModel>> confirmRide(@Path("bookingId") String bookingId,
+                                             @Field("bookingStatus") String bookingStatus,
+                                             @Field("driverId") String driverId);
 
     @FormUrlEncoded
     @PUT("hourlyrideconfirm/{bookingId}")
@@ -122,12 +122,12 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @PUT("bookingtripstart/{bookingId}")
-    Call<List<BookForLaterModel>> startTripData(@Path("bookingId") String bookingId,
-                                                @Field("pickUpTime") String pickupTime,
-                                                @Field("pickUpLat") String pickupLat,
-                                                @Field("pickUpLon") String pickupLon,
-                                                @Field("pickUpPlace") String pickupPlace,
-                                                @Field("rideStatus") String rideStatus);
+    Call<List<BookRegularModel>> startTripData(@Path("bookingId") String bookingId,
+                                               @Field("pickUpTime") String pickupTime,
+                                               @Field("pickUpLat") String pickupLat,
+                                               @Field("pickUpLon") String pickupLon,
+                                               @Field("pickUpPlace") String pickupPlace,
+                                               @Field("rideStatus") String rideStatus);
 
     @FormUrlEncoded
     @PUT("hourlyridestart/{bookingId}")
@@ -140,12 +140,12 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @PUT("bookingtripend/{bookingId}")
-    Call<List<BookForLaterModel>> endTripData(@Path("bookingId") String bookingId,
-                                              @Field("rideStatus") String rideStatus,
-                                              @Field("destinationLat") String destinationLat,
-                                              @Field("destinationLon") String destinationLon,
-                                              @Field("destinationPlace") String destinationPlace,
-                                              @Field("endTime") String endTime);
+    Call<List<BookRegularModel>> endTripData(@Path("bookingId") String bookingId,
+                                             @Field("rideStatus") String rideStatus,
+                                             @Field("destinationLat") String destinationLat,
+                                             @Field("destinationLon") String destinationLon,
+                                             @Field("destinationPlace") String destinationPlace,
+                                             @Field("endTime") String endTime);
 
     @FormUrlEncoded
     @PUT("hourlytripend/{bookingId}")
@@ -161,12 +161,12 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @PUT("priceupdate/{bookingId}")
-    Call<List<BookForLaterModel>> priceUpdate(@Path("bookingId") String bookingId,
-                                              @Field("price") String price,
-                                              @Field("discount") String discount,
-                                              @Field("updatedPrice") String updatedPrice,
-                                              @Field("totalDistance") String km,
-                                              @Field("totalTime") String time);
+    Call<List<BookRegularModel>> priceUpdate(@Path("bookingId") String bookingId,
+                                             @Field("price") String price,
+                                             @Field("discount") String discount,
+                                             @Field("updatedPrice") String updatedPrice,
+                                             @Field("totalDistance") String km,
+                                             @Field("totalTime") String time);
 
     @FormUrlEncoded
     @PUT("hourlypriceupdate/{bookingId}")
@@ -187,7 +187,7 @@ public interface ApiInterface {
                                        @Field("details") String details);
 
     @GET("customerbookinglist?")
-    Call<List<BookForLaterModel>> rideHistory(@Query("id") String customer_id);
+    Call<List<BookRegularModel>> rideHistory(@Query("id") String customer_id);
 
     @GET("car")
     Call<List<Car>> getCar();
@@ -264,7 +264,7 @@ public interface ApiInterface {
                                               @Field("update_price") int update_price);
 
     @GET("driverbookinglist?")
-    Call<List<BookForLaterModel>> driverRideHistory(@Query("id") String driver_id);
+    Call<List<BookRegularModel>> driverRideHistory(@Query("id") String driver_id);
 
     @GET("driverearninghistory?")
     Call<List<DriverAllRidePrice>> driverAllRidePrice(@Query("driver_id") String driver_id);
@@ -284,12 +284,12 @@ public interface ApiInterface {
                                             @Field("wallet") int wallet);
     @FormUrlEncoded
     @PUT("hourlycashreceived/{bookingId}")
-    Call<List<BookForLaterModel>> hourlyCashReceived(@Path("bookingId") String bookingId,
-                                                     @Field("cashReceived") String cashReceived);
+    Call<List<BookRegularModel>> hourlyCashReceived(@Path("bookingId") String bookingId,
+                                                    @Field("cashReceived") String cashReceived);
     @FormUrlEncoded
     @PUT("bookingcashreceived/{bookingId}")
-    Call<List<BookForLaterModel>> BookingCashReceived(@Path("bookingId") String bookingId,
-                                                      @Field("cashReceived") String cashReceived);
+    Call<List<BookRegularModel>> BookingCashReceived(@Path("bookingId") String bookingId,
+                                                     @Field("cashReceived") String cashReceived);
 
     @GET("driverearningstotal?")
     Call<List<EarningsShowModel>> getEarningsData(@Query("driver_id") String driver_id);

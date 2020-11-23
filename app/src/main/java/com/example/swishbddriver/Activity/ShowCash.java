@@ -3,24 +3,21 @@ package com.example.swishbddriver.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CouponShow;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverEarnings;
-import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.database.DataSnapshot;
@@ -111,15 +108,15 @@ public class ShowCash extends AppCompatActivity {
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
-                        Call<List<BookForLaterModel>> call2 = api.BookingCashReceived(tripId, "yes");
-                        call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                        Call<List<BookRegularModel>> call2 = api.BookingCashReceived(tripId, "yes");
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
-                            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                             }
 
                             @Override
-                            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
                             }
                         });
                     } else if (check == 2) {
@@ -128,15 +125,15 @@ public class ShowCash extends AppCompatActivity {
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
-                        Call<List<BookForLaterModel>> call2 = api.hourlyCashReceived(tripId, "yes");
-                        call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                        Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
-                            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                             }
 
                             @Override
-                            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                             }
                         });
@@ -149,13 +146,13 @@ public class ShowCash extends AppCompatActivity {
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
-                        Call<List<BookForLaterModel>> call2 = api.BookingCashReceived(tripId, "yes");
-                        call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                        Call<List<BookRegularModel>> call2 = api.BookingCashReceived(tripId, "yes");
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
-                            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
                             }
                             @Override
-                            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
                             }
                         });
                     } else if (check == 2) {
@@ -164,14 +161,14 @@ public class ShowCash extends AppCompatActivity {
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
-                        Call<List<BookForLaterModel>> call2 = api.hourlyCashReceived(tripId, "yes");
-                        call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                        Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
-                            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                             }
                             @Override
-                            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                             }
                         });

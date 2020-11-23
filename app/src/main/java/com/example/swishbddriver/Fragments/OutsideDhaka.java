@@ -13,17 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.swishbddriver.Activity.AdvanceBookingActivity;
-import com.example.swishbddriver.Adapter.BookForLaterAdapter;
+import com.example.swishbddriver.Adapter.BookRegularAdapter;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.firebase.database.DataSnapshot;
@@ -38,20 +36,15 @@ import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class OutsideDhaka extends Fragment {
 
     private DatabaseReference databaseReference;
-    private List<BookForLaterModel> bookForLaterModelList;
+    private List<BookRegularModel> bookRegularModelList;
     private RecyclerView recyclerView;
     private TextView moreTv, titleTv, notificationCount, emptyText;
-    private BookForLaterAdapter bookForLaterAdapter;
+    private BookRegularAdapter bookRegularAdapter;
     private String driverId;
     private static Switch switchBtn;
     private String bookingStatus, driverCarType;
@@ -99,23 +92,23 @@ public class OutsideDhaka extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    bookForLaterModelList.clear();
+                    bookRegularModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
                             if (!rideStatus.equals("End")) {
-                                BookForLaterModel book = data.getValue(BookForLaterModel.class);
-                                bookForLaterModelList.add(book);
+                                BookRegularModel book = data.getValue(BookRegularModel.class);
+                                bookRegularModelList.add(book);
                             }
 
                         }
                     }
                     //  notificationCount.setVisibility(View.GONE);
-                    Collections.reverse(bookForLaterModelList);
-                    bookForLaterAdapter.notifyDataSetChanged();
+                    Collections.reverse(bookRegularModelList);
+                    bookRegularAdapter.notifyDataSetChanged();
                 }
-                if (bookForLaterModelList.size() < 1) {
+                if (bookRegularModelList.size() < 1) {
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("You have no confirm ride.");
                 } else {
@@ -134,11 +127,11 @@ public class OutsideDhaka extends Fragment {
 
     private void init(View view) {
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        bookForLaterModelList = new ArrayList<>();
+        bookRegularModelList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.bookingRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        bookForLaterAdapter = new BookForLaterAdapter(bookForLaterModelList, getContext());
-        recyclerView.setAdapter(bookForLaterAdapter);
+        bookRegularAdapter = new BookRegularAdapter(bookRegularModelList, getContext());
+        recyclerView.setAdapter(bookRegularAdapter);
         //cardView=findViewById(R.id.cardItem);
         unavailableTxt = view.findViewById(R.id.unavailableTxt);
         emptyText = view.findViewById(R.id.emptyText);
@@ -157,19 +150,19 @@ public class OutsideDhaka extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    bookForLaterModelList.clear();
+                    bookRegularModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         bookingStatus = data.child("bookingStatus").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
-                            BookForLaterModel book = data.getValue(BookForLaterModel.class);
-                            bookForLaterModelList.add(book);
+                            BookRegularModel book = data.getValue(BookRegularModel.class);
+                            bookRegularModelList.add(book);
                         }
                     }
 
-                    Collections.reverse(bookForLaterModelList);
-                    bookForLaterAdapter.notifyDataSetChanged();
+                    Collections.reverse(bookRegularModelList);
+                    bookRegularAdapter.notifyDataSetChanged();
                 }
-                if (bookForLaterModelList.size() < 1) {
+                if (bookRegularModelList.size() < 1) {
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("No Request Available");
                 } else {

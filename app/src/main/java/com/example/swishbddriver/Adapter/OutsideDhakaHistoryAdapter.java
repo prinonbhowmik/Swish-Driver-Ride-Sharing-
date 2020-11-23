@@ -12,18 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.R;
 
 import java.util.List;
 
 public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhakaHistoryAdapter.ViewHolder>{
 
-    private List<BookForLaterModel> bookForLaterModelList;
+    private List<BookRegularModel> bookRegularModelList;
     private Context context;
     private String car_type,carType;
-    public OutsideDhakaHistoryAdapter(List<BookForLaterModel> bookForLaterModelList, Context context) {
-        this.bookForLaterModelList = bookForLaterModelList;
+    public OutsideDhakaHistoryAdapter(List<BookRegularModel> bookRegularModelList, Context context) {
+        this.bookRegularModelList = bookRegularModelList;
         this.context = context;
     }
 
@@ -36,7 +36,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final BookForLaterModel book=bookForLaterModelList.get(position);
+        final BookRegularModel book= bookRegularModelList.get(position);
         holder.destinationTV.setText(book.getDestinationPlace());
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
@@ -81,7 +81,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
 
     @Override
     public int getItemCount() {
-        return bookForLaterModelList.size();
+        return bookRegularModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

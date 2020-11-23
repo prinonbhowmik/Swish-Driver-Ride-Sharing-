@@ -36,7 +36,7 @@ import com.example.swishbddriver.ForApi.DistanceApiClient;
 import com.example.swishbddriver.ForApi.DistanceResponse;
 import com.example.swishbddriver.ForApi.Element;
 import com.example.swishbddriver.ForApi.RestUtil;
-import com.example.swishbddriver.Model.BookForLaterModel;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
@@ -71,7 +71,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -334,15 +333,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
         userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
         userRef.child("endTime").setValue(currentTime);
 
-        Call<List<BookForLaterModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, currentTime);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<BookRegularModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, currentTime);
+        call.enqueue(new Callback<List<BookRegularModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
             }
         });
@@ -441,15 +440,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
                 userRef.child("pickUpTime").setValue(currentTime);
 
-                Call<List<BookForLaterModel>> call = api.startTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
-                call.enqueue(new Callback<List<BookForLaterModel>>() {
+                Call<List<BookRegularModel>> call = api.startTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                call.enqueue(new Callback<List<BookRegularModel>>() {
                     @Override
-                    public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                    public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                     }
 
                     @Override
-                    public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                    public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                     }
                 });
@@ -593,15 +592,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
             newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
             newRef.child("totalTime").setValue(String.valueOf(travelduration));
 
-            Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price),"0",String.valueOf(price),String.valueOf(kmdistance),String.valueOf(travelduration));
-            call2.enqueue(new Callback<List<BookForLaterModel>>() {
+            Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price),"0",String.valueOf(price),String.valueOf(kmdistance),String.valueOf(travelduration));
+            call2.enqueue(new Callback<List<BookRegularModel>>() {
                 @Override
-                public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                 }
 
                 @Override
-                public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                 }
             });
@@ -646,15 +645,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
                         newRef.child("totalTime").setValue(String.valueOf(travelduration));
 
-                        Call<List<BookForLaterModel>> call2 = api.priceUpdate(id, String.valueOf(price),String.valueOf(discount),String.valueOf(finalPrice),String.valueOf(kmdistance),String.valueOf(travelduration));
-                        call2.enqueue(new Callback<List<BookForLaterModel>>() {
+                        Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price),String.valueOf(discount),String.valueOf(finalPrice),String.valueOf(kmdistance),String.valueOf(travelduration));
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
-                            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
                             }
 
                             @Override
-                            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                             }
                         });
@@ -706,7 +705,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        BookForLaterModel book = snapshot.getValue(BookForLaterModel.class);
+                        BookRegularModel book = snapshot.getValue(BookRegularModel.class);
                         pickupPlace = book.getPickUpPlace();
                         destinationPlace = book.getDestinationPlace();
                         pickupDate = book.getPickUpDate();
@@ -965,15 +964,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("bookingStatus").setValue("Booked");
         ref2.child("driverId").setValue(driverId);
 
-        Call<List<BookForLaterModel>> call = api.confirmRide(id, "Booked", driverId);
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<BookRegularModel>> call = api.confirmRide(id, "Booked", driverId);
+        call.enqueue(new Callback<List<BookRegularModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
             }
         });
@@ -1066,15 +1065,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
         ref2.child("bookingStatus").setValue("Pending");
         ref2.child("driverId").setValue("");
 
-        Call<List<BookForLaterModel>> call = api.confirmRide(id, "Pending", "");
-        call.enqueue(new Callback<List<BookForLaterModel>>() {
+        Call<List<BookRegularModel>> call = api.confirmRide(id, "Pending", "");
+        call.enqueue(new Callback<List<BookRegularModel>>() {
             @Override
-            public void onResponse(Call<List<BookForLaterModel>> call, Response<List<BookForLaterModel>> response) {
+            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
 
             }
 
             @Override
-            public void onFailure(Call<List<BookForLaterModel>> call, Throwable t) {
+            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
             }
         });
