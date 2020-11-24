@@ -56,7 +56,13 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
         });
         String rideStatus=book.getRideStatus();
         if(rideStatus.equals("Start")){
-            holder.parentLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.green1));
+            holder.view.setVisibility(View.VISIBLE);
+            //holder.view.setBackgroundColor(ContextCompat.getColor(context,R.color.green1));
+        }else if(rideStatus.equals("Pending")){
+            holder.view.setVisibility(View.GONE);
+        }
+        else if(rideStatus.equals("End")){
+            holder.view.setVisibility(View.GONE);
         }
 
     }
@@ -68,6 +74,7 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout parentLayout;
+        private View view;
         private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,6 +83,7 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
             parentLayout=itemView.findViewById(R.id.parentLayout);
+            view=itemView.findViewById(R.id.runningView);
         }
     }
 }

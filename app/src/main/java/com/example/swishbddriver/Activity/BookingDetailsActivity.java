@@ -88,7 +88,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private String driver_name, driver_phone, payment;
-    private boolean hasDateMatch = false, startRide = false,confirmed=false;
+    private boolean hasDateMatch = false, startRide = false,confirmed=false,hasOngoing=false;
     private ScrollView scrollLayout;
     private double currentLat, currentLon;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
@@ -211,7 +211,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
         startTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkDriverOnLine();
+                if(hasOngoing){
+                    alreadyOngoingAlert();
+                    Toast.makeText(BookingDetailsActivity.this, "You are already ongoing with other trip", Toast.LENGTH_SHORT).show();
+                }else {
+                    checkDriverOnLine();
+                }
+
             }
         });
 
@@ -229,6 +235,73 @@ public class BookingDetailsActivity extends AppCompatActivity {
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
+    }
+
+    private void alreadyOngoingAlert() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Already on a trip!");
+        dialog.setIcon(R.drawable.logo_circle);
+        dialog.setMessage("You are already in a trip. You can not start this trip until you end that trip. ");
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
+    }
+
+    private void checkHasOngoing() {
+            DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            String driver_id = String.valueOf(data.child("driverId").getValue());
+                            if (driver_id.equals(driverId)) {
+                                String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                if( rStatus.equals("Start")){
+                                    hasOngoing=true;
+                                }
+                            }
+                        }
+                        if (!hasOngoing) {
+                            DatabaseReference ref1 = databaseReference.child("BookHourly").child(carType);
+                            ref1.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                    if (dataSnapshot1.exists()) {
+                                        for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                            String driver_id = String.valueOf(data.child("driverId").getValue());
+                                            if (driver_id.equals(driverId)) {
+                                                String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                                if( rStatus.equals("Start")){
+                                                    hasOngoing=true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
     }
 
     private void blockAlert() {
@@ -757,7 +830,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         }
                         checkDate();
                         checkBookingConfirm(bookingStatus);
-
+                        checkHasOngoing();
                         if (rideStatus.equals("Start")) {
                             startTripBtn.setVisibility(View.GONE);
                             neomorphFrameLayoutStart.setVisibility(View.GONE);

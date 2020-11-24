@@ -111,6 +111,14 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
+            <View
+                android:background="@color/green1"
+                android:id="@+id/runningView"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:visibility="gone"
+                android:layout_below="@id/pickup_timeTv"/>
+
 
 
         </RelativeLayout>
