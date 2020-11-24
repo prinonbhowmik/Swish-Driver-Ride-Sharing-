@@ -504,12 +504,32 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     AlertDialog alertDialog = dialog.create();
                     alertDialog.show();
                 } else {
-                    DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
-                    GeoFire geoFire = new GeoFire(onlineRef);
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                    dialog.setTitle("Alert..!!");
+                    dialog.setIcon(R.drawable.ic_leave_24);
+                    dialog.setMessage("Do you want to go online?");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
+                            GeoFire geoFire = new GeoFire(onlineRef);
 
-                    geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
-                    buttonOff.setVisibility(View.GONE);
-                    buttonOn.setVisibility(View.VISIBLE);
+                            geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
+                            buttonOff.setVisibility(View.GONE);
+                            buttonOn.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alertDialog = dialog.create();
+                    alertDialog.show();
+
                 }
             }
 

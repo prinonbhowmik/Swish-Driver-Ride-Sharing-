@@ -4,109 +4,184 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/themColor"
     tools:context=".Activity.FareDetails">
 
-    <View
+    <RelativeLayout
+        android:id="@+id/tabRelative"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/themColor" />
-
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fare Details"
-        android:textColor="#fff"
-        android:textSize="30sp"
-        android:layout_margin="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        />
-    <ImageView
-        android:id="@+id/emergencyBackBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:layout_marginStart="15dp"
-        android:onClick="fareDetailsBack"
-        android:src="@drawable/ic_baseline_arrow_back_24" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fare Details"
+            android:textColor="#fff"
+            android:layout_margin="10dp"
+            android:textSize="30sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            />
+        <ImageView
+            android:id="@+id/emergencyBackBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="15dp"
+            android:layout_centerVertical="true"
+            android:onClick="fareDetailsBack"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/layout_background"
-        android:layout_below="@+id/text">
+        android:layout_below="@+id/tabRelative">
         <RelativeLayout
-            android:id="@+id/layout2"
+            android:id="@+id/interRelative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Base Fare :"
-                android:textColor="#000"
-                android:textSize="18sp"/>
-            <TextView
-                android:id="@+id/baseTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00 TK"
-                android:layout_alignParentRight="true"
-                android:textColor="#000"
-                android:textSize="18sp"/>
+            android:layout_below="@+id/layout1"
+            android:visibility="gone">
 
+            <RelativeLayout
+                android:id="@+id/layout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Base Fare :"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/baseTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="00 TK"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout2"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Per Kilometer :"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/kiloTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="00 TK"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout3"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Per Minute :"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/minuteTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="00 TK"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/layout3"
-            android:layout_below="@+id/layout2"
+            android:id="@+id/hourlyRelative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Per Kilometer :"
-                android:textColor="#000"
-                android:textSize="18sp"/>
-            <TextView
-                android:id="@+id/kiloTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00 TK"
-                android:layout_alignParentRight="true"
-                android:textColor="#000"
-                android:textSize="18sp"/>
+            android:layout_below="@+id/interRelative"
+            android:visibility="gone">
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/layout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="20dp">
 
-        <RelativeLayout
-            android:id="@+id/layout4"
-            android:layout_below="@+id/layout3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp">
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Base Hour :"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/baseHourTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout6"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Per Minute :"
-                android:textColor="#000"
-                android:textSize="18sp"/>
-            <TextView
-                android:id="@+id/minuteTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00 TK"
-                android:layout_alignParentRight="true"
-                android:textColor="#000"
-                android:textSize="18sp"/>
+                android:layout_below="@+id/layout5"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Per Hour:"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/perHourTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
     </RelativeLayout>

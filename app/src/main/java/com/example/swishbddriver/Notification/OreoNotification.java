@@ -7,16 +7,24 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
+
+import androidx.core.app.NotificationCompat;
 
 import com.example.swishbddriver.R;
 
 public class OreoNotification extends ContextWrapper {
 
     private static final String CHANNEL_ID = "com.example.swishbddriver";
-    private static final String CHANNEL_NAME = "swishbddriver";
+    private static final String CHANNEL_NAME = "Swish Driver";
+    String GROUP_KEY = "com.hydertechno.swishdriver.WORK.EMAIL";
 
     private NotificationManager notificationManager;
 
@@ -36,16 +44,12 @@ public class OreoNotification extends ContextWrapper {
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
                 .build();
 
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(true);
         channel.enableVibration(true);
         channel.setSound(sound,audioAttributes);
         channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-
-
         getManager().createNotificationChannel(channel);
     }
 
@@ -56,15 +60,24 @@ public class OreoNotification extends ContextWrapper {
 
         return  notificationManager;
     }
-
+    Drawable myDrawable = getResources().getDrawable(R.drawable.customer_care);
+    Bitmap smallImage1      = ((BitmapDrawable) myDrawable).getBitmap();
     @TargetApi(Build.VERSION_CODES.O)
-    public  Notification.Builder getOreoNotification(String title, String body,
-                                                     PendingIntent pendingIntent, Uri soundUri, String icon){
-        return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
-                .setContentIntent(pendingIntent)
+    public  NotificationCompat.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent, Uri soundUri, String icon){
+
+        // Assign big picture notification
+//        /*NotificationCompat.BigPictureStyle bpStyle = new NotificationCompat.BigPictureStyle();
+//        bpStyle.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.customer_care)).build();*/
+        Bitmap smallImage= BitmapFactory.decodeResource(getResources(),R.drawable.customer_care);
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_noti_logo)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(R.drawable.ic_car)
+                //.setLargeIcon(smallImage)
+                //.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(smallImage).bigLargeIcon(null))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setContentIntent(pendingIntent)
+                .setColor(Color.parseColor("#1785DA"))
                 .setAutoCancel(true);
 
     }

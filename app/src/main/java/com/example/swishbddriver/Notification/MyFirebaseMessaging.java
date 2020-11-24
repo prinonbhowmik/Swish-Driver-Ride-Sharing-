@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -21,7 +22,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.swishbddriver.Activity.AllRidesActivity;
+import com.example.swishbddriver.Activity.AllRidesHistoryActivity;
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
+import com.example.swishbddriver.Activity.DriverMapActivity;
+import com.example.swishbddriver.Activity.NotificationsActivity;
 import com.example.swishbddriver.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,11 +38,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
     public static final String TAG = "FirebaseMessaging";
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedPreferences sharedPreferences;
+    String GROUP_KEY = "com.hydertechno.swishdriver";
 
     @Override
     public void onNewToken(@NonNull String s) {
@@ -62,13 +68,13 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null && sent.equals(firebaseUser.getUid())) {*/
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                sendOreoNotification(remoteMessage);
-            } else {
-                sendNotification(remoteMessage);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getOreoNotification(remoteMessage);
+        } else {
+            getNotification(remoteMessage);
+        }
 
-       // }
+        // }
     }
 
     private void updateToken(String refreshToken) {
@@ -78,7 +84,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
     }
 
-    private void sendOreoNotification(RemoteMessage remoteMessage) {
+    private void getOreoNotification(RemoteMessage remoteMessage) {
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         String carType = sharedPreferences.getString("carType", "");
         String userID = remoteMessage.getData().get("sent");
@@ -90,37 +96,68 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
-
-        if(toActivity.equals("booking_details")) {
-            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-            Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-            OreoNotification oreoNotification = new OreoNotification(this);
-            Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
-                    defaultSound, icon);
-            int i = 0;
-            if (j > 0) {
-                i = j;
-
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+        switch (toActivity) {
+            case "booking_details":
+            case "hourly_details": {
+                Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                OreoNotification oreoNotification = new OreoNotification(this);
+                NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                        defaultSound, icon);
+                /*int i = 0;
+                if (j > 0) {
+                    i = j;
+                }*/
+                oreoNotification.getManager().notify(m, builder.build());
+                break;
             }
-            oreoNotification.getManager().notify(i, builder.build());
-        }else if (toActivity.equals("hourly_details")) {
-            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-            Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-            OreoNotification oreoNotification = new OreoNotification(this);
-            Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
-                    defaultSound, icon);
-            int i = 0;
-            if (j > 0) {
-                i = j;
-
+            case "history":{
+                Intent intent = new Intent(getApplicationContext(), AllRidesHistoryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                OreoNotification oreoNotification = new OreoNotification(this);
+                NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                        defaultSound, icon);
+                /*int i = 0;
+                if (j > 0) {
+                    i = j;
+                }*/
+                oreoNotification.getManager().notify(m, builder.build());
+                break;
             }
-            oreoNotification.getManager().notify(i, builder.build());
+            case "main_activity": {
+                Intent intent = new Intent(getApplicationContext(), DriverMapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                OreoNotification oreoNotification = new OreoNotification(this);
+                NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                        defaultSound, icon);
+                /*int i = 0;
+                if (j > 0) {
+                    i = j;
+                }*/
+                oreoNotification.getManager().notify(m, builder.build());
+                break;
+            }case "notification": {
+                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                OreoNotification oreoNotification = new OreoNotification(this);
+                NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
+                        defaultSound, icon);
+                /*int i = 0;
+                if (j > 0) {
+                    i = j;
+                }*/
+                oreoNotification.getManager().notify(m, builder.build());
+                break;
+            }
         }
     }
 
@@ -162,7 +199,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         return output;
     }
 
-    private void sendNotification(RemoteMessage remoteMessage) {
+    private void getNotification(RemoteMessage remoteMessage) {
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         String carType = sharedPreferences.getString("carType", "");
         String userID = remoteMessage.getData().get("sent");
@@ -171,49 +208,112 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String body = remoteMessage.getData().get("body");
         String bookingId = remoteMessage.getData().get("bookingId");
         String toActivity = remoteMessage.getData().get("toActivity");
+        // Assign big picture notification
+        NotificationCompat.BigPictureStyle bpStyle = new NotificationCompat.BigPictureStyle();
+        bpStyle.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.book_car)).build();
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int j = Integer.parseInt(userID.replaceAll("[\\D]", ""));
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+        switch (toActivity) {
+            case "booking_details":
+            case "hourly_details": {
+                Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), m, intent, PendingIntent.FLAG_ONE_SHOT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.ic_noti_logo)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setColor(Color.parseColor("#131550"))
+                        .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                        .setContentIntent(pendingIntent);
+                NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if(toActivity.equals("booking_details") ){
-            Intent intent = new Intent(getApplicationContext(), BookingDetailsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                    .setSmallIcon(R.drawable.ic_car)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                    .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
-                    .setContentIntent(pendingIntent);
-            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                int i = 0;
+                if (j > 0) {
+                    i = j;
+                }
 
-            int i = 0;
-            if (j > 0) {
-                i = j;
+                noti.notify(m, builder.build());
+                break;
             }
+            case "history":{
+                Intent intent = new Intent(getApplicationContext(), AllRidesHistoryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.ic_noti_logo)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setStyle(bpStyle)
+                        .setColor(Color.parseColor("#131550"))
+                        .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                        .setContentIntent(pendingIntent);
+                NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            noti.notify(i, builder.build());
-        } else if(toActivity.equals("hourly_details") ){
-            Intent intent = new Intent(getApplicationContext(), AllRidesActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                    .setSmallIcon(R.drawable.ic_car)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                    .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
-                    .setContentIntent(pendingIntent);
-            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                int i = 0;
+                if (j > 0) {
+                    i = j;
+                }
 
-            int i = 0;
-            if (j > 0) {
-                i = j;
+                noti.notify(m, builder.build());
+                break;
             }
+            case "main_activity": {
+                Intent intent = new Intent(getApplicationContext(), DriverMapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.ic_noti_logo)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setStyle(bpStyle)
+                        .setColor(Color.parseColor("#131550"))
+                        .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                        .setContentIntent(pendingIntent);
+                NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            noti.notify(i, builder.build());
+                int i = 0;
+                if (j > 0) {
+                    i = j;
+                }
+
+                noti.notify(m, builder.build());
+                break;
+            }case "notification": {
+                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.ic_noti_logo)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setStyle(bpStyle)
+                        .setColor(Color.parseColor("#131550"))
+                        .setSound(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.swiftly))
+                        .setContentIntent(pendingIntent);
+                NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                int i = 0;
+                if (j > 0) {
+                    i = j;
+                }
+
+                noti.notify(m, builder.build());
+                break;
+            }
         }
 
     }

@@ -187,7 +187,9 @@ public class ShowCash extends AppCompatActivity {
                 call.enqueue(new Callback<List<ProfileModel>>() {
                     @Override
                     public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
-                        startActivity(new Intent(ShowCash.this, FareDetails.class).putExtra("carType", carType));
+                        startActivity(new Intent(ShowCash.this, FareDetails.class)
+                                .putExtra("check",check)
+                                .putExtra("carType", carType));
                         info.setEnabled(true);
                     }
                     @Override

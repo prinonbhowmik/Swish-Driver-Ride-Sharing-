@@ -3,7 +3,9 @@ package com.example.swishbddriver.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,73 +29,76 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FareDetails extends AppCompatActivity {
-    
-    private TextView baseTv,kiloTv,minuteTv;
-    private String baseFare,kiloFare,minuteFare,carType;
-    private ApiInterface api;
-    
+    private RelativeLayout interRelative,hourlyRelative;
+    private TextView baseTv,kiloTv,minuteTv,baseHourTv,perHourTv;
+    private String baseFare,kiloFare,minuteFare,baseHour,perHour,carType;
+    private int check;
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fare_details);
-        
-        init();
 
         Intent intent = getIntent();
         carType = intent.getStringExtra("carType");
+        check=intent.getIntExtra("check",0);
+        init();
 
-        Call<List<RidingRate>> call1 = api.getPrice(carType);
-        call1.enqueue(new Callback<List<RidingRate>>() {
-            @Override
-            public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
-                if (response.isSuccessful()){
-                    List<RidingRate> rate = new ArrayList<>();
-                    rate = response.body();
-                    int kmRate = rate.get(0).getKm_charge();
-                    int minRate =rate.get(0).getMin_charge();
-                    int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
+        if(check==1) {
+            interRelative.setVisibility(View.VISIBLE);
+            Call<List<RidingRate>> call1 = ApiUtils.getUserService().getPrice(carType);
+            call1.enqueue(new Callback<List<RidingRate>>() {
+                @Override
+                public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
+                    if (response.isSuccessful()) {
+                        List<RidingRate> rate = new ArrayList<>();
+                        rate = response.body();
+                        int kmRate = rate.get(0).getKm_charge();
+                        int minRate = rate.get(0).getMin_charge();
+                        int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
 
-                    baseTv.setText(""+minimumRate);
-                    kiloTv.setText(""+kmRate);
-                    minuteTv.setText(""+minRate);
+                        baseTv.setText("" + minimumRate+" Tk");
+                        kiloTv.setText("" + kmRate+" Tk");
+                        minuteTv.setText("" + minRate+" Tk");
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<RidingRate>> call, Throwable t) {
+                @Override
+                public void onFailure(Call<List<RidingRate>> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }else if(check==2){
+            hourlyRelative.setVisibility(View.VISIBLE);
+            DatabaseReference hourlyRate=databaseReference.child("HourlyRate").child(carType);
+            hourlyRate.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    baseHourTv.setText("2 Hour");
+                    String price = snapshot.getValue().toString();
+                    perHourTv.setText(price+" Tk");
 
-      //
+                }
 
-       /* DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("RidingRate").child(carType);
-        getRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Rate rate = snapshot.getValue(Rate.class);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-                kiloFare = rate.getKm();
-                minuteFare = rate.getMin();
-                baseFare = rate.getMinimumfare();
+                }
+            });
 
-                baseTv.setText(baseFare);
-                kiloTv.setText(kiloFare);
-                minuteTv.setText(minuteFare);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
+        }
     }
+
 
     private void init() {
         baseTv=findViewById(R.id.baseTv);
         kiloTv=findViewById(R.id.kiloTv);
         minuteTv=findViewById(R.id.minuteTv);
-        api = ApiUtils.getUserService();
+        databaseReference=FirebaseDatabase.getInstance().getReference();
+        interRelative=findViewById(R.id.interRelative);
+        hourlyRelative=findViewById(R.id.hourlyRelative);
+        baseHourTv=findViewById(R.id.baseHourTv);
+        perHourTv=findViewById(R.id.perHourTv);
     }
 
     public void fareDetailsBack(View view) {
