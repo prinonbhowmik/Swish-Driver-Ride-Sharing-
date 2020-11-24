@@ -50,6 +50,16 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
                 context.startActivity(intent);
             }
         });
+
+        String rideStatus=book.getRideStatus();
+        if(rideStatus.equals("Start")){
+            holder.view.setVisibility(View.VISIBLE);
+        }else if(rideStatus.equals("Pending")){
+            holder.view.setVisibility(View.GONE);
+        }
+        else if(rideStatus.equals("End")){
+            holder.view.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -60,9 +70,10 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView pickupLocationTV,pickupTimeTV,pickupDate;
-
+        private View view;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            view=itemView.findViewById(R.id.runningHourView);
             pickupLocationTV=itemView.findViewById(R.id.pickup_TV1);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);

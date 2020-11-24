@@ -926,8 +926,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         if (driver_id.equals(driverId)) {
                             String pickup_date1 = String.valueOf(data.child("pickUpDate").getValue());
 
-                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-                            hasDateMatch = pickupDate.equals((pickup_date1));
+                            hasDateMatch = pickupDate.equals(pickup_date1);
 
                         }
                     }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
         android:id="@+id/card_view1"
@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/stroke">
+
             <ImageView
                 android:id="@+id/fromTv"
                 android:layout_width="wrap_content"
@@ -36,13 +37,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginEnd="20dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
                 android:layout_toEndOf="@+id/fromTv"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
-
-
 
 
             <ImageView
@@ -53,7 +52,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="13dp"
                 android:layout_marginBottom="10dp"
-                android:src="@drawable/ic_calendar_color"/>
+                android:src="@drawable/ic_calendar_color" />
 
             <TextView
                 android:id="@+id/pick_dateTv"
@@ -61,12 +60,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/pickup_TV1"
                 android:layout_marginStart="15dp"
-                android:layout_marginEnd="150dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="150dp"
                 android:layout_marginBottom="10dp"
                 android:layout_toEndOf="@id/calendarIv"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
+
             <ImageView
                 android:id="@+id/clockIv"
                 android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                 android:layout_marginTop="13dp"
                 android:layout_marginBottom="10dp"
                 android:layout_toStartOf="@+id/pickup_timeTv"
-                android:src="@drawable/ic_clock_color"/>
+                android:src="@drawable/ic_clock_color" />
 
             <TextView
                 android:id="@+id/pickup_timeTv"
@@ -84,25 +84,31 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/pickup_TV1"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="20dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-
-
+            <View
+                android:id="@+id/runningHourView"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_below="@id/pickup_timeTv"
+                android:background="@color/green1"
+                android:visibility="gone" />
         </RelativeLayout>
 
     </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
     <TextView
         android:id="@+id/unavailableTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="21sp"
-        android:textColor="@color/themColor"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:text="No booking request available."/>
+        android:text="No booking request available."
+        android:textColor="@color/themColor"
+        android:textSize="21sp"
+        android:visibility="gone" />
 </RelativeLayout>
