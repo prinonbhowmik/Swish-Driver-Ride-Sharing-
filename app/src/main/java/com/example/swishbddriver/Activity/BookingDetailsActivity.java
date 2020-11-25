@@ -90,7 +90,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private String driver_name, driver_phone, payment;
     private boolean hasDateMatch = false, startRide = false,confirmed=false,hasOngoing=false;
     private ScrollView scrollLayout;
-    private double currentLat, currentLon;
+    private double currentLat=0.0, currentLon=0.0;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
     private RelativeLayout loadingLayout;
@@ -353,7 +353,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
 
-        Call<List<ProfileModel>> call2 = api.getData(driverId);
+        if (currentLat!=0.0 && currentLon!=0.0){
+            Call<List<ProfileModel>> call2 = api.getData(driverId);
         call2.enqueue(new Callback<List<ProfileModel>>() {
             @Override
             public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
@@ -420,6 +421,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
         });
 
         calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace,currentTime);
+        }
+        else{
+            Toast.makeText(this, "Please Check Internet Connection", Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -482,7 +487,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (currentLat!=0.0 && currentLon!=0.0){
+                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
@@ -536,6 +542,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 navigationIntent.setPackage("com.google.android.apps.maps");
                 startActivity(navigationIntent);
                 sendNotification(id,customerID, "Start Trip", "Your trip has started.", "running_trip");
+            }
 
             }
         });
