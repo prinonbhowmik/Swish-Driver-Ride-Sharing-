@@ -816,63 +816,72 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 break;
             case R.id.advance_book:
                 drawerLayout.closeDrawers();
-                switch (status) {
-                    case "Active":{
-                        startActivity(new Intent(DriverMapActivity.this, AllRidesActivity.class));
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        drawerLayout.closeDrawers();
-                        finish();
-                        break;
+                try {
+                    switch (status) {
+                        case "Active":{
+                            startActivity(new Intent(DriverMapActivity.this, AllRidesActivity.class));
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            drawerLayout.closeDrawers();
+                            finish();
+                            break;
+                        }
+                        case "Deactive": {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                            dialog.setTitle("Alert..!!");
+                            dialog.setIcon(R.drawable.ic_leave_24);
+                            dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
+                            dialog.setCancelable(false);
+                            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog alertDialog = dialog.create();
+                            alertDialog.show();
+                            break;
+                        }
+                        case "Payment Lock": {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                            dialog.setTitle("Alert..!!");
+                            dialog.setIcon(R.drawable.ic_leave_24);
+                            dialog.setMessage("Please clear your due to activate your profile again.");
+                            dialog.setCancelable(false);
+                            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog alertDialog = dialog.create();
+                            alertDialog.show();
+                            break;
+                        }
+                        case "Report Lock": {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                            dialog.setTitle("Lock..!!");
+                            dialog.setIcon(R.drawable.ic_leave_24);
+                            dialog.setMessage("Your account is temporary lock due to violation of code of conduct.");
+                            dialog.setCancelable(false);
+                            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog alertDialog = dialog.create();
+                            alertDialog.show();
+                            break;
+                        }
                     }
-                    case "Deactive": {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
-                        dialog.setTitle("Alert..!!");
-                        dialog.setIcon(R.drawable.ic_leave_24);
-                        dialog.setMessage("You didn't completed your registration. If your registration is complete then wait for Admin Approval!");
-                        dialog.setCancelable(false);
-                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog alertDialog = dialog.create();
-                        alertDialog.show();
-                        break;
-                    }
-                    case "Payment Lock": {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
-                        dialog.setTitle("Alert..!!");
-                        dialog.setIcon(R.drawable.ic_leave_24);
-                        dialog.setMessage("Please clear your due to activate your profile again.");
-                        dialog.setCancelable(false);
-                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog alertDialog = dialog.create();
-                        alertDialog.show();
-                        break;
-                    }
-                    case "Report Lock": {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
-                        dialog.setTitle("Lock..!!");
-                        dialog.setIcon(R.drawable.ic_leave_24);
-                        dialog.setMessage("Your account is temporary lock due to violation of code of conduct.");
-                        dialog.setCancelable(false);
-                        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog alertDialog = dialog.create();
-                        alertDialog.show();
-                        break;
-                    }
+                }catch (Exception e){
+                    Toast.makeText(this, "Something Wrong! Please Try Again.", Toast.LENGTH_SHORT).show();
+                    finish();
+                    overridePendingTransition( 0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition( 0, 0);
                 }
+
                 break;
             case R.id.registration:
                 list = new ArrayList<>();
