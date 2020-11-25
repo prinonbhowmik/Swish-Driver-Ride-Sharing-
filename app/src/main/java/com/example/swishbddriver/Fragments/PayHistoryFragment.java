@@ -55,7 +55,6 @@ public class PayHistoryFragment extends Fragment {
     }
 
     private void getData() {
-
         model.clear();
         Call<List<PayHistoryModel>> call = api.driverPayHistory(driverId);
         call.enqueue(new Callback<List<PayHistoryModel>>() {
@@ -73,10 +72,7 @@ public class PayHistoryFragment extends Fragment {
                     Collections.reverse(model);
                     adapter.notifyDataSetChanged();
                 }
-
-
-            } 
-
+            }
             @Override
             public void onFailure(Call<List<PayHistoryModel>> call, Throwable t) {
             }
@@ -92,7 +88,6 @@ public class PayHistoryFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId=sharedPreferences.getString("id","");
-
         noHistoryTxt=view.findViewById(R.id.emptyText);
     }
 }

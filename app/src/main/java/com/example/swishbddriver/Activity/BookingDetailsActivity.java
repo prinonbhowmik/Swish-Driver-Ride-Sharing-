@@ -254,53 +254,53 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void checkHasOngoing() {
-            DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            String driver_id = String.valueOf(data.child("driverId").getValue());
-                            if (driver_id.equals(driverId)) {
-                                String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                                if( rStatus.equals("Start")){
-                                    hasOngoing=true;
-                                }
+        DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                            if( rStatus.equals("Start")){
+                                hasOngoing=true;
                             }
                         }
-                        if (!hasOngoing) {
-                            DatabaseReference ref1 = databaseReference.child("BookHourly").child(carType);
-                            ref1.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
-                                    if (dataSnapshot1.exists()) {
-                                        for (DataSnapshot data : dataSnapshot1.getChildren()) {
-                                            String driver_id = String.valueOf(data.child("driverId").getValue());
-                                            if (driver_id.equals(driverId)) {
-                                                String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                                                if( rStatus.equals("Start")){
-                                                    hasOngoing=true;
-                                                }
+                    }
+                    if (!hasOngoing) {
+                        DatabaseReference ref1 = databaseReference.child("BookHourly").child(carType);
+                        ref1.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                if (dataSnapshot1.exists()) {
+                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                        if (driver_id.equals(driverId)) {
+                                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                            if( rStatus.equals("Start")){
+                                                hasOngoing=true;
                                             }
                                         }
                                     }
                                 }
+                            }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                }
-                            });
-                        }
+                            }
+                        });
                     }
-
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            }
 
-                }
-            });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
@@ -744,10 +744,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             }
                         });
 
-
                     }
                 }
-
                 @Override
                 public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
                     Log.d("walletError",""+t.getMessage());
@@ -926,8 +924,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         if (driver_id.equals(driverId)) {
                             String pickup_date1 = String.valueOf(data.child("pickUpDate").getValue());
 
+                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
                             hasDateMatch = pickupDate.equals(pickup_date1);
-
                         }
                     }
                     if (!hasDateMatch) {
@@ -940,9 +938,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                         String driver_id = String.valueOf(data.child("driverId").getValue());
                                         if (driver_id.equals(driverId)) {
                                             String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
-
-                                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-
                                             hasDateMatch = pickupDate.equals(pickup_date2);
                                         }
                                     }

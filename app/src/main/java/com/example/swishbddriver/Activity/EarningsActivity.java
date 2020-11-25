@@ -101,14 +101,13 @@ public class EarningsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(EarningsActivity.this,DriverMapActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        /*startActivity(new Intent(EarningsActivity.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
         finish();
     }
 
     public void backPress(View view) {
-        startActivity(new Intent(EarningsActivity.this,DriverMapActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+
         finish();
     }
 }

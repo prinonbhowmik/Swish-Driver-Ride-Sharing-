@@ -195,5 +195,4 @@ public class InsideDhaka extends Fragment {
             }
         });
     }
-
 }

@@ -27,7 +27,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class InsideDhakaHistoryFragment extends Fragment {
     private RecyclerView recyclerView;
     private InsideDhakaHistoryAdapter adapter;
@@ -36,16 +35,12 @@ public class InsideDhakaHistoryFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
     private TextView noHistoryTxt;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_inside_dhaka_histroy, container, false);
         init(view);
-
-
-
 
         getData();
         return view;
@@ -81,10 +76,7 @@ public class InsideDhakaHistoryFragment extends Fragment {
                     Collections.reverse(list);
                     adapter.notifyDataSetChanged();
                 }
-
-
             }
-
             @Override
             public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
             }

@@ -30,8 +30,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import co.ceryle.radiorealbutton.RadioRealButton;
@@ -58,16 +62,14 @@ public class OutsideDhaka extends Fragment {
     private List<ProfileModel> list;
     private boolean checked = false;
     private RadioRealButtonGroup radioGroup;
+    private Date d1,d2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_out_side_dhaka, container, false);
         init(view);
-
-
-
-
 
         radioGroup.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
             @Override
@@ -86,7 +88,6 @@ public class OutsideDhaka extends Fragment {
     }
 
     private void getMyList() {
-
         DatabaseReference bookingRef = databaseReference.child("BookForLater").child(carType);
         bookingRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -95,16 +96,15 @@ public class OutsideDhaka extends Fragment {
                     bookRegularModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
+
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
                             if (!rideStatus.equals("End")) {
                                 BookRegularModel book = data.getValue(BookRegularModel.class);
                                 bookRegularModelList.add(book);
                             }
-
                         }
                     }
-                    //  notificationCount.setVisibility(View.GONE);
                     Collections.reverse(bookRegularModelList);
                     bookRegularAdapter.notifyDataSetChanged();
                 }
@@ -153,10 +153,30 @@ public class OutsideDhaka extends Fragment {
                     bookRegularModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         bookingStatus = data.child("bookingStatus").getValue().toString();
+                        String date1 = data.child("pickUpDate").getValue().toString();
+                        String tripId = data.child("bookingId").getValue().toString();
+                        String customerID = data.child("customerId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
                             BookRegularModel book = data.getValue(BookRegularModel.class);
                             bookRegularModelList.add(book);
                         }
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
+                        try {
+                            d1 = dateFormat.parse(date1);
+                            d2 = dateFormat.parse(currentDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (d2.compareTo(d1) > 0){
+                            DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID);
+                            delRef.child(tripId).removeValue();
+                            DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+                            del1Ref.child(tripId).removeValue();
+                        }
+
                     }
 
                     Collections.reverse(bookRegularModelList);
@@ -177,35 +197,4 @@ public class OutsideDhaka extends Fragment {
         });
     }
 
-
-
-   /* public void counter(String carType){
-        DatabaseReference bookingRef2 = databaseReference.child("BookForLater").child(carType);
-        bookingRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    count=0;
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        String driver_id=String.valueOf(data.child("driverId").getValue());
-                        if(driver_id.equals(driverId)) {
-                            String rideStatus = (String) data.child("rideStatus").getValue().toString();
-                            if (!rideStatus.equals("End")) {
-                                count++;
-                            }
-                        }
-                    }
-                    if(count>0){
-                        notificationCount.setVisibility(View.VISIBLE);
-                        notificationCount.setText(""+count);
-                    }
-                    else
-                        notificationCount.setVisibility(View.GONE);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }*/
 }

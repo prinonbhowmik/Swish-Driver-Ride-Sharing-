@@ -86,16 +86,14 @@ public class NotificationsActivity extends AppCompatActivity {
         });
     }
     public void notificationBack(View view) {
-        startActivity(new Intent(NotificationsActivity.this,DriverMapActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         finish();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(NotificationsActivity.this,DriverMapActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        /*startActivity(new Intent(NotificationsActivity.this,DriverMapActivity.class));
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
         finish();
     }
 }

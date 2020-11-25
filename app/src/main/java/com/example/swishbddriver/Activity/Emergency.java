@@ -49,8 +49,6 @@ public class Emergency extends AppCompatActivity {
     }
 
     public void emergencyBack(View view) {
-        /*startActivity(new Intent(Emergency.this,DriverMapActivity.class));
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);*/
         finish();
     }
     @Override

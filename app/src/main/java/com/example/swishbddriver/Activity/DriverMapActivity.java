@@ -929,7 +929,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     Intent intent2 = new Intent(DriverMapActivity.this, EarningsActivity.class);
                     startActivity(intent2);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
                     drawerLayout.closeDrawers();
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
@@ -953,7 +952,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     Intent intent2 = new Intent(DriverMapActivity.this, AllRidesHistoryActivity.class);
                     startActivity(intent2);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
                     drawerLayout.closeDrawers();
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
@@ -974,7 +972,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             case R.id.emergency:
                 startActivity(new Intent(DriverMapActivity.this, Emergency.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
                 drawerLayout.closeDrawers();
                 break;
             case R.id.settings:
@@ -987,7 +984,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 startActivity(new Intent(DriverMapActivity.this, NotificationsActivity.class).putExtra("mymode", String.valueOf(dark)));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
-                finish();
                 break;
             case R.id.logout:
                 DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
