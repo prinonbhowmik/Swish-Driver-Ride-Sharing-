@@ -97,7 +97,9 @@
                 android:layout_height="3dp"
                 android:layout_below="@id/pickup_timeTv"
                 android:background="@color/green1"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:layout_marginEnd="35dp"
+                android:layout_marginStart="35dp"/>
         </RelativeLayout>
 
     </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
