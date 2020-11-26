@@ -43,6 +43,7 @@ import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
+import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -272,7 +273,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void checkHourlyCashReceived() {
-        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
         tripRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -282,9 +283,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         String ratingStatus = data.child("ratingStatus").getValue().toString();
                         String cashReceived = data.child("cashReceived").getValue().toString();
                         if (rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
-                            BookRegularModel model = data.getValue(BookRegularModel.class);
+                            HourlyRideModel model = data.getValue(HourlyRideModel.class);
                             String id = model.getBookingId();
                             String customerID = model.getCustomerId();
+
+                            Log.d("checkKorbo",id+","+customerID);
+
                             Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
                             intent.putExtra("tripId", id);
                             intent.putExtra("customerId", customerID);
@@ -305,7 +309,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void checkCashReceived() {
-        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
+        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
         tripRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

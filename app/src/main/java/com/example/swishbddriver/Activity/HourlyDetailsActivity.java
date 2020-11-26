@@ -404,7 +404,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
         rideRef.child("endTime").setValue(currentTime);
-        rideRef.child("endTime").setValue(currentTime);
         rideRef.child("destinationPlace").setValue(destinationPlace);
 
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
