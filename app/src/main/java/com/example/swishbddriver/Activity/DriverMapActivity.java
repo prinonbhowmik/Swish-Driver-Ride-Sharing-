@@ -146,6 +146,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         checkLocationPermission();
 
         checkCashReceived();
+        checkHourlyCashReceived();
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
 
@@ -270,8 +271,41 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void checkCashReceived() {
+    private void checkHourlyCashReceived() {
         DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+        tripRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    for (DataSnapshot data : snapshot.getChildren()){
+                        String rideStatus = data.child("rideStatus").getValue().toString();
+                        String ratingStatus = data.child("ratingStatus").getValue().toString();
+                        String cashReceived = data.child("cashReceived").getValue().toString();
+                        if (rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
+                            BookRegularModel model = data.getValue(BookRegularModel.class);
+                            String id = model.getBookingId();
+                            String customerID = model.getCustomerId();
+                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                            intent.putExtra("tripId", id);
+                            intent.putExtra("customerId", customerID);
+                            intent.putExtra("check", 2);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            finish();
+                            startActivity(intent);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkCashReceived() {
+        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
         tripRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
