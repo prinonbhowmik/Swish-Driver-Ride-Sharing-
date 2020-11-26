@@ -1079,4 +1079,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(HourlyDetailsActivity.this,AllRidesActivity.class));
+        finish();
+    }
 }

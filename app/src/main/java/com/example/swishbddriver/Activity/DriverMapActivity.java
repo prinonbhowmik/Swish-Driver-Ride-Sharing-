@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -144,7 +145,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         checkDriverOnLine();
         checkLocationPermission();
 
-
+        checkCashReceived();
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
 
@@ -269,6 +270,38 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    private void checkCashReceived() {
+        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+        tripRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    for (DataSnapshot data : snapshot.getChildren()){
+                        String rideStatus = data.child("rideStatus").getValue().toString();
+                        String ratingStatus = data.child("ratingStatus").getValue().toString();
+                        String cashReceived = data.child("cashReceived").getValue().toString();
+                        if (rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
+                            BookRegularModel model = data.getValue(BookRegularModel.class);
+                            String id = model.getBookingId();
+                            String customerID = model.getCustomerId();
+                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                            intent.putExtra("tripId", id);
+                            intent.putExtra("customerId", customerID);
+                            intent.putExtra("check", 1);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            finish();
+                            startActivity(intent);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkLocationPermission() {
