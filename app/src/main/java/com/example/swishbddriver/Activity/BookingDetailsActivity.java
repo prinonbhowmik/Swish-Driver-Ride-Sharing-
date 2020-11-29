@@ -201,8 +201,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     intent.putExtra("carType", car_type);
                     intent.putExtra("rideStatus", "regular");
                     startActivity(intent);
-                }else{
-                    Toast.makeText(BookingDetailsActivity.this, "Confirm Trip First!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -1200,8 +1198,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(BookingDetailsActivity.this,AllRidesActivity.class));
-        finish();
+            finish();
+
     }
 
 }
