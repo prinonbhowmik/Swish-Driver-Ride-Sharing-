@@ -280,9 +280,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if (snapshot.exists()){
                     for (DataSnapshot data : snapshot.getChildren()){
                         String rideStatus = data.child("rideStatus").getValue().toString();
+                        String dId = data.child("driverId").getValue().toString();
                         String ratingStatus = data.child("ratingStatus").getValue().toString();
                         String cashReceived = data.child("cashReceived").getValue().toString();
-                        if (rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
+                        if (dId.equals(driverId) && rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
                             HourlyRideModel model = data.getValue(HourlyRideModel.class);
                             String id = model.getBookingId();
                             String customerID = model.getCustomerId();
@@ -316,9 +317,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if (snapshot.exists()){
                     for (DataSnapshot data : snapshot.getChildren()){
                         String rideStatus = data.child("rideStatus").getValue().toString();
+                        String dId = data.child("driverId").getValue().toString();
                         String ratingStatus = data.child("ratingStatus").getValue().toString();
                         String cashReceived = data.child("cashReceived").getValue().toString();
-                        if (rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
+                        if (dId.equals(driverId) && rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
                             BookRegularModel model = data.getValue(BookRegularModel.class);
                             String id = model.getBookingId();
                             String customerID = model.getCustomerId();

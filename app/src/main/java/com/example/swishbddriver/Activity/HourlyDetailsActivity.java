@@ -1082,6 +1082,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-       finish();
+        finish();
     }
 }
