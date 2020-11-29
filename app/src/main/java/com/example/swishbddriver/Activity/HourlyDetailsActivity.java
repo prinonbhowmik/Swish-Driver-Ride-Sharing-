@@ -78,9 +78,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private String driver_name, driver_phone;
-    private boolean hasDateMatch = false, startRide = false,hasOngoing=false;
+    private boolean hasDateMatch = false, startRide = false, hasOngoing = false;
     private ScrollView scrollLayout;
-    private double currentLat, currentLon;
+    private double currentLat = 0.0, currentLon = 0.0;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
     private SharedPreferences sharedPreferences;
@@ -103,10 +103,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private boolean endTripClicked = false;
     private Dialog dialog;
     Button collectBtn;
-    RelativeLayout hourLayout,kmLayout;
-    TextView cashpickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv,hourTv;
+    RelativeLayout hourLayout, kmLayout;
+    TextView cashpickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv, hourTv;
     private String hourPrice;
-    private int walletBalance,halfPrice,finalPrice,updatewallet;
+    private int walletBalance, halfPrice, finalPrice, updatewallet;
     private float totalHours;
     private String driverID2;
 
@@ -116,7 +116,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hourly_details);
 
         init();
-
 
 
         //getDriverInformation();
@@ -194,7 +193,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         pickupPlaceTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(check==1){
+                if (check == 1) {
                     Intent intent = new Intent(HourlyDetailsActivity.this, BookLaterMapActivity.class);
                     intent.putExtra("pLat", pickUpLat);
                     intent.putExtra("pLon", pickUpLon);
@@ -211,9 +210,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         startTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(hasOngoing){
+                if (hasOngoing) {
                     alreadyOngoingAlert();
-                }else {
+                } else {
                     checkDriverOnLine();
                 }
             }
@@ -227,6 +226,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
 
     }
+
     private void alreadyOngoingAlert() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Already on a trip!");
@@ -253,8 +253,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                            if( rStatus.equals("Start")){
-                                hasOngoing=true;
+                            if (rStatus.equals("Start")) {
+                                hasOngoing = true;
                             }
                         }
                     }
@@ -268,8 +268,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                                         String driver_id = String.valueOf(data.child("driverId").getValue());
                                         if (driver_id.equals(driverId)) {
                                             String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                                            if( rStatus.equals("Start")){
-                                                hasOngoing=true;
+                                            if (rStatus.equals("Start")) {
+                                                hasOngoing = true;
                                             }
                                         }
                                     }
@@ -293,7 +293,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
 
     }
-
 
 
     private void init() {
@@ -349,7 +348,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id,customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash2");
+                sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash2");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -364,97 +363,101 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     private void confirmEndTrip() {
 
-        Call<List<ProfileModel>> call2 = api.getData(driverId);
-        call2.enqueue(new Callback<List<ProfileModel>>() {
-            @Override
-            public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
-                list = response.body();
-                int rideCount = list.get(0).getRideCount();
-                int totalRide = rideCount + 1;
-                Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
-                call1.enqueue(new Callback<List<ProfileModel>>() {
-                    @Override
-                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+        if (currentLat != 0.0 && currentLon != 0.0) {
+            Call<List<ProfileModel>> call2 = api.getData(driverId);
+            call2.enqueue(new Callback<List<ProfileModel>>() {
+                @Override
+                public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
+                    list = response.body();
+                    int rideCount = list.get(0).getRideCount();
+                    int totalRide = rideCount + 1;
+                    Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
+                    call1.enqueue(new Callback<List<ProfileModel>>() {
+                        @Override
+                        public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                    }
-                });
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
+
+                }
+            });
+
+            Locale locale = new Locale("en");
+            Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
+            try {
+                List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
+                destinationPlace = addresses.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
+            String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+            DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+            rideRef.child("rideStatus").setValue("End");
+            rideRef.child("endTime").setValue(currentTime);
+            rideRef.child("destinationPlace").setValue(destinationPlace);
 
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
+            userRef.child("rideStatus").setValue("End");
+            userRef.child("endTime").setValue(currentTime);
+            rideRef.child("destinationPlace").setValue(destinationPlace);
+
+            Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
+            call.enqueue(new Callback<List<HourlyRideModel>>() {
+                @Override
+                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                }
+            });
+
+
+            SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+            try {
+                date1 = myFormat.parse(pickupTime);
+                date2 = myFormat.parse(currentTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        });
+            long difference = date2.getTime() - date1.getTime();
 
-        Locale locale = new Locale("en");
-        Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
-        try {
-            List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
-            destinationPlace = addresses.get(0).getAddressLine(0);
-        } catch (IOException e) {
-            e.printStackTrace();
+            float hours = (float) difference / (1000 * 60 * 60);
+            totalHours = Math.abs(hours);
+
+
+            carTypeRate = Integer.parseInt(priceRate);
+            actualPrice = (int) (carTypeRate * totalHours);
+            actualIntPrice = (int) actualPrice;
+
+            if (totalHours < 2.00) {
+                actualIntPrice = carTypeRate * 2;
+            }
+
+            showPrice(actualIntPrice, totalHours);
+        } else {
+            Toast.makeText(this, "Please check your Internet Connection!", Toast.LENGTH_SHORT).show();
         }
-
-        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-        rideRef.child("rideStatus").setValue("End");
-        rideRef.child("endTime").setValue(currentTime);
-        rideRef.child("destinationPlace").setValue(destinationPlace);
-
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
-        userRef.child("rideStatus").setValue("End");
-        userRef.child("endTime").setValue(currentTime);
-        rideRef.child("destinationPlace").setValue(destinationPlace);
-
-        Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
-        call.enqueue(new Callback<List<HourlyRideModel>>() {
-            @Override
-            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-            }
-        });
-
-
-        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-        try {
-            date1 = myFormat.parse(pickupTime);
-            date2 = myFormat.parse(currentTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long difference = date2.getTime() - date1.getTime();
-
-        float hours = (float) difference / (1000 * 60 * 60);
-        totalHours = Math.abs(hours);
-
-
-        carTypeRate = Integer.parseInt(priceRate);
-        actualPrice = (int) (carTypeRate * totalHours);
-        actualIntPrice = (int) actualPrice;
-
-        if (totalHours < 2.00) {
-            actualIntPrice = carTypeRate * 2;
-        }
-
-        showPrice(actualIntPrice,totalHours);
 
     }
 
-    private void showPrice(int actualIntPrice,float totalHours) {
+    private void showPrice(int actualIntPrice, float totalHours) {
 
         if (payment.equals("cash")) {
-            float totalHour=totalHours;
-            Log.d("showHour",""+totalHour);
+            float totalHour = totalHours;
+            Log.d("showHour", "" + totalHour);
 
             DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides")
                     .child(customerID).child(id);
@@ -470,8 +473,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             newRef.child("finalPrice").setValue(String.valueOf(actualIntPrice));
             newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
 
-            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice),"0"
-                    ,String.valueOf(actualIntPrice),String.format("%.2f", totalHour));
+            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice), "0"
+                    , String.valueOf(actualIntPrice), String.format("%.2f", totalHour));
             call2.enqueue(new Callback<List<HourlyRideModel>>() {
                 @Override
                 public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -484,16 +487,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 }
             });
 
-        }
-
-        else if (payment.equals("wallet")) {
-            float totalHour=totalHours;
+        } else if (payment.equals("wallet")) {
+            float totalHour = totalHours;
 
             Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
             getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         List<CustomerProfile> list = response.body();
                         walletBalance = list.get(0).getWallet();
                         halfPrice = actualIntPrice / 2;
@@ -502,9 +503,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
                             finalPrice = actualIntPrice - walletBalance;
                             discount = walletBalance;
-                            updatewallet=0;
-                        }
-                        else if(walletBalance >= halfPrice) {
+                            updatewallet = 0;
+                        } else if (walletBalance >= halfPrice) {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
@@ -524,7 +524,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
 
                         Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice)
-                                ,String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
+                                , String.valueOf(discount), String.valueOf(finalPrice), String.format("%.2f", totalHour));
                         call2.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
                             public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -573,7 +573,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 finish();
                 startActivity(intent);
             }
-        },5000);
+        }, 5000);
     }
 
 
@@ -629,66 +629,70 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     private void startTripAlert() {
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
-        dialog.setTitle("Confirmation!!");
-        dialog.setIcon(R.drawable.logo_circle);
-        dialog.setMessage("Did you pick up your passenger?");
-        dialog.setCancelable(false);
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Locale locale = new Locale("en");
-                Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
-                try {
-                    List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
-                    pickupPlace = addresses.get(0).getAddressLine(0);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (currentLat != 0.0 && currentLon != 0.0) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
+            dialog.setTitle("Confirmation!!");
+            dialog.setIcon(R.drawable.logo_circle);
+            dialog.setMessage("Did you pick up your passenger?");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Locale locale = new Locale("en");
+                    Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
+                        pickupPlace = addresses.get(0).getAddressLine(0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+                    DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+                    rideRef.child("rideStatus").setValue("Start");
+                    rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                    rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                    rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                    rideRef.child("pickUpTime").setValue(currentTime);
+
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
+                    userRef.child("rideStatus").setValue("Start");
+                    userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
+                    userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
+                    userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
+                    userRef.child("pickUpTime").setValue(currentTime);
+
+                    Call<List<HourlyRideModel>> call = api.startHourTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    call.enqueue(new Callback<List<HourlyRideModel>>() {
+                        @Override
+                        public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                        }
+                    });
+
+                    sendNotification(id, customerID, "Start Trip", "Your trip has started.", "running_trip");
                 }
-                String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-                DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-                rideRef.child("rideStatus").setValue("Start");
-                rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
-                rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
-                rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                rideRef.child("pickUpTime").setValue(currentTime);
+            });
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog = dialog.create();
+            alertDialog.show();
 
-                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
-                userRef.child("rideStatus").setValue("Start");
-                userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
-                userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
-                userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                userRef.child("pickUpTime").setValue(currentTime);
+            neomorphFrameLayoutStart.setVisibility(View.GONE);
 
-                Call<List<HourlyRideModel>> call = api.startHourTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
-                call.enqueue(new Callback<List<HourlyRideModel>>() {
-                    @Override
-                    public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-                    }
-                });
-
-                sendNotification(id,customerID, "Start Trip", "Your trip has started.", "running_trip");
-            }
-        });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        AlertDialog alertDialog = dialog.create();
-        alertDialog.show();
-
-        neomorphFrameLayoutStart.setVisibility(View.GONE);
-
-        neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-        endTripBtn.setVisibility(View.VISIBLE);
+            neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+            endTripBtn.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(this, "Please Check Your Internet Connection ", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getData() {
@@ -697,7 +701,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
                         HourlyRideModel book = snapshot.getValue(HourlyRideModel.class);
                         pickupPlace = book.getPickUpPlace();
                         pickupDate = book.getPickUpDate();
@@ -808,16 +812,12 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String pickup_date2 = String.valueOf(data.child("pickUpDate").getValue());
-
-                            //String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-
                             hasDateMatch = pickupDate.equals(pickup_date2);
-
                         }
                     }
                     if (!hasDateMatch) {
@@ -825,7 +825,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         ref.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
-                                if (dataSnapshot1.exists()){
+                                if (dataSnapshot1.exists()) {
                                     for (DataSnapshot data : dataSnapshot1.getChildren()) {
                                         String driver_id = String.valueOf(data.child("driverId").getValue());
                                         if (driver_id.equals(driverId)) {
@@ -913,7 +913,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(HourlyDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id,customerID, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_hourly_ride_details");
+                    sendNotification(id, customerID, "Trip Confirmation!", "Your Ride request has been confirmed.", "my_hourly_ride_details");
                 }
             }
         });
@@ -936,10 +936,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void sendNotification(final String id,final String receiverId, final String title, final String message, final String toActivity) {
+    private void sendNotification(final String id, final String receiverId, final String title, final String message, final String toActivity) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
         Query query = tokens.orderByKey().equalTo(receiverId);
-        String receiverId1=receiverId;
+        String receiverId1 = receiverId;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1012,7 +1012,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     Snackbar snackbar = Snackbar.make(scrollLayout, "You are cancel this ride", Snackbar.LENGTH_SHORT);
                     snackbar.show();
                     addRating();
-                    sendNotification(id,customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
+                    sendNotification(id, customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_hourly_ride_details");
 
 
                 }
@@ -1046,7 +1046,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     list = response.body();
                     rating = list.get(0).getRating();
                     ratingCount = list.get(0).getRatingCount();
-                    ride=list.get(0).getRideCount();
+                    ride = list.get(0).getRideCount();
                     rat = rating / ratingCount;
 
                 }
@@ -1082,7 +1082,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(HourlyDetailsActivity.this,AllRidesActivity.class));
+        startActivity(new Intent(HourlyDetailsActivity.this, AllRidesActivity.class));
         finish();
     }
 }
