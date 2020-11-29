@@ -1082,6 +1082,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-       finish();
+        startActivity(new Intent(HourlyDetailsActivity.this, AllRidesActivity.class));
+        finish();
     }
 }
