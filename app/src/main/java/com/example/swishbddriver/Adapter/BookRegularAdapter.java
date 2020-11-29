@@ -52,6 +52,7 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
                 intent.putExtra("userId",book.getCustomerId());
                 intent.putExtra("check", 1);
                 context.startActivity(intent);
+
             }
         });
         String rideStatus=book.getRideStatus();
