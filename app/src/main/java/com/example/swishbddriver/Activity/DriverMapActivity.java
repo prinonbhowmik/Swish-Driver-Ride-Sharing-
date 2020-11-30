@@ -146,8 +146,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         checkDriverOnLine();
         checkLocationPermission();
 
-        checkCashReceived();
-        checkHourlyCashReceived();
+       if(!isFinishing()){
+           checkCashReceived();
+           checkHourlyCashReceived();
+       }
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
 

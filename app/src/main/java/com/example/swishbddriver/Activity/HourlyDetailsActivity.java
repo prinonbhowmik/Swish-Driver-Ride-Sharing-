@@ -363,94 +363,90 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     private void confirmEndTrip() {
 
-        if (currentLat != 0.0 && currentLon != 0.0) {
-            Call<List<ProfileModel>> call2 = api.getData(driverId);
-            call2.enqueue(new Callback<List<ProfileModel>>() {
-                @Override
-                public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
-                    list = response.body();
-                    int rideCount = list.get(0).getRideCount();
-                    int totalRide = rideCount + 1;
-                    Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
-                    call1.enqueue(new Callback<List<ProfileModel>>() {
-                        @Override
-                        public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+        Call<List<ProfileModel>> call2 = api.getData(driverId);
+        call2.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
+                list = response.body();
+                int rideCount = list.get(0).getRideCount();
+                int totalRide = rideCount + 1;
+                Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
+                call1.enqueue(new Callback<List<ProfileModel>>() {
+                    @Override
+                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
-
-                }
-            });
-
-            Locale locale = new Locale("en");
-            Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
-            try {
-                List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
-                destinationPlace = addresses.get(0).getAddressLine(0);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    }
+                });
             }
 
-            String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-            DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-            rideRef.child("rideStatus").setValue("End");
-            rideRef.child("endTime").setValue(currentTime);
-            rideRef.child("destinationPlace").setValue(destinationPlace);
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
 
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
-            userRef.child("rideStatus").setValue("End");
-            userRef.child("endTime").setValue(currentTime);
-            rideRef.child("destinationPlace").setValue(destinationPlace);
-
-            Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
-            call.enqueue(new Callback<List<HourlyRideModel>>() {
-                @Override
-                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-                }
-
-                @Override
-                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-                }
-            });
-
-
-            SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
-            try {
-                date1 = myFormat.parse(pickupTime);
-                date2 = myFormat.parse(currentTime);
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
-            long difference = date2.getTime() - date1.getTime();
+        });
 
-            float hours = (float) difference / (1000 * 60 * 60);
-            totalHours = Math.abs(hours);
-
-
-            carTypeRate = Integer.parseInt(priceRate);
-            actualPrice = (int) (carTypeRate * totalHours);
-            actualIntPrice = (int) actualPrice;
-
-            if (totalHours < 2.00) {
-                actualIntPrice = carTypeRate * 2;
-            }
-
-            showPrice(actualIntPrice, totalHours);
-        } else {
-            Toast.makeText(this, "Please check your Internet Connection!", Toast.LENGTH_SHORT).show();
+        Locale locale = new Locale("en");
+        Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
+            destinationPlace = addresses.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
+        rideRef.child("rideStatus").setValue("End");
+        rideRef.child("endTime").setValue(currentTime);
+        rideRef.child("destinationPlace").setValue(destinationPlace);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
+        userRef.child("rideStatus").setValue("End");
+        userRef.child("endTime").setValue(currentTime);
+        rideRef.child("destinationPlace").setValue(destinationPlace);
+
+        Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
+        call.enqueue(new Callback<List<HourlyRideModel>>() {
+            @Override
+            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+            }
+        });
+
+
+        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+        try {
+            date1 = myFormat.parse(pickupTime);
+            date2 = myFormat.parse(currentTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long difference = date2.getTime() - date1.getTime();
+
+        float hours = (float) difference / (1000 * 60 * 60);
+        totalHours = Math.abs(hours);
+
+
+        carTypeRate = Integer.parseInt(priceRate);
+        actualPrice = (int) (carTypeRate * totalHours);
+
+        if (totalHours < 2.00) {
+            actualIntPrice = carTypeRate * 2;
+        }else{
+            actualIntPrice = (int) actualPrice;
+        }
+
+        showPrice(actualIntPrice, totalHours);
     }
 
     private void showPrice(int actualIntPrice, float totalHours) {
@@ -487,14 +483,15 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 }
             });
 
-        } else if (payment.equals("wallet")) {
-            float totalHour = totalHours;
+        }
+        else if (payment.equals("wallet")) {
+            float totalHour=totalHours;
 
             Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
             getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-                    if (response.isSuccessful()) {
+                    if (response.isSuccessful()){
                         List<CustomerProfile> list = response.body();
                         walletBalance = list.get(0).getWallet();
                         halfPrice = actualIntPrice / 2;
@@ -503,8 +500,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
                             finalPrice = actualIntPrice - walletBalance;
                             discount = walletBalance;
-                            updatewallet = 0;
-                        } else if (walletBalance >= halfPrice) {
+                            updatewallet=0;
+                        }
+                        else if(walletBalance >= halfPrice) {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
@@ -524,7 +522,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
 
                         Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice)
-                                , String.valueOf(discount), String.valueOf(finalPrice), String.format("%.2f", totalHour));
+                                ,String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
                         call2.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
                             public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {

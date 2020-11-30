@@ -351,78 +351,73 @@ public class BookingDetailsActivity extends AppCompatActivity {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
 
-        if (currentLat!=0.0 && currentLon!=0.0){
-            Call<List<ProfileModel>> call2 = api.getData(driverId);
-            call2.enqueue(new Callback<List<ProfileModel>>() {
-                @Override
-                public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
-                    list = response.body();
-                    int rideCount = list.get(0).getRideCount();
-                    int totalRide = rideCount + 1;
-                    Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
-                    call1.enqueue(new Callback<List<ProfileModel>>() {
-                        @Override
-                        public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+        Call<List<ProfileModel>> call2 = api.getData(driverId);
+        call2.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
+                list = response.body();
+                int rideCount = list.get(0).getRideCount();
+                int totalRide = rideCount + 1;
+                Call<List<ProfileModel>> call1 = api.rideCountUpdate(driverId, totalRide);
+                call1.enqueue(new Callback<List<ProfileModel>>() {
+                    @Override
+                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
 
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
-
-                }
-            });
-            destinationLat = String.valueOf(currentLat);
-            destinationLon = String.valueOf(currentLon);
-
-            Locale locale = new Locale("en");
-            Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
-            try {
-                List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
-                destinationPlace = addresses.get(0).getAddressLine(0);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    }
+                });
             }
 
-            String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-            DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
-            rideRef.child("rideStatus").setValue("End");
-            rideRef.child("destinationLat").setValue(String.valueOf(currentLat));
-            rideRef.child("destinationLon").setValue(String.valueOf(currentLon));
-            rideRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
-            rideRef.child("endTime").setValue(currentTime);
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
 
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
-            userRef.child("rideStatus").setValue("End");
-            userRef.child("destinationLat").setValue(String.valueOf(currentLat));
-            userRef.child("destinationLon").setValue(String.valueOf(currentLon));
-            userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
-            userRef.child("endTime").setValue(currentTime);
+            }
+        });
+        destinationLat = String.valueOf(currentLat);
+        destinationLon = String.valueOf(currentLon);
 
-            Call<List<BookRegularModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, currentTime);
-            call.enqueue(new Callback<List<BookRegularModel>>() {
-                @Override
-                public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
-
-                }
-
-                @Override
-                public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
-
-                }
-            });
-
-            calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace,currentTime);
+        Locale locale = new Locale("en");
+        Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
+            destinationPlace = addresses.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else{
-            Toast.makeText(this, "Please Check Internet Connection", Toast.LENGTH_LONG).show();
-        }
+
+        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
+        rideRef.child("rideStatus").setValue("End");
+        rideRef.child("destinationLat").setValue(String.valueOf(currentLat));
+        rideRef.child("destinationLon").setValue(String.valueOf(currentLon));
+        rideRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
+        rideRef.child("endTime").setValue(currentTime);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
+        userRef.child("rideStatus").setValue("End");
+        userRef.child("destinationLat").setValue(String.valueOf(currentLat));
+        userRef.child("destinationLon").setValue(String.valueOf(currentLon));
+        userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
+        userRef.child("endTime").setValue(currentTime);
+
+        Call<List<BookRegularModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, currentTime);
+        call.enqueue(new Callback<List<BookRegularModel>>() {
+            @Override
+            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
+                Log.d("checkError",t.getMessage());
+            }
+        });
+
+        calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace,currentTime);
 
     }
 
@@ -517,7 +512,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
                     userRef.child("pickUpTime").setValue(currentTime);
 
-                    Call<List<BookRegularModel>> call = api.startTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<BookRegularModel>> call = api.startTripData(id, currentTime, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<BookRegularModel>>() {
                         @Override
                         public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -594,6 +589,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     distance = element.getDistance().getValue();
 
                     Log.d("getPrice", String.valueOf(distance));
+                    Log.d("getPrice", String.valueOf(currentTime));
                     SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
                     try {
                         date1 = myFormat.parse(pickupTime);
@@ -625,6 +621,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         kmdistance = distance / 1000;
         Log.d("showDistance", String.valueOf(kmdistance));
+        Log.d("showDistance", String.valueOf(travelduration));
 
         Call<List<RidingRate>> call1 = api.getPrice(carType);
         call1.enqueue(new Callback<List<RidingRate>>() {
@@ -642,7 +639,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     price = kmPrice + minPrice + minimumRate;
 
-                    updateBookingDetails();
+                    updateBookingDetails(price);
 
                 }
             }
@@ -655,7 +652,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
 
-    private void updateBookingDetails() {
+    private void updateBookingDetails(int price) {
+
         if (payment.equals("cash")) {
 
             DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
@@ -708,8 +706,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
-
                         }
+
+                        Log.d("finalPrice", String.valueOf(finalPrice));
+                        Log.d("discount", String.valueOf(discount));
 
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
                         updateRef.child("price").setValue(String.valueOf(price));
