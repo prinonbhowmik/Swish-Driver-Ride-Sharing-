@@ -93,7 +93,7 @@ public class RideRequestActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(type, R.drawable.ic_car, message, title, "hN45u4r4UhaSkFdeuB9i6IRgEtI2",title);
+                    Data data = new Data(type,"1", message, title, "hN45u4r4UhaSkFdeuB9i6IRgEtI2",title);
 
                         Sender sender = new Sender(data, token.getToken());
 

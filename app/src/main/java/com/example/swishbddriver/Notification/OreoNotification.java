@@ -22,9 +22,8 @@ import com.example.swishbddriver.R;
 
 public class OreoNotification extends ContextWrapper {
 
-    private static final String CHANNEL_ID = "com.example.swishbddriver";
+    private static final String CHANNEL_ID = "com.hydertechno.swishdriver";
     private static final String CHANNEL_NAME = "Swish Driver";
-    String GROUP_KEY = "com.hydertechno.swishdriver.WORK.EMAIL";
 
     private NotificationManager notificationManager;
 
@@ -63,12 +62,11 @@ public class OreoNotification extends ContextWrapper {
     Drawable myDrawable = getResources().getDrawable(R.drawable.customer_care);
     Bitmap smallImage1      = ((BitmapDrawable) myDrawable).getBitmap();
     @TargetApi(Build.VERSION_CODES.O)
-    public  NotificationCompat.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent, Uri soundUri, String icon){
-
+    public  NotificationCompat.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent){
         // Assign big picture notification
 //        /*NotificationCompat.BigPictureStyle bpStyle = new NotificationCompat.BigPictureStyle();
 //        bpStyle.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.customer_care)).build();*/
-        Bitmap smallImage= BitmapFactory.decodeResource(getResources(),R.drawable.customer_care);
+        //Bitmap smallImage=BitmapFactory.decodeResource(getResources(),R.drawable.customer_care);
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_noti_logo)
                 .setContentTitle(title)
@@ -76,6 +74,26 @@ public class OreoNotification extends ContextWrapper {
                 //.setLargeIcon(smallImage)
                 //.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(smallImage).bigLargeIcon(null))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setContentIntent(pendingIntent)
+                .setColor(Color.parseColor("#1785DA"))
+                .setAutoCancel(true);
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public  NotificationCompat.Builder getOreoNotification1(String title, String body, PendingIntent pendingIntent, Bitmap image){
+
+        // Assign big picture notification
+//        /*NotificationCompat.BigPictureStyle bpStyle = new NotificationCompat.BigPictureStyle();
+//        bpStyle.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.customer_care)).build();*/
+        //Bitmap smallImage=BitmapFactory.decodeResource(getResources(),R.drawable.customer_care);
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_noti_logo)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setLargeIcon(image)
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(image).bigLargeIcon(null))
+                //.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setContentIntent(pendingIntent)
                 .setColor(Color.parseColor("#1785DA"))
                 .setAutoCancel(true);
