@@ -281,24 +281,26 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
                     for (DataSnapshot data : snapshot.getChildren()){
-                        String rideStatus = data.child("rideStatus").getValue().toString();
-                        String dId = data.child("driverId").getValue().toString();
-                        String ratingStatus = data.child("ratingStatus").getValue().toString();
                         String cashReceived = data.child("cashReceived").getValue().toString();
-                        if (dId.equals(driverId) && rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
-                            HourlyRideModel model = data.getValue(HourlyRideModel.class);
-                            String id = model.getBookingId();
-                            String customerID = model.getCustomerId();
+                        if ( cashReceived.equals("no")){
+                            String rideStatus = data.child("rideStatus").getValue().toString();
+                            String dId = data.child("driverId").getValue().toString();
+                            if (dId.equals(driverId) && rideStatus.equals("End") ){
+                                HourlyRideModel model = data.getValue(HourlyRideModel.class);
+                                String id = model.getBookingId();
+                                String customerID = model.getCustomerId();
 
-                            Log.d("checkKorbo",id+","+customerID);
+                                Log.d("checkKorbo",id+","+customerID);
 
-                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
-                            intent.putExtra("tripId", id);
-                            intent.putExtra("customerId", customerID);
-                            intent.putExtra("check", 2);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            finish();
-                            startActivity(intent);
+                                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                                intent.putExtra("tripId", id);
+                                intent.putExtra("customerId", customerID);
+                                intent.putExtra("check", 2);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                finish();
+                                startActivity(intent);
+                            }
+
                         }
                     }
                 }
@@ -318,21 +320,26 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
                     for (DataSnapshot data : snapshot.getChildren()){
-                        String rideStatus = data.child("rideStatus").getValue().toString();
-                        String dId = data.child("driverId").getValue().toString();
-                        String ratingStatus = data.child("ratingStatus").getValue().toString();
                         String cashReceived = data.child("cashReceived").getValue().toString();
-                        if (dId.equals(driverId) && rideStatus.equals("End") && ratingStatus.equals("false") && cashReceived.equals("no")){
-                            BookRegularModel model = data.getValue(BookRegularModel.class);
-                            String id = model.getBookingId();
-                            String customerID = model.getCustomerId();
-                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
-                            intent.putExtra("tripId", id);
-                            intent.putExtra("customerId", customerID);
-                            intent.putExtra("check", 1);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            finish();
-                            startActivity(intent);
+                        if ( cashReceived.equals("no")){
+                            String rideStatus = data.child("rideStatus").getValue().toString();
+                            String dId = data.child("driverId").getValue().toString();
+                            if (dId.equals(driverId) && rideStatus.equals("End") ){
+                                HourlyRideModel model = data.getValue(HourlyRideModel.class);
+                                String id = model.getBookingId();
+                                String customerID = model.getCustomerId();
+
+                                Log.d("checkKorbo",id+","+customerID);
+
+                                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                                intent.putExtra("tripId", id);
+                                intent.putExtra("customerId", customerID);
+                                intent.putExtra("check", 2);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                finish();
+                                startActivity(intent);
+                            }
+
                         }
                     }
                 }

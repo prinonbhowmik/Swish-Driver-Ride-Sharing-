@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.chinodev.androidneomorphframelayout.NeomorphFrameLayout;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.Model.ProfileModel;
@@ -485,14 +486,17 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
         }
         else if (payment.equals("wallet")) {
-            float totalHour=totalHours;
+            float totalHour = totalHours;
+            Log.d("showHour", "" + totalHour);
+            Log.d("showHour", "" + customerID);
 
-            Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
-            getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+            Call<List<CustomerProfile>> getWalletData = api.getCustomerData(customerID);
+            getWalletData.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
                     if (response.isSuccessful()){
                         List<CustomerProfile> list = response.body();
+                        Log.d("showHour", "" + list.get(0).getWallet());
                         walletBalance = list.get(0).getWallet();
                         halfPrice = actualIntPrice / 2;
 
@@ -506,8 +510,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
-
                         }
+
+                        Log.d("finalPrice", String.valueOf(finalPrice));
+                        Log.d("discount", String.valueOf(discount));
 
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
                         updateRef.child("price").setValue(String.valueOf(actualIntPrice));
@@ -548,12 +554,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                             }
                         });
 
-
                     }
                 }
-
                 @Override
                 public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+                    Log.d("walletError",""+t.getMessage());
                 }
             });
 
