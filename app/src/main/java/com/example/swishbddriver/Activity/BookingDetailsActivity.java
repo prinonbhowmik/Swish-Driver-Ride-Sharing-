@@ -519,7 +519,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
                     userRef.child("pickUpTime").setValue(currentTime);
 
-                    Call<List<BookRegularModel>> call = api.startTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<BookRegularModel>> call = api.startTripData(id, currentTime, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<BookRegularModel>>() {
                         @Override
                         public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
