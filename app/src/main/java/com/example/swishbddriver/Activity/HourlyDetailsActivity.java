@@ -701,7 +701,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
                     userRef.child("pickUpTime").setValue(currentTime);
 
-                    Call<List<HourlyRideModel>> call = api.startHourTripData(id, pickupTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<HourlyRideModel>> call = api.startHourTripData(id, currentTime, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<HourlyRideModel>>() {
                         @Override
                         public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {

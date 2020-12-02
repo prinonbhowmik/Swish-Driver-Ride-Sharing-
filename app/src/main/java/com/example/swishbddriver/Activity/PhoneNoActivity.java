@@ -19,8 +19,11 @@ import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
 import com.example.swishbddriver.Model.CheckModel;
 import com.example.swishbddriver.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +89,13 @@ public class PhoneNoActivity extends AppCompatActivity {
                             if (response.isSuccessful()) {
                                 list = response.body();
                                 status = list.get(0).getStatus();
+                                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                    @Override
+                                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                                       // updateToken(carType, instanceIdResult.getToken());
+
+                                    }
+                                });
                                 phn_LT.setErrorEnabled(false);
                                 if (status.equals("1")) {
                                     startActivity(new Intent(PhoneNoActivity.this, PasswordActivity.class)
