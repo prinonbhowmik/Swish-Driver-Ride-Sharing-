@@ -1,8 +1,6 @@
 package com.example.swishbddriver.Api;
 
 
-
-
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
@@ -154,7 +152,11 @@ public interface ApiInterface {
                                                 @Field("destinationLat") String destinationLat,
                                                 @Field("destinationLon") String destinationLon,
                                                 @Field("destinationPlace") String destinationPlace,
-                                                @Field("endTime") String endTime);
+                                                @Field("endTime") String endTime,
+                                                @Field("price") String price,
+                                                @Field("discount") String discount,
+                                                @Field("finalPrice") String updatedPrice,
+                                                @Field("totalTime") String time);
 
     @GET("bookingrate?")
     Call<List<RidingRate>> getPrice(@Query("id") String car_type);
@@ -164,7 +166,7 @@ public interface ApiInterface {
     Call<List<BookRegularModel>> priceUpdate(@Path("bookingId") String bookingId,
                                              @Field("price") String price,
                                              @Field("discount") String discount,
-                                             @Field("updatedPrice") String updatedPrice,
+                                             @Field("finalPrice") String updatedPrice,
                                              @Field("totalDistance") String km,
                                              @Field("totalTime") String time);
 
@@ -173,7 +175,7 @@ public interface ApiInterface {
     Call<List<HourlyRideModel>> hourpriceUpdate(@Path("bookingId") String bookingId,
                                                 @Field("price") String price,
                                                 @Field("discount") String discount,
-                                                @Field("updatedPrice") String updatedPrice,
+                                                @Field("finalPrice") String updatedPrice,
                                                 @Field("totalTime") String time);
 
     @FormUrlEncoded
@@ -282,10 +284,12 @@ public interface ApiInterface {
     @PUT("walletupdate/{id}")
     Call<List<CustomerProfile>> walletValue(@Path("id") String customer_id,
                                             @Field("wallet") int wallet);
+
     @FormUrlEncoded
     @PUT("hourlycashreceived/{bookingId}")
     Call<List<BookRegularModel>> hourlyCashReceived(@Path("bookingId") String bookingId,
                                                     @Field("cashReceived") String cashReceived);
+
     @FormUrlEncoded
     @PUT("bookingcashreceived/{bookingId}")
     Call<List<BookRegularModel>> BookingCashReceived(@Path("bookingId") String bookingId,

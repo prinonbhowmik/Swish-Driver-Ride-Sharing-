@@ -391,6 +391,16 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             }
         });
 
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+
         Locale locale = new Locale("en");
         Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
         try {
@@ -401,29 +411,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         }
 
         String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
-        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
-        rideRef.child("rideStatus").setValue("End");
-        rideRef.child("endTime").setValue(currentTime);
-        rideRef.child("destinationPlace").setValue(destinationPlace);
-
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
-        userRef.child("rideStatus").setValue("End");
-        userRef.child("endTime").setValue(currentTime);
-        rideRef.child("destinationPlace").setValue(destinationPlace);
-
-        Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime);
-        call.enqueue(new Callback<List<HourlyRideModel>>() {
-            @Override
-            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
-
-            }
-        });
-
 
         SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
         try {
@@ -447,10 +434,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             actualIntPrice = (int) actualPrice;
         }
 
-        showPrice(actualIntPrice, totalHours);
+        showPrice(actualIntPrice, totalHours,currentTime,destinationPlace);
     }
 
-    private void showPrice(int actualIntPrice, float totalHours) {
+    private void showPrice(int actualIntPrice, float totalHours, String currentTime, String destinationPlace) {
 
         if (payment.equals("cash")) {
             float totalHour = totalHours;
@@ -462,6 +449,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             updateRef.child("discount").setValue("0");
             updateRef.child("finalPrice").setValue(String.valueOf(actualIntPrice));
             updateRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+            updateRef.child("rideStatus").setValue("End");
+            updateRef.child("endTime").setValue(currentTime);
+            updateRef.child("destinationPlace").setValue(destinationPlace);
+
 
             DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly")
                     .child(carType).child(id);
@@ -469,8 +460,25 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             newRef.child("discount").setValue("0");
             newRef.child("finalPrice").setValue(String.valueOf(actualIntPrice));
             newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+            newRef.child("rideStatus").setValue("End");
+            newRef.child("endTime").setValue(currentTime);
+            newRef.child("destinationPlace").setValue(destinationPlace);
 
-            Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice), "0"
+            Call<List<HourlyRideModel>> call = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime,
+                    String.valueOf(actualIntPrice), "0", String.valueOf(actualIntPrice), String.format("%.2f", totalHour));
+            call.enqueue(new Callback<List<HourlyRideModel>>() {
+                @Override
+                public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                }
+            });
+
+          /*  Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice), "0"
                     , String.valueOf(actualIntPrice), String.format("%.2f", totalHour));
             call2.enqueue(new Callback<List<HourlyRideModel>>() {
                 @Override
@@ -482,7 +490,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
 
                 }
-            });
+            });*/
 
         }
         else if (payment.equals("wallet")) {
@@ -520,14 +528,34 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         updateRef.child("discount").setValue(String.valueOf(discount));
                         updateRef.child("finalPrice").setValue(String.valueOf(finalPrice));
                         updateRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+                        updateRef.child("rideStatus").setValue("End");
+                        updateRef.child("endTime").setValue(currentTime);
+                        updateRef.child("destinationPlace").setValue(destinationPlace);
 
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                         newRef.child("price").setValue(String.valueOf(actualIntPrice));
                         newRef.child("discount").setValue(String.valueOf(discount));
                         newRef.child("finalPrice").setValue(String.valueOf(finalPrice));
                         newRef.child("totalTime").setValue(String.format("%.2f", totalHour));
+                        newRef.child("rideStatus").setValue("End");
+                        newRef.child("endTime").setValue(currentTime);
+                        newRef.child("destinationPlace").setValue(destinationPlace);
 
-                        Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice)
+                        Call<List<HourlyRideModel>> call1 = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime,
+                                String.valueOf(actualIntPrice),String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
+                        call1.enqueue(new Callback<List<HourlyRideModel>>() {
+                            @Override
+                            public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
+
+                            }
+                        });
+
+                       /* Call<List<HourlyRideModel>> call2 = api.hourpriceUpdate(id, String.valueOf(actualIntPrice)
                                 ,String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
                         call2.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
@@ -539,7 +567,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                             public void onFailure(Call<List<HourlyRideModel>> call, Throwable t) {
 
                             }
-                        });
+                        });*/
 
                         Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
                         listCall.enqueue(new Callback<List<CustomerProfile>>() {
@@ -569,10 +597,11 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Intent intent = new Intent(HourlyDetailsActivity.this, ShowCash.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("tripId", id);
                 intent.putExtra("customerId", customerID);
                 intent.putExtra("check", 2);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 finish();
                 startActivity(intent);
             }
@@ -631,6 +660,14 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void startTripAlert() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+
 
         if (currentLat != 0.0 && currentLon != 0.0) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(HourlyDetailsActivity.this);
