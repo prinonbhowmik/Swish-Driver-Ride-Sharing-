@@ -1,6 +1,7 @@
 package com.example.swishbddriver.Api;
 
 
+import com.example.swishbddriver.Model.ApiDeviceToken;
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.Car;
 import com.example.swishbddriver.Model.CarModel;
@@ -300,5 +301,13 @@ public interface ApiInterface {
 
     @GET("driver-noti-list?")
     Call<List<NotificationModel>> getNotificationData(@Query("driver_id") String driver_id);
+
+    @POST("driver_device_token")
+    @FormUrlEncoded
+    Call<List<ApiDeviceToken>> updateToken(@Field("driver_id") String driver_id,
+                                           @Field("device_token") String token);
+    @POST("driver_remove_token")
+    @FormUrlEncoded
+    Call<List<ApiDeviceToken>> deleteToken(@Field("driver_id") String driver_id);
 
 }

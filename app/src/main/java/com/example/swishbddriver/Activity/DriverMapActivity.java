@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Model.ApiDeviceToken;
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
@@ -838,6 +839,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void updateToken(String carType, String token) {
+        Call<List<ApiDeviceToken>> call = apiInterface.updateToken(driverId,token);
+        call.enqueue(new Callback<List<ApiDeviceToken>>() {
+            @Override
+            public void onResponse(Call<List<ApiDeviceToken>> call, Response<List<ApiDeviceToken>> response) {
+            }
+            @Override
+            public void onFailure(Call<List<ApiDeviceToken>> call, Throwable t) {
+                Log.d("kahiniki",t.getMessage());
+            }
+        });
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("DriversToken").child("Null").child(driverId);
         if (!carType.equals("Notset")) {
             userRef.removeValue();
@@ -1073,6 +1084,18 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 drawerLayout.closeDrawers();
                 break;
             case R.id.logout:
+                Call<List<ApiDeviceToken>> call2 = apiInterface.deleteToken(driverId);
+                call2.enqueue(new Callback<List<ApiDeviceToken>>() {
+                    @Override
+                    public void onResponse(Call<List<ApiDeviceToken>> call, Response<List<ApiDeviceToken>> response) {
+                    }
+                    @Override
+                    public void onFailure(Call<List<ApiDeviceToken>> call, Throwable t) {
+                        Log.d("kahiniki",t.getMessage());
+                    }
+                });
+
+
                 DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
                 dRef.removeValue();
                 buttonOff.setVisibility(View.VISIBLE);
