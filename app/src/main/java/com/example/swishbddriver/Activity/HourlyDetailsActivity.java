@@ -118,7 +118,6 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
         init();
 
-
         //getDriverInformation();
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
@@ -126,13 +125,17 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         car_type = intent.getStringExtra("carType");
         check = intent.getIntExtra("check", 0);
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        try {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HourlyDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            currentLat = location.getLatitude();
+            currentLon = location.getLongitude();
+        } catch (Exception e) {
+            Log.d("checkError",e.getMessage());
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
 
         getData();
 
@@ -426,15 +429,15 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
 
         carTypeRate = Integer.parseInt(priceRate);
-        actualPrice = (int) (carTypeRate * totalHours);
 
-        if (totalHours < 2.00) {
+        if (totalHours <= 2.00) {
             actualIntPrice = carTypeRate * 2;
-        }else{
-            actualIntPrice = (int) actualPrice;
+        } else {
+            actualIntPrice = (int) (carTypeRate * totalHours);
         }
 
-        showPrice(actualIntPrice, totalHours,currentTime,destinationPlace);
+        showPrice(actualIntPrice, totalHours, currentTime, destinationPlace);
+
     }
 
     private void showPrice(int actualIntPrice, float totalHours, String currentTime, String destinationPlace) {
@@ -492,8 +495,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 }
             });*/
 
-        }
-        else if (payment.equals("wallet")) {
+        } else if (payment.equals("wallet")) {
             float totalHour = totalHours;
             Log.d("showHour", "" + totalHour);
             Log.d("showHour", "" + customerID);
@@ -502,7 +504,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             getWalletData.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         List<CustomerProfile> list = response.body();
                         Log.d("showHour", "" + list.get(0).getWallet());
                         walletBalance = list.get(0).getWallet();
@@ -512,9 +514,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
                             finalPrice = actualIntPrice - walletBalance;
                             discount = walletBalance;
-                            updatewallet=0;
-                        }
-                        else if(walletBalance >= halfPrice) {
+                            updatewallet = 0;
+                        } else if (walletBalance >= halfPrice) {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
@@ -542,7 +543,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         newRef.child("destinationPlace").setValue(destinationPlace);
 
                         Call<List<HourlyRideModel>> call1 = api.endHourTripData(id, "End", String.valueOf(currentLat), String.valueOf(currentLon), destinationPlace, currentTime,
-                                String.valueOf(actualIntPrice),String.valueOf(discount),String.valueOf(finalPrice),String.format("%.2f", totalHour));
+                                String.valueOf(actualIntPrice), String.valueOf(discount), String.valueOf(finalPrice), String.format("%.2f", totalHour));
                         call1.enqueue(new Callback<List<HourlyRideModel>>() {
                             @Override
                             public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -584,9 +585,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
                     }
                 }
+
                 @Override
                 public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
-                    Log.d("walletError",""+t.getMessage());
+                    Log.d("walletError", "" + t.getMessage());
                 }
             });
 

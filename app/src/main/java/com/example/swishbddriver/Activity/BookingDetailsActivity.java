@@ -88,9 +88,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private String driver_name, driver_phone, payment;
-    private boolean hasDateMatch = false, startRide = false,confirmed=false,hasOngoing=false;
+    private boolean hasDateMatch = false, startRide = false, confirmed = false, hasOngoing = false;
     private ScrollView scrollLayout;
-    private double currentLat=0.0, currentLon=0.0;
+    private double currentLat = 0.0, currentLon = 0.0;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
     private NeomorphFrameLayout neomorphFrameLayoutEnd;
     private RelativeLayout loadingLayout;
@@ -98,14 +98,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private APIService apiService;
     private int distance;
-    private float rating, rat,trduration;
+    private float rating, rat, trduration;
     private int ratingCount;
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance,addWalletBalance,halfPrice,discount,updatewallet,finalPrice;
-    private boolean couponActive=false,walletHigh=false;
-    private Date date1,date2;
+    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance, addWalletBalance, halfPrice, discount, updatewallet, finalPrice;
+    private boolean couponActive = false, walletHigh = false;
+    private Date date1, date2;
     private int days, hour;
     private String driverID2;
 
@@ -172,7 +172,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         destinationTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (check==1) {
+                if (check == 1) {
 
                     Intent intent = new Intent(BookingDetailsActivity.this, BookLaterMapActivity.class);
                     intent.putExtra("dLat", destinationLat);
@@ -187,9 +187,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
         pickupPlaceTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (check==1){
+                if (check == 1) {
                     if (driverID2.equals(driverId)) {
-                        confirmed=true;
+                        confirmed = true;
                     }
                     Intent intent = new Intent(BookingDetailsActivity.this, BookLaterMapActivity.class);
                     intent.putExtra("pLat", pickUpLat);
@@ -209,10 +209,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
         startTripBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(hasOngoing){
+                if (hasOngoing) {
                     alreadyOngoingAlert();
                     Toast.makeText(BookingDetailsActivity.this, "You are already ongoing with other trip", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     checkDriverOnLine();
                 }
 
@@ -226,13 +226,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        try {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            currentLat = location.getLatitude();
+            currentLon = location.getLongitude();
+        } catch (Exception e) {
+            Log.d("checkError",e.getMessage());
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
+
     }
 
     private void alreadyOngoingAlert() {
@@ -261,8 +266,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                            if( rStatus.equals("Start")){
-                                hasOngoing=true;
+                            if (rStatus.equals("Start")) {
+                                hasOngoing = true;
                             }
                         }
                     }
@@ -276,8 +281,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                         String driver_id = String.valueOf(data.child("driverId").getValue());
                                         if (driver_id.equals(driverId)) {
                                             String rStatus = String.valueOf(data.child("rideStatus").getValue());
-                                            if( rStatus.equals("Start")){
-                                                hasOngoing=true;
+                                            if (rStatus.equals("Start")) {
+                                                hasOngoing = true;
                                             }
                                         }
                                     }
@@ -328,7 +333,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmEndTrip();
-                sendNotification(id,customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
+                sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -413,11 +418,11 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
-                Log.d("checkError",t.getMessage());
+                Log.d("checkError", t.getMessage());
             }
         });
 
-        calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace,currentTime);
+        calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace, currentTime);
 
     }
 
@@ -480,7 +485,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (currentLat!=0.0 && currentLon!=0.0){
+                if (currentLat != 0.0 && currentLon != 0.0) {
                     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
@@ -534,8 +539,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
                     navigationIntent.setPackage("com.google.android.apps.maps");
                     startActivity(navigationIntent);
-                    sendNotification(id,customerID, "Start Trip", "Your trip has started.", "running_trip");
-                }else{
+                    sendNotification(id, customerID, "Start Trip", "Your trip has started.", "running_trip");
+                } else {
                     Toast.makeText(BookingDetailsActivity.this, "Please Check Your Internet Connection!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -551,10 +556,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace,String currentTime) {
+    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace, String currentTime) {
 
 
-        Log.d("checkLat",pickUpLat+","+pickUpLon);
+        Log.d("checkLat", pickUpLat + "," + pickUpLon);
 
         double pickLat = Double.parseDouble(pickUpLat);
         double pickLon = Double.parseDouble(pickUpLon);
@@ -604,7 +609,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     travelduration = (int) (trduration * 60);
 
-                    showPrice(distance,travelduration);
+                    showPrice(distance, travelduration);
 
 
                 }
@@ -670,7 +675,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
             newRef.child("totalTime").setValue(String.valueOf(travelduration));
 
-            Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price),"0",String.valueOf(price),String.valueOf(kmdistance),String.valueOf(travelduration));
+            Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price), "0", String.valueOf(price), String.valueOf(kmdistance), String.valueOf(travelduration));
             call2.enqueue(new Callback<List<BookRegularModel>>() {
                 @Override
                 public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -683,13 +688,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 }
             });
 
-        }else if (payment.equals("wallet")) {
+        } else if (payment.equals("wallet")) {
 
             Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
             getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
                 public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         List<CustomerProfile> list = response.body();
                         walletBalance = list.get(0).getWallet();
                         halfPrice = price / 2;
@@ -698,9 +703,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                             finalPrice = price - walletBalance;
                             discount = walletBalance;
-                            updatewallet=0;
-                        }
-                        else if(walletBalance >= halfPrice) {
+                            updatewallet = 0;
+                        } else if (walletBalance >= halfPrice) {
                             finalPrice = halfPrice;
                             discount = halfPrice;
                             updatewallet = walletBalance - halfPrice;
@@ -723,7 +727,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
                         newRef.child("totalTime").setValue(String.valueOf(travelduration));
 
-                        Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price),String.valueOf(discount),String.valueOf(finalPrice),String.valueOf(kmdistance),String.valueOf(travelduration));
+                        Call<List<BookRegularModel>> call2 = api.priceUpdate(id, String.valueOf(price), String.valueOf(discount), String.valueOf(finalPrice), String.valueOf(kmdistance), String.valueOf(travelduration));
                         call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
                             public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -751,9 +755,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     }
                 }
+
                 @Override
                 public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
-                    Log.d("walletError",""+t.getMessage());
+                    Log.d("walletError", "" + t.getMessage());
                 }
             });
 
@@ -771,7 +776,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 finish();
                 startActivity(intent);
             }
-        },5000);
+        }, 5000);
     }
 
     private void getData() {
@@ -797,7 +802,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         rideStatus = book.getRideStatus();
                         payment = book.getPayment();
 
-                        price=Integer.parseInt(taka);
+                        price = Integer.parseInt(taka);
                         pickupPlaceTV.setText(pickupPlace);
                         destinationTV.setText(destinationPlace);
                         pickupDateTV.setText(pickupDate);
@@ -1027,7 +1032,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     View view = snackbar.getView();
                     view.setBackgroundColor(ContextCompat.getColor(BookingDetailsActivity.this, R.color.green1));
 
-                    sendNotification(id,customerID, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
+                    sendNotification(id, customerID, "Driver found!", "Your Ride request has confirmed", "my_ride_details");
                 }
             }
         });
@@ -1053,7 +1058,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private void sendNotification(final String id, final String receiverId, final String title, final String message, final String toActivity) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
         Query query = tokens.orderByKey().equalTo(receiverId);
-        String receiverId1=receiverId;
+        String receiverId1 = receiverId;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1126,7 +1131,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     snackbar.show();
                     addRating();
                     //Toasty.normal(BookingDetailsActivity.this, "You are cancel this ride.", Toasty.LENGTH_SHORT).show();
-                    sendNotification(id,customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
+                    sendNotification(id, customerID, "Driver Canceled Your Trip!", "Driver has canceled your trip request!", "my_ride_details");
 
 
                 }
