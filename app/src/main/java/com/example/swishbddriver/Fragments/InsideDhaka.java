@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ public class InsideDhaka extends Fragment {
     private TextView unavailableTxt;
     private static Switch switchBtn;
     private String carType;
+    private ProgressBar progressBar;
     private int count = 0;
     private RelativeLayout moreRelative;
     private SharedPreferences sharedPreferences;
@@ -99,6 +101,7 @@ public class InsideDhaka extends Fragment {
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
                             if (!rideStatus.equals("End")) {
+                                progressBar.setVisibility(View.GONE);
                                 HourlyRideModel book = data.getValue(HourlyRideModel.class);
                                 hourlyRideModelList.add(book);
                             }
@@ -133,6 +136,7 @@ public class InsideDhaka extends Fragment {
         recyclerView.setAdapter(bookHourlyAdapter);
         //cardView=findViewById(R.id.cardItem);
         unavailableTxt = view.findViewById(R.id.unavailableTxt);
+        progressBar = view.findViewById(R.id.progressBar);
         emptyText = view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
@@ -157,6 +161,7 @@ public class InsideDhaka extends Fragment {
                         String tripId = data.child("bookingId").getValue().toString();
                         String customerID = data.child("customerId").getValue().toString();
                         if(bookingStatus.equals("Pending")){
+                            progressBar.setVisibility(View.GONE);
                             HourlyRideModel book = data.getValue(HourlyRideModel.class);
                             hourlyRideModelList.add(book);
                         }
@@ -183,6 +188,7 @@ public class InsideDhaka extends Fragment {
                     bookHourlyAdapter.notifyDataSetChanged();
                 }
                 if(hourlyRideModelList.size()<1){
+                    progressBar.setVisibility(View.GONE);
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("No Request Available");
                 }else {

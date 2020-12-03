@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private List<NotificationModel> list;
     private ApiInterface api;
     private String driverId;
+    private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -55,6 +57,7 @@ public class NotificationsActivity extends AppCompatActivity {
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         recyclerView = findViewById(R.id.notificationRecyclerView);
+        progressBar = findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new NotificationAdapter(list,this);
         recyclerView.setAdapter(adapter);
@@ -68,6 +71,7 @@ public class NotificationsActivity extends AppCompatActivity {
             public void onResponse(Call<List<NotificationModel>> call, Response<List<NotificationModel>> response) {
                 if (response.isSuccessful()){
                     list = response.body();
+                    progressBar.setVisibility(View.GONE);
                     adapter = new NotificationAdapter(list, NotificationsActivity.this);
                     recyclerView.setAdapter(adapter);
                     if (list.size() == 0) {

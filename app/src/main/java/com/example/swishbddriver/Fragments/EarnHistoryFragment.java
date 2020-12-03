@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -35,6 +36,7 @@ public class EarnHistoryFragment extends Fragment {
     private TextView noHistoryTxt;
     private String carType;
     private SharedPreferences sharedPreferences;
+    private ProgressBar progressBar;
     private ApiInterface api;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,8 +63,8 @@ public class EarnHistoryFragment extends Fragment {
             @Override
             public void onResponse(Call<List<DriverAllRidePrice>> call, Response<List<DriverAllRidePrice>> response) {
                 if (response.isSuccessful()){
-
                     list = response.body();
+                    progressBar.setVisibility(View.GONE);
                     adapter = new EarningHistoryAdapter(list, getContext());
                     recyclerView.setAdapter(adapter);
                     if (list.size() == 0) {
@@ -85,6 +87,7 @@ public class EarnHistoryFragment extends Fragment {
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         recyclerView = view.findViewById(R.id.historyRecycler);
+        progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new EarningHistoryAdapter(list,getContext());
         recyclerView.setAdapter(adapter);

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.example.swishbddriver.R;
 public class ReferralActivity extends AppCompatActivity {
     private String driverId;
     private TextView referralTV;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,7 @@ public class ReferralActivity extends AppCompatActivity {
 
     private void init() {
         referralTV=findViewById(R.id.referralTV);
+
     }
 
     public void referralBack(View view) {

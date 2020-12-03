@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class PayHistoryFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
     private TextView noHistoryTxt;
+    private ProgressBar progressBar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class PayHistoryFragment extends Fragment {
             @Override
             public void onResponse(Call<List<PayHistoryModel>> call, Response<List<PayHistoryModel>> response) {
                 if (response.isSuccessful()){
+                    progressBar.setVisibility(View.GONE);
                     model = response.body();
                     adapter = new PayHistoryAdapter(model, getContext());
                     recyclerView.setAdapter(adapter);
@@ -83,6 +86,7 @@ public class PayHistoryFragment extends Fragment {
         model = new ArrayList<>();
         api = ApiUtils.getUserService();
         recyclerView = view.findViewById(R.id.payRecycler);
+        progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PayHistoryAdapter(model,getContext());
         recyclerView.setAdapter(adapter);

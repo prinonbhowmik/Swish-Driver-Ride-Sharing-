@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.swishbddriver.Adapter.OutsideDhakaHistoryAdapter;
@@ -35,6 +36,7 @@ public class OutsideDhakaHistoryFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private ApiInterface api;
     private TextView noHistoryTxt;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,6 +53,7 @@ public class OutsideDhakaHistoryFragment extends Fragment {
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
         recyclerView = view.findViewById(R.id.outsideHistoryRecyclerView);
+        progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new OutsideDhakaHistoryAdapter(list,getContext());
         recyclerView.setAdapter(adapter);
@@ -66,7 +69,7 @@ public class OutsideDhakaHistoryFragment extends Fragment {
             @Override
             public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
                 if (response.isSuccessful()){
-
+                    progressBar.setVisibility(View.GONE);
                     list = response.body();
                     adapter = new OutsideDhakaHistoryAdapter(list, getContext());
                     recyclerView.setAdapter(adapter);

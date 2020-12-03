@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -61,6 +62,7 @@ public class OutsideDhaka extends Fragment {
     private ApiInterface apiInterface;
     private List<ProfileModel> list;
     private boolean checked = false;
+    private ProgressBar progressBar;
     private RadioRealButtonGroup radioGroup;
     private Date d1,d2;
 
@@ -100,6 +102,7 @@ public class OutsideDhaka extends Fragment {
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
                             if (!rideStatus.equals("End")) {
+                                progressBar.setVisibility(View.GONE);
                                 BookRegularModel book = data.getValue(BookRegularModel.class);
                                 bookRegularModelList.add(book);
                             }
@@ -109,6 +112,7 @@ public class OutsideDhaka extends Fragment {
                     bookRegularAdapter.notifyDataSetChanged();
                 }
                 if (bookRegularModelList.size() < 1) {
+                    progressBar.setVisibility(View.GONE);
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("You have no confirm ride.");
                 } else {
@@ -129,6 +133,7 @@ public class OutsideDhaka extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         bookRegularModelList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.bookingRecyclerView);
+        progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         bookRegularAdapter = new BookRegularAdapter(bookRegularModelList, getContext());
         recyclerView.setAdapter(bookRegularAdapter);
@@ -157,6 +162,7 @@ public class OutsideDhaka extends Fragment {
                         String tripId = data.child("bookingId").getValue().toString();
                         String customerID = data.child("customerId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
+                            progressBar.setVisibility(View.GONE);
                             BookRegularModel book = data.getValue(BookRegularModel.class);
                             bookRegularModelList.add(book);
                         }
