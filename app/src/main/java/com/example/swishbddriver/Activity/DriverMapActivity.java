@@ -120,7 +120,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private LottieAnimationView progressBar, profileImageLoading;
     private float rating;
     private int ratingCount;
-    private RatingBar ratingBar;
+    private TextView ratingBar;
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI", place, bookingId, tripStatus, customerId, accptDriverId;
     private ApiInterface apiInterface;
     private LinearLayout hourRequestLayout, customerDetailsLayout;
@@ -713,7 +713,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
                     float rat = rating / ratingCount;
-                    ratingBar.setRating(rat);
+                    ratingBar.setText(" "+String.format("%.2f",rat));
                     profileImageLoading.setVisibility(View.GONE);
 
                 }

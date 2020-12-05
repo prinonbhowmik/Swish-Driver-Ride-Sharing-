@@ -163,6 +163,7 @@ public class OutsideDhaka extends Fragment {
                         String customerID = data.child("customerId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
                             progressBar.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
                             BookRegularModel book = data.getValue(BookRegularModel.class);
                             bookRegularModelList.add(book);
                         }
@@ -189,6 +190,7 @@ public class OutsideDhaka extends Fragment {
                     bookRegularAdapter.notifyDataSetChanged();
                 }
                 if (bookRegularModelList.size() < 1) {
+                    progressBar.setVisibility(View.GONE);
                     emptyText.setVisibility(View.VISIBLE);
                     emptyText.setText("No Request Available");
                 } else {

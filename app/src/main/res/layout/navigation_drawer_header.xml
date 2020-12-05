@@ -62,16 +62,15 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp"/>
 
-            <RatingBar
+            <TextView
                 android:id="@+id/headerRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                style = "?android:attr/ratingBarStyleSmall"
-                android:numStars="5"
-                android:rating="0"
-                android:stepSize=".5"
-                android:theme="@style/RatingBarLight"/>
+                android:text="  0.0"
+                android:drawableLeft="@drawable/ic_baseline_star_24"
+                android:textColor="#fff"
+                android:textSize="15sp"/>
 
 
 
