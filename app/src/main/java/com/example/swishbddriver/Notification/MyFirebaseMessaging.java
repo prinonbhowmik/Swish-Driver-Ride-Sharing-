@@ -319,7 +319,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 break;
             }
             case "notification_with_image": {
-                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class).putExtra("carType",carType);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
