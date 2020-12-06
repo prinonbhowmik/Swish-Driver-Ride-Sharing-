@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.ReceiptActivity">
+
+    <RelativeLayout
+        android:id="@+id/tool"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/themColor">
+        <ImageView
+            android:id="@+id/emergencyBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:onClick="receiptsBack"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/titleName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Receipts"
+            android:layout_marginLeft="50dp"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
+            android:textSize="21sp"/>
+
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tool">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/totalFareTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 150.00"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:layout_alignParentEnd="true"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"/>
+
+        <View
+            android:id="@+id/view_1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/themColor"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_below="@id/totalFareTv"/>
+
+        <TextView
+            android:id="@+id/title_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Base Fare"
+            android:textSize="18sp"
+            android:layout_below="@+id/view_1"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/baseFareTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 50"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/view_1"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/title_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time"
+            android:textSize="18sp"
+            android:layout_below="@+id/title_2"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/timeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 50"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/baseFareTv"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/title_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance"
+            android:textSize="18sp"
+            android:layout_below="@+id/title_3"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/distanceTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 80"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/timeTv"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"/>
+
+        <view
+            android:id="@+id/view_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/title_4"/>
+
+        <TextView
+            android:id="@+id/title_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subtotal"
+            android:textSize="21sp"
+            android:layout_below="@+id/view_2"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"/>
+        <TextView
+            android:id="@+id/subTotalTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 180"
+            android:textSize="21sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/view_2"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/title_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discount"
+            android:textSize="18sp"
+            android:layout_below="@+id/title_5"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/discountTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 30"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/subTotalTv"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"/>
+
+        <view
+            android:id="@+id/view_3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_below="@+id/discountTv"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dollar"
+            android:layout_below="@+id/view_3"
+            android:layout_marginTop="-20dp"
+            android:layout_marginStart="20dp"/>
+
+        <TextView
+            android:id="@+id/title_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cash Pay"
+            android:textSize="21sp"
+            android:layout_below="@+id/view_3"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+        <TextView
+            android:id="@+id/netFareTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BDT 150"
+            android:textSize="21sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/view_3"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"/>
+
+
+    </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

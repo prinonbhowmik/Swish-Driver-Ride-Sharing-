@@ -233,6 +233,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
         android:text="Collect Cash"
+        android:textAllCaps="false"
         android:textColor="#fff"
         android:padding="10dp"/>
 

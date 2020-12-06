@@ -93,7 +93,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String bookingId = remoteMessage.getData().get("bookingId");
         String toActivity = remoteMessage.getData().get("toActivity");
         Bitmap bitmap = null;
-        if (remoteMessage.getData().get("image").trim().length() != 2) {
+        if (remoteMessage.getData().get("image").trim().length() > 2) {
             bitmap = getBitmapFromURL(remoteMessage.getData().get("image"));
         }
 
@@ -221,7 +221,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String toActivity = remoteMessage.getData().get("toActivity");
 
         Bitmap bitmap = null;
-        if (remoteMessage.getData().get("image").trim().length() != 2) {
+        if (remoteMessage.getData().get("image").trim().length() > 2) {
             bitmap = getBitmapFromURL(remoteMessage.getData().get("image"));
         }
         //Assign big picture notification
@@ -240,6 +240,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_noti_logo)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setShowWhen(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -262,6 +263,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_noti_logo)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setShowWhen(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -285,6 +287,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_noti_logo)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setShowWhen(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -307,6 +310,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_noti_logo)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setShowWhen(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -326,6 +330,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_noti_logo)
                         .setContentTitle(title)
                         .setContentText(body)
+                        .setShowWhen(true)
                         .setLargeIcon(bitmap)
                         .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(null))
                         .setPriority(Notification.PRIORITY_HIGH)
