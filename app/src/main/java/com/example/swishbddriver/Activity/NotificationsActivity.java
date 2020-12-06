@@ -33,6 +33,7 @@ import static java.security.AccessController.getContext;
 public class NotificationsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView emptyText;
+    private String carType;
     private NotificationAdapter adapter;
     private List<NotificationModel> list;
     private ApiInterface api;
@@ -45,6 +46,8 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
         init();
+        Intent intent=getIntent();
+        carType=intent.getStringExtra("carType");
         getData();
 
     }
@@ -65,7 +68,7 @@ public class NotificationsActivity extends AppCompatActivity {
     }
     private void getData() {
         list.clear();
-        Call<List<NotificationModel>> call = api.getNotificationData(driverId);
+        Call<List<NotificationModel>> call = api.getNotificationData(driverId,carType);
         call.enqueue(new Callback<List<NotificationModel>>() {
             @Override
             public void onResponse(Call<List<NotificationModel>> call, Response<List<NotificationModel>> response) {

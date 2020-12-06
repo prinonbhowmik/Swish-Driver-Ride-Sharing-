@@ -300,7 +300,8 @@ public interface ApiInterface {
     Call<List<EarningsShowModel>> getEarningsData(@Query("driver_id") String driver_id);
 
     @GET("driver-noti-list?")
-    Call<List<NotificationModel>> getNotificationData(@Query("driver_id") String driver_id);
+    Call<List<NotificationModel>> getNotificationData(@Query("driver_id") String driver_id,
+                                                      @Query("carType") String carType);
 
     @POST("driver_device_token")
     @FormUrlEncoded

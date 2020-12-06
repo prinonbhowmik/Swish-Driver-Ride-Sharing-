@@ -157,7 +157,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 oreoNotification.getManager().notify(m, builder.build());
                 break;
             }case "notification_with_image": {
-                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NotificationsActivity.class).putExtra("carType",userID);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, intent, PendingIntent.FLAG_ONE_SHOT);
                 Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

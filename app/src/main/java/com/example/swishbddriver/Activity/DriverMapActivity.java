@@ -1079,7 +1079,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 finish();
                 break;
             case R.id.notification:
-                startActivity(new Intent(DriverMapActivity.this, NotificationsActivity.class).putExtra("mymode", String.valueOf(dark)));
+                startActivity(new Intent(DriverMapActivity.this, NotificationsActivity.class).putExtra("carType", carType));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 drawerLayout.closeDrawers();
                 break;
