@@ -55,7 +55,7 @@ public class FareDetails extends AppCompatActivity {
                         rate = response.body();
                         int kmRate = rate.get(0).getKm_charge();
                         int minRate = rate.get(0).getMin_charge();
-                        int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
+                        int minimumRate = rate.get(0).getBase_fare_outside_dhaka();
 
                         baseTv.setText("" + minimumRate+" Tk");
                         kiloTv.setText("" + kmRate+" Tk");

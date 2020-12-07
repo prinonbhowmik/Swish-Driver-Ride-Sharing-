@@ -27,7 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.ReceiptActivity"></activity>
+        <activity android:name=".Activity.ReceiptActivity"/>
         <activity android:name=".Activity.ReferralActivity" />
         <activity android:name=".Activity.NotificationsActivity" />
         <activity android:name=".Activity.AllVerificationActivity" />

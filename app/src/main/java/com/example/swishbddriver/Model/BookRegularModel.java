@@ -21,13 +21,13 @@ public class BookRegularModel {
     private String finalPrice;
     private String cashReceived;
     private String totalTime;
-    private String totalDestination;
+    private String totalDistance;
     private float rating;
 
     public BookRegularModel() {
     }
 
-    public BookRegularModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDestination, float rating) {
+    public BookRegularModel(String bookingId, String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickUpPlace, String destinationPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDistance, float rating) {
         this.bookingId = bookingId;
         this.pickUpLat = pickUpLat;
         this.pickUpLon = pickUpLon;
@@ -49,7 +49,7 @@ public class BookRegularModel {
         this.finalPrice = finalPrice;
         this.cashReceived = cashReceived;
         this.totalTime = totalTime;
-        this.totalDestination = totalDestination;
+        this.totalDistance = totalDistance;
         this.rating = rating;
     }
 
@@ -137,8 +137,8 @@ public class BookRegularModel {
         return totalTime;
     }
 
-    public String getTotalDestination() {
-        return totalDestination;
+    public String getTotalDistance() {
+        return totalDistance;
     }
 
     public float getRating() {

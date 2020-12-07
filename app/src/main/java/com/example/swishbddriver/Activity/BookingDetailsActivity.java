@@ -79,7 +79,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV;
 
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
-            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,
+            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,
             rideStatus, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
 
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
@@ -125,7 +125,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
         car_type = intent.getStringExtra("carType");
 
         getData();
-
+        takaTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BookingDetailsActivity.this,ReceiptActivity.class)
+                        .putExtra("price",SPrice)
+                        .putExtra("carType",car_type)
+                        .putExtra("finalPrice",SFinalPrice)
+                        .putExtra("distance",totalDistance)
+                        .putExtra("time",totalTime)
+                        .putExtra("discount",SDiscount));
+            }
+        });
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -637,7 +648,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     int kmRate = rate.get(0).getKm_charge();
                     int minRate = rate.get(0).getMin_charge();
-                    int minimumRate = rate.get(0).getBase_fare_inside_dhaka();
+                    int minimumRate = rate.get(0).getBase_fare_outside_dhaka();
 
                     int kmPrice = (int) (kmRate * kmdistance);
                     int minPrice = (int) (minRate * travelduration);
@@ -868,7 +879,12 @@ public class BookingDetailsActivity extends AppCompatActivity {
             pickupDateTV.setText(intent.getStringExtra("pickUpDate"));
             pickupTimeTV.setText(intent.getStringExtra("pickUpTime"));
             carTypeTV.setText(intent.getStringExtra("carType"));
-            takaTV.setText(intent.getStringExtra("price"));
+            SPrice=intent.getStringExtra("price");
+            SFinalPrice=intent.getStringExtra("finalPrice");
+            SDiscount=intent.getStringExtra("discount");
+            totalDistance=intent.getStringExtra("distance");
+            totalTime=intent.getStringExtra("time");
+            takaTV.setText(SPrice);
             details.setVisibility(View.VISIBLE);
             confirmBtn.setVisibility(View.GONE);
             cancelBtn.setVisibility(View.GONE);

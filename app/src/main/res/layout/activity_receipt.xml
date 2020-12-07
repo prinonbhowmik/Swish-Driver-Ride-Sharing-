@@ -13,9 +13,9 @@
         android:background="@color/themColor">
         <ImageView
             android:id="@+id/emergencyBackBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="15dp"
             android:onClick="receiptsBack"
             android:src="@drawable/ic_baseline_arrow_back_24"
             android:layout_centerVertical="true"/>
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Receipts"
-            android:layout_marginLeft="50dp"
+            android:layout_marginStart="55dp"
             android:textColor="@android:color/white"
             android:layout_centerVertical="true"
             android:textSize="21sp"/>
@@ -53,7 +53,6 @@
             android:id="@+id/totalFareTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 150.00"
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_alignParentEnd="true"
@@ -86,7 +85,6 @@
             android:id="@+id/baseFareTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 50"
             android:textSize="18sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/view_1"
@@ -107,7 +105,6 @@
             android:id="@+id/timeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 50"
             android:textSize="18sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/baseFareTv"
@@ -128,7 +125,6 @@
             android:id="@+id/distanceTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 80"
             android:textSize="18sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/timeTv"
@@ -136,7 +132,7 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="20dp"/>
 
-        <view
+        <View
             android:id="@+id/view_2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -144,6 +140,7 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
+            android:background="@color/gray"
             android:layout_below="@+id/title_4"/>
 
         <TextView
@@ -160,7 +157,6 @@
             android:id="@+id/subTotalTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 180"
             android:textSize="21sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/view_2"
@@ -182,7 +178,6 @@
             android:id="@+id/discountTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 30"
             android:textSize="18sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/subTotalTv"
@@ -190,13 +185,14 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="20dp"/>
 
-        <view
+        <View
             android:id="@+id/view_3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="30dp"
+            android:background="@color/gray"
             android:layout_marginBottom="30dp"
             android:layout_below="@+id/discountTv"/>
         <ImageView
@@ -211,7 +207,7 @@
             android:id="@+id/title_7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cash Pay"
+            android:text="Cash Received"
             android:textSize="21sp"
             android:layout_below="@+id/view_3"
             android:textColor="@android:color/black"
@@ -222,7 +218,6 @@
             android:id="@+id/netFareTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BDT 150"
             android:textSize="21sp"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/view_3"

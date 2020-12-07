@@ -73,6 +73,10 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
                 intent.putExtra("pickUpTime",book.getPickUpTime());
                 intent.putExtra("userId",book.getCustomerId());
                 intent.putExtra("price",book.getPrice());
+                intent.putExtra("finalPrice",book.getFinalPrice());
+                intent.putExtra("distance",book.getTotalDistance());
+                intent.putExtra("time",book.getTotalTime());
+                intent.putExtra("discount",book.getDiscount());
                 intent.putExtra("check", 2);
                 context.startActivity(intent);
             }
