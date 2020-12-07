@@ -19,10 +19,33 @@ public class HourlyRideModel {
     private String finalPrice;
     private String cashReceived;
     private String totalTime;
-    private String totalDestination;
+    private String totalDistance;
     private float rating;
 
     public HourlyRideModel() {
+    }
+
+    public HourlyRideModel(String bookingId, String pickUpLat, String pickUpLon, String pickUpPlace, String pickUpDate, String pickUpTime, String customerId, String price, String carType, String bookingStatus, String driverId, String rideStatus, String endTime, String payment, String discount, String finalPrice, String cashReceived, String totalTime, String totalDistance, float rating) {
+        this.bookingId = bookingId;
+        this.pickUpLat = pickUpLat;
+        this.pickUpLon = pickUpLon;
+        this.pickUpPlace = pickUpPlace;
+        this.pickUpDate = pickUpDate;
+        this.pickUpTime = pickUpTime;
+        this.customerId = customerId;
+        this.price = price;
+        this.carType = carType;
+        this.bookingStatus = bookingStatus;
+        this.driverId = driverId;
+        this.rideStatus = rideStatus;
+        this.endTime = endTime;
+        this.payment = payment;
+        this.discount = discount;
+        this.finalPrice = finalPrice;
+        this.cashReceived = cashReceived;
+        this.totalTime = totalTime;
+        this.totalDistance = totalDistance;
+        this.rating = rating;
     }
 
     public HourlyRideModel(String bookingId) {
@@ -101,8 +124,8 @@ public class HourlyRideModel {
         return totalTime;
     }
 
-    public String getTotalDestination() {
-        return totalDestination;
+    public String getTotalDistance() {
+        return totalDistance;
     }
 
     public float getRating() {

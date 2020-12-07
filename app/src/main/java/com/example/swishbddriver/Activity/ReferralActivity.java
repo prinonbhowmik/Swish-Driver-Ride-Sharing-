@@ -2,6 +2,8 @@ package com.example.swishbddriver.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +27,14 @@ public class ReferralActivity extends AppCompatActivity {
         Intent intent=getIntent();
         driverId=intent.getStringExtra("driverId");
         referralTV.setText(driverId);
+
+        referralTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager cm = (ClipboardManager) ReferralActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(referralTV.getText());
+            }
+        });
     }
 
 

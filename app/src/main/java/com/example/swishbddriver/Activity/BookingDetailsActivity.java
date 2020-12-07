@@ -76,10 +76,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BookingDetailsActivity extends AppCompatActivity {
-    private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV;
+    private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV,receiptTv;
 
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
-            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,
+            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,bookingId,
             rideStatus, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
 
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
@@ -92,7 +92,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private ScrollView scrollLayout;
     private double currentLat = 0.0, currentLon = 0.0;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
-    private NeomorphFrameLayout neomorphFrameLayoutEnd;
+    private NeomorphFrameLayout neomorphFrameLayoutEnd,receiptNFLE;
     private RelativeLayout loadingLayout;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -121,11 +121,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
         check = intent.getIntExtra("check", 0);
+        if(check==1){
+            receiptNFLE.setVisibility(View.GONE);
+        }
         customerID = intent.getStringExtra("userId");
         car_type = intent.getStringExtra("carType");
 
         getData();
-        takaTV.setOnClickListener(new View.OnClickListener() {
+        receiptTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(BookingDetailsActivity.this,ReceiptActivity.class)
@@ -134,7 +137,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         .putExtra("finalPrice",SFinalPrice)
                         .putExtra("distance",totalDistance)
                         .putExtra("time",totalTime)
-                        .putExtra("discount",SDiscount));
+                        .putExtra("discount",SDiscount)
+                        .putExtra("bookingId",bookingId)
+                        .putExtra("check",1));
             }
         });
         confirmBtn.setOnClickListener(new View.OnClickListener() {
@@ -884,6 +889,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             SDiscount=intent.getStringExtra("discount");
             totalDistance=intent.getStringExtra("distance");
             totalTime=intent.getStringExtra("time");
+            bookingId=intent.getStringExtra("bookingId");
             takaTV.setText(SPrice);
             details.setVisibility(View.VISIBLE);
             confirmBtn.setVisibility(View.GONE);
@@ -935,6 +941,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         loadingLayout = findViewById(R.id.loadingLayout);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
+        receiptTv=findViewById(R.id.receiptTv);
+        receiptNFLE=findViewById(R.id.card_view6);
 
         getDriverRat();
     }

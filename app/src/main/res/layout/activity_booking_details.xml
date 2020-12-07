@@ -19,18 +19,48 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="Booking Details"
+            android:text="Ride Details"
             android:textColor="@android:color/black"
             android:textSize="27sp"
             android:textStyle="bold" />
+        <RelativeLayout
+            android:id="@+id/relativeTaka"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/headerTitle"
+            android:layout_marginStart="20dp">
+
+            <TextView
+                android:id="@+id/txt6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Fare : BDT "
+                android:layout_centerVertical="true"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="21sp" />
+
+            <TextView
+                android:id="@+id/takaTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="15dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/txt6"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="21sp" />
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/fromTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="85dp"
+            android:layout_marginTop="15dp"
             android:src="@drawable/ic_map"
+            android:layout_below="@+id/relativeTaka"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -38,8 +68,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/fromTv"
+            android:layout_below="@+id/relativeTaka"
             android:text="Pickup Place"
             android:textColor="@android:color/black"
             android:textSize="21sp" />
@@ -270,8 +301,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/card_view5"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="-5dp"
             android:layerType="software"
+            android:layout_marginTop="-5dp"
             app:neomorph_background_color="@color/neomorph_background_color"
             app:neomorph_corner_radius="10dp"
             app:neomorph_elevation="8dp"
@@ -280,36 +311,17 @@
             app:neomorph_shadow_type="outer"
             app:neomorph_view_type="rectangular">
 
-            <RelativeLayout
-                android:id="@+id/relativeTaka"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@drawable/stroke"
-                android:layout_below="@+id/card_view5"
-                android:layout_centerHorizontal="true">
 
                 <TextView
-                    android:id="@+id/txt6"
+                    android:id="@+id/receiptTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="Fare : "
+                    android:padding="10dp"
+                    android:text="Receipt"
+                    android:background="@drawable/stroke"
                     android:layout_centerVertical="true"
                     android:textColor="@android:color/black"
                     android:textSize="21sp" />
-
-                <TextView
-                    android:id="@+id/takaTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/txt6"
-                    android:textColor="@android:color/black"
-                    android:textSize="21sp" />
-
-            </RelativeLayout>
         </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
         <RelativeLayout
