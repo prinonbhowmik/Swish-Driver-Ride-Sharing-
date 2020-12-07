@@ -27,11 +27,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.ReceiptActivity"/>
-        <activity android:name=".Activity.ReferralActivity" />
-        <activity android:name=".Activity.NotificationsActivity" />
-        <activity android:name=".Activity.AllVerificationActivity" />
-        <activity android:name=".Activity.ResetPassword" />
+        <activity
+            android:name=".Activity.ReceiptActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.ReferralActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.NotificationsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.AllVerificationActivity"
+            android:screenOrientation="portrait"  />
+        <activity
+            android:name=".Activity.ResetPassword"
+            android:screenOrientation="portrait"  />
         <activity
             android:name=".Activity.AllRidesHistoryActivity"
             android:screenOrientation="portrait" />
