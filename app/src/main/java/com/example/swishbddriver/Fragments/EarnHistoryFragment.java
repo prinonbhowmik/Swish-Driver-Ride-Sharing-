@@ -89,8 +89,6 @@ public class EarnHistoryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.historyRecycler);
         progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new EarningHistoryAdapter(list,getContext());
-        recyclerView.setAdapter(adapter);
         noHistoryTxt=view.findViewById(R.id.emptyText);
         sharedPreferences = getContext().getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         driverId=sharedPreferences.getString("id","");

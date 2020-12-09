@@ -81,7 +81,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
             driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,bookingId,
             rideStatus, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
-
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
     private int travelduration;
     private double kmdistance;
@@ -108,6 +107,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private Date date1, date2;
     private int days, hour;
     private String driverID2;
+    private String destinationDivision;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -625,8 +625,20 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     travelduration = (int) (trduration * 60);
 
-                    showPrice(distance, travelduration);
+                    Locale locale2 = new Locale("bn","BN");
+                    Geocoder geocoder2 = new Geocoder(BookingDetailsActivity.this, locale2);
 
+                    List<Address> addresses2 = null;
+                    try {
+                        addresses2 = geocoder2.getFromLocation(desLat, desLon, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address location1 = addresses2.get(0);
+                    destinationDivision = location1.getAdminArea();
+                    Log.d("division",location1.getAdminArea());
+
+                    showPrice(distance, travelduration,destinationDivision);
 
                 }
             }
@@ -638,7 +650,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void showPrice(int distance, int travelduration) {
+    private void showPrice(int distance, int travelduration, String destinationDivision) {
 
         kmdistance = distance / 1000;
         Log.d("showDistance", String.valueOf(kmdistance));
@@ -658,9 +670,25 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     int kmPrice = (int) (kmRate * kmdistance);
                     int minPrice = (int) (minRate * travelduration);
 
-                    price = kmPrice + minPrice + minimumRate;
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Division").child(destinationDivision);
+                    reference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
+                            int estprice = kmPrice + minPrice + minimumRate;
+                            int divisionPercent = (estprice*farePercent)/100;
+                            price = estprice+divisionPercent;
+                            updateBookingDetails(price);
+                        }
 
-                    updateBookingDetails(price);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+
 
                 }
             }

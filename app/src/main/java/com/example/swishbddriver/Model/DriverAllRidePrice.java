@@ -16,6 +16,15 @@ public class DriverAllRidePrice {
     @Expose
     private Integer totalEarn;
 
+    public DriverAllRidePrice(String rideId, String date, Integer totalEarn) {
+        this.rideId = rideId;
+        this.date = date;
+        this.totalEarn = totalEarn;
+    }
+
+    public DriverAllRidePrice() {
+    }
+
     public String getRideId() {
         return rideId;
     }
