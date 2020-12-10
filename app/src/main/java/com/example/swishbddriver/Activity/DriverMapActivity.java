@@ -141,14 +141,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         carType = sharedPreferences.getString("carType", "");
         hideKeyBoard(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(this);
+        checkCashReceived();
         //navigationView.getMenu().getItem(2).setActionView(R.layout.registration_counter);
         navHeaderData();
         checkAppVersion();
         checkDriverOnLine();
         checkLocationPermission();
 
-        /*checkCashReceived();
-        checkHourlyCashReceived();*/
+
+        checkHourlyCashReceived();
 
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
@@ -285,11 +286,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         String rideStatus = data.child("rideStatus").getValue().toString();
                         String dId = data.child("driverId").getValue().toString();
                         if (dId.equals(driverId) && cashReceived.equals("no") && rideStatus.equals("End")) {
-                            HourlyRideModel model = data.getValue(HourlyRideModel.class);
-                            String id = model.getBookingId();
-                            String customerID = model.getCustomerId();
-
-                            Log.d("checkKorbo", id + "," + customerID);
+                            String id = data.child("bookingId").getValue().toString();
+                            String customerID = data.child("customerId").getValue().toString();
 
                             Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
                             intent.putExtra("tripId", id);
@@ -312,7 +310,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void checkCashReceived() {
-        DatabaseReference tripRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+        DatabaseReference reference=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference tripRef = reference.child("BookForLater").child(carType);
         tripRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -322,16 +321,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         String rideStatus = data.child("rideStatus").getValue().toString();
                         String dId = data.child("driverId").getValue().toString();
                         if (dId.equals(driverId) && cashReceived.equals("no") && rideStatus.equals("End")) {
-                            HourlyRideModel model = data.getValue(HourlyRideModel.class);
-                            String id = model.getBookingId();
-                            String customerID = model.getCustomerId();
-
-                            Log.d("checkKorbo", id + "," + customerID);
+                            String id = data.child("bookingId").getValue().toString();
+                            String customerID = data.child("customerId").getValue().toString();
 
                             Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
                             intent.putExtra("tripId", id);
                             intent.putExtra("customerId", customerID);
-                            intent.putExtra("check", 2);
+                            intent.putExtra("check", 1);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             finish();
                             startActivity(intent);

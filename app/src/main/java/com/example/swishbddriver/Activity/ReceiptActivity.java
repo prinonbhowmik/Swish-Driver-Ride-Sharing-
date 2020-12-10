@@ -103,6 +103,7 @@ public class ReceiptActivity extends AppCompatActivity {
             });
         }
         else if(check==2){
+            timeTv.setText("( "+time+" Hrs )");
             DatabaseReference hourRef = FirebaseDatabase.getInstance().getReference("HourlyRate").child(carType);
             hourRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -112,7 +113,11 @@ public class ReceiptActivity extends AppCompatActivity {
                         int priceInt=Integer.parseInt(price);
                         int basePrice=priceInt*2;
                         baseFareTv.setText("BDT "+basePrice);
-                        timeTv.setText("( "+time+" Hrs )");
+                        int totalFareInt=Integer.parseInt(totalFare);
+                        if(totalFareInt>basePrice) {
+                            timePrice =totalFareInt-basePrice;
+                            timePriceTv.setText("BDT "+timePrice);
+                        }
                     }
 
                 }

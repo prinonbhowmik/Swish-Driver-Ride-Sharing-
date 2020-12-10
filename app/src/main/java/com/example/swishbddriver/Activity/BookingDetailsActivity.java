@@ -674,11 +674,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     reference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
-                            int estprice = kmPrice + minPrice + minimumRate;
-                            int divisionPercent = (estprice*farePercent)/100;
-                            price = estprice+divisionPercent;
-                            updateBookingDetails(price);
+                            if(snapshot.exists()) {
+                                int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
+                                int estprice = kmPrice + minPrice + minimumRate;
+                                int divisionPercent = (estprice * farePercent) / 100;
+                                price = estprice + divisionPercent;
+                                updateBookingDetails(price);
+                            }
                         }
 
                         @Override
@@ -731,6 +733,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                 }
             });
+            loadingAnimation();
 
         } else if (payment.equals("wallet")) {
 
@@ -805,9 +808,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Log.d("walletError", "" + t.getMessage());
                 }
             });
+            loadingAnimation();
 
         }
 
+
+    }
+    private void loadingAnimation(){
         loadingLayout.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -820,7 +827,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 finish();
                 startActivity(intent);
             }
-        }, 5000);
+        }, 3000);
     }
 
     private void getData() {

@@ -374,10 +374,5 @@ public class ShowCash extends AppCompatActivity {
         Toasty.info(this,"Please Confirm cash collect!",Toasty.LENGTH_LONG).show();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
 
 }

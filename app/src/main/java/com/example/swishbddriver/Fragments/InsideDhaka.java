@@ -99,8 +99,7 @@ public class InsideDhaka extends Fragment {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
-                            String rideStatus = (String) data.child("rideStatus").getValue().toString();
-                            rideStatus=data.child("rideStatus").getValue().toString();
+                            String rideStatus = data.child("rideStatus").getValue().toString();
                             String date1 = data.child("pickUpDate").getValue().toString();
                             String tripId = data.child("bookingId").getValue().toString();
                             String customerID = data.child("customerId").getValue().toString();
