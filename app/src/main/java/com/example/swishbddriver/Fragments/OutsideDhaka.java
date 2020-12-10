@@ -65,6 +65,7 @@ public class OutsideDhaka extends Fragment {
     private ProgressBar progressBar;
     private RadioRealButtonGroup radioGroup;
     private Date d1,d2;
+    private String rideStatus;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,6 +99,10 @@ public class OutsideDhaka extends Fragment {
                     bookRegularModelList.clear();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
+                        rideStatus=data.child("rideStatus").getValue().toString();
+                        String date1 = data.child("pickUpDate").getValue().toString();
+                        String tripId = data.child("bookingId").getValue().toString();
+                        String customerID = data.child("customerId").getValue().toString();
 
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
@@ -107,9 +112,30 @@ public class OutsideDhaka extends Fragment {
                                 bookRegularModelList.add(book);
                             }
                         }
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+                        try {
+                            d1 = dateFormat.parse(date1);
+                            d2 = dateFormat.parse(currentDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!rideStatus.equals("Start") || !rideStatus.equals("End")){
+                            if (d2.compareTo(d1) > 0){
+                                DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID);
+                                delRef.child(tripId).removeValue();
+                                DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
+                                del1Ref.child(tripId).removeValue();
+                            }
+                        }
                     }
                     Collections.reverse(bookRegularModelList);
                     bookRegularAdapter.notifyDataSetChanged();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
+
                 }
                 if (bookRegularModelList.size() < 1) {
                     progressBar.setVisibility(View.GONE);
@@ -161,6 +187,7 @@ public class OutsideDhaka extends Fragment {
                         String date1 = data.child("pickUpDate").getValue().toString();
                         String tripId = data.child("bookingId").getValue().toString();
                         String customerID = data.child("customerId").getValue().toString();
+                        driverId = data.child("driverId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
                             progressBar.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
@@ -177,7 +204,7 @@ public class OutsideDhaka extends Fragment {
                             e.printStackTrace();
                         }
 
-                        if (d2.compareTo(d1) > 0){
+                        if (d2.compareTo(d1) > 0 && driverId.equals("")){
                             DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID);
                             delRef.child(tripId).removeValue();
                             DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);

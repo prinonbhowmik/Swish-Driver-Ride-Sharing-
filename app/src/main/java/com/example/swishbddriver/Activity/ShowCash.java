@@ -81,6 +81,20 @@ public class ShowCash extends AppCompatActivity {
         collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Call<List<CustomerProfile>> call = ApiUtils.getUserService().getReffarelCommision(customerID);
+                call.enqueue(new Callback<List<CustomerProfile>>() {
+                    @Override
+                    public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                    }
+                });
+
                 if (payment.equals("cash")) {
                     Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
                     call1.enqueue(new Callback<List<CouponShow>>() {

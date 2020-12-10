@@ -44,6 +44,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<List<CheckModel>> forgotPassword(@Field("phone_no") String phone_no);
 
+    @GET("referral-commission?")
+    Call<List<CustomerProfile>> getReffarelCommision(@Query("customer_id") String customer_id);
+
+
     @PUT("dpasswordupdate/{customer_id}")
     @FormUrlEncoded
     Call<List<ProfileModel>> resetPassword(@Path("customer_id") String customer_id,

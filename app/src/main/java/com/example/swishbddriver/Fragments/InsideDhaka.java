@@ -100,6 +100,30 @@ public class InsideDhaka extends Fragment {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String rideStatus = (String) data.child("rideStatus").getValue().toString();
+                            rideStatus=data.child("rideStatus").getValue().toString();
+                            String date1 = data.child("pickUpDate").getValue().toString();
+                            String tripId = data.child("bookingId").getValue().toString();
+                            String customerID = data.child("customerId").getValue().toString();
+
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
+                            try {
+                                d1 = dateFormat.parse(date1);
+                                d2 = dateFormat.parse(currentDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (!rideStatus.equals("Start") || !rideStatus.equals("End")){
+                                if (d2.compareTo(d1) > 0){
+                                    DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID);
+                                    delRef.child(tripId).removeValue();
+                                    DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
+                                    del1Ref.child(tripId).removeValue();
+                                }
+                            }
+
                             if (!rideStatus.equals("End")) {
                                 progressBar.setVisibility(View.GONE);
                                 HourlyRideModel book = data.getValue(HourlyRideModel.class);
