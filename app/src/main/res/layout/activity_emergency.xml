@@ -18,60 +18,66 @@
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
+        android:layout_below="@+id/customerCareIv"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/description"
-        android:justificationMode="inter_word"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/customerCareIv" />
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:justificationMode="inter_word"
+        android:text="@string/description"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
+
     <TextView
         android:id="@+id/call999"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/description"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:text="Call 999"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@+id/description" />
+        android:textSize="24sp" />
+
     <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/sos2"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_below="@+id/call999"
-        app:lottie_loop="true"
         android:layout_centerHorizontal="true"
         app:lottie_autoPlay="true"
         app:lottie_fileName="sos.json"
-        android:id="@+id/sos2"/>
+        app:lottie_loop="true" />
+
     <FrameLayout
+        android:id="@+id/frame_layout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/frame_layout1">
+        android:layout_height="wrap_content">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="56dp"
             android:background="@color/themColor">
+
             <ImageView
                 android:id="@+id/emergencyBackBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
                 android:onClick="emergencyBack"
-                android:layout_marginStart="5dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:layout_centerVertical="true"/>
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
             <TextView
                 android:id="@+id/titleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Emergency"
-                android:layout_marginLeft="50dp"
-                android:textColor="@android:color/white"
                 android:layout_centerVertical="true"
-                android:textSize="21sp"/>
+                android:layout_marginStart="50dp"
+                android:text="Emergency"
+                android:textColor="@android:color/white"
+                android:textSize="21sp" />
         </RelativeLayout>
     </FrameLayout>
 

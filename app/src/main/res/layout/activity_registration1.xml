@@ -4,37 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
     android:background="#fff"
+    android:focusableInTouchMode="true"
     tools:context=".Activity.Registration1Activity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <RelativeLayout
             android:id="@+id/tool"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="56dp"
             android:background="@color/themColor">
+
             <ImageView
                 android:id="@+id/emergencyBackBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
                 android:onClick="registrationBack"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:layout_centerVertical="true"/>
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
             <TextView
                 android:id="@+id/titleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Verification"
-                android:layout_marginLeft="50dp"
-                android:textColor="@android:color/white"
                 android:layout_centerVertical="true"
-                android:textSize="21sp"/>
+                android:layout_marginLeft="50dp"
+                android:text="Verification"
+                android:textColor="@android:color/white"
+                android:textSize="21sp" />
 
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/relative1"
             android:layout_width="match_parent"
@@ -126,10 +130,10 @@
                 android:hint="Plate Number"
                 android:textColorHint="#000"
                 app:boxBackgroundMode="outline"
-                app:helperText="Example: Dhaka Metro Ga 12-1234"
-                app:helperTextEnabled="true"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:helperText="Example: Dhaka Metro Ga 12-1234"
+                app:helperTextEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/plateNumber_Et"
@@ -198,26 +202,29 @@
                     android:textColor="#000"
                     android:textSize="21sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <RadioGroup
                 android:id="@+id/ownerRg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/carEngineNumberLT"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/carEngineNumberLT">
+                android:layout_marginTop="20dp">
+
                 <RadioButton
                     android:id="@+id/ownerRb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="I am owner of the car."/>
+                    android:text="I am owner of the car."
+                    android:textSize="18sp" />
+
                 <RadioButton
                     android:id="@+id/notOwnerRb"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textSize="18sp"
                     android:layout_height="wrap_content"
-                    android:text="I am not owner of the car."/>
+                    android:layout_marginTop="5dp"
+                    android:text="I am not owner of the car."
+                    android:textSize="18sp" />
 
             </RadioGroup>
 

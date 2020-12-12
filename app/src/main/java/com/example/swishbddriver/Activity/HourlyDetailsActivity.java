@@ -327,7 +327,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         confirmBtn = findViewById(R.id.confirmBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
         customerDetailsBtn = findViewById(R.id.customerDetailsBtn);
-        scrollLayout = findViewById(R.id.scrollLayout);
+        scrollLayout = findViewById(R.id.scrollLayout2);
         startTripBtn = findViewById(R.id.startTripBtn);
         endTripBtn = findViewById(R.id.endTripBtn);
         neomorphFrameLayoutStart = findViewById(R.id.startTripNFL);
@@ -1149,5 +1149,9 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    public void hourlyDetailsBack(View view) {
+        finish();;
     }
 }

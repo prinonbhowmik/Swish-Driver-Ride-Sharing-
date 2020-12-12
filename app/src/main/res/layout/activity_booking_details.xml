@@ -1,339 +1,410 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/neomorph_background_color"
-    tools:context=".Activity.BookingDetailsActivity"
-    android:id="@+id/scrollLayout">
-
+    tools:context=".Activity.BookingDetailsActivity">
 
     <RelativeLayout
+        android:id="@+id/tool"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="56dp"
+        android:background="@color/themColor">
+
+        <ImageView
+            android:id="@+id/emergencyBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:onClick="bookingDetailsBack"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
 
         <TextView
-            android:id="@+id/headerTitle"
+            android:id="@+id/titleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_centerVertical="true"
             android:text="Ride Details"
-            android:textColor="@android:color/black"
-            android:textSize="27sp"
-            android:textStyle="bold" />
+            android:textColor="@android:color/white"
+            android:textSize="21sp" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tool">
+
         <RelativeLayout
-            android:id="@+id/relativeTaka"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_below="@+id/headerTitle"
-            android:layout_marginStart="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/txt6"
+            <RelativeLayout
+                android:id="@+id/relativeTaka"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/txt6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:text="Fare : BDT "
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/takaTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_toEndOf="@id/txt6"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="21sp" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/fromTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="Fare : BDT "
-                android:layout_centerVertical="true"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="21sp" />
+                android:layout_below="@+id/relativeTaka"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/ic_map"
+                android:textColor="@android:color/black" />
 
             <TextView
-                android:id="@+id/takaTV"
+                android:id="@+id/txt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeTaka"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/txt6"
-                android:textColor="@android:color/holo_red_dark"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/fromTv"
+                android:text="Pickup Place"
+                android:textColor="@android:color/black"
                 android:textSize="21sp" />
 
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/fromTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            android:src="@drawable/ic_map"
-            android:layout_below="@+id/relativeTaka"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/txt1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/fromTv"
-            android:layout_below="@+id/relativeTaka"
-            android:text="Pickup Place"
-            android:textColor="@android:color/black"
-            android:textSize="21sp" />
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt1"
-            android:layout_marginTop="-5dp"
-            android:layerType="software"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
-
-            <TextView
-                android:id="@+id/pickupPlaceTV"
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@drawable/stroke"
-                android:gravity="center_vertical"
-                android:layout_toEndOf="@id/txt1"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+                android:layout_below="@+id/txt1"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
-        <ImageView
-            android:id="@+id/toTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card_view1"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="9dp"
-            android:src="@drawable/ic_flags"
-            android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/pickupPlaceTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/txt1"
+                    android:background="@drawable/stroke"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-        <TextView
-            android:id="@+id/txt2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view1"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@+id/toTv"
-            android:text="Destination"
-            android:textColor="@android:color/black"
-            android:textSize="21sp" />
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt2"
-            android:layout_marginTop="-5dp"
-            android:layerType="software"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
+            <ImageView
+                android:id="@+id/toTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/card_view1"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="9dp"
+                android:src="@drawable/ic_flags"
+                android:textColor="@android:color/black" />
 
             <TextView
-                android:id="@+id/destinationTV"
+                android:id="@+id/txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view1"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/toTv"
+                android:text="Destination"
+                android:textColor="@android:color/black"
+                android:textSize="21sp" />
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@drawable/stroke"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+                android:layout_below="@+id/txt2"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
-        <ImageView
-            android:id="@+id/calendarIv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card_view2"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="9dp"
-            android:src="@drawable/ic_calendar_color"
-            android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/destinationTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/stroke"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-        <TextView
-            android:id="@+id/txt3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view2"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/calendarIv"
-            android:text="Pickup Date"
-            android:textColor="@android:color/black"
-            android:textSize="21sp" />
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt3"
-            android:layout_marginTop="-5dp"
-            android:layerType="software"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
+            <ImageView
+                android:id="@+id/calendarIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/card_view2"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="9dp"
+                android:src="@drawable/ic_calendar_color"
+                android:textColor="@android:color/black" />
 
             <TextView
-                android:id="@+id/pickupDateTV"
+                android:id="@+id/txt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view2"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/calendarIv"
+                android:text="Pickup Date"
+                android:textColor="@android:color/black"
+                android:textSize="21sp" />
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@drawable/stroke"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:layout_below="@+id/txt3"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+                <TextView
+                    android:id="@+id/pickupDateTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/stroke"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
 
-        <ImageView
-            android:id="@+id/clockIv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view3"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_clock_color" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-        <TextView
-            android:id="@+id/txt4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view3"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/clockIv"
-            android:text="Pickup Time"
-            android:textColor="@android:color/black"
-            android:textSize="21sp" />
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt4"
-            android:layout_marginTop="-5dp"
-            android:layerType="software"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
+            <ImageView
+                android:id="@+id/clockIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view3"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_clock_color" />
 
             <TextView
-                android:id="@+id/pickupTimeTV"
+                android:id="@+id/txt4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view3"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/clockIv"
+                android:text="Pickup Time"
+                android:textColor="@android:color/black"
+                android:textSize="21sp" />
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@drawable/stroke"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+                android:layout_below="@+id/txt4"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
-        <ImageView
-            android:id="@+id/carTypeIv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view4"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_car" />
+                <TextView
+                    android:id="@+id/pickupTimeTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/stroke"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-        <TextView
-            android:id="@+id/txt5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view4"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@+id/carTypeIv"
-            android:text="Car Type"
-            android:textColor="@android:color/black"
-            android:textSize="21sp" />
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt5"
-            android:layout_marginTop="-5dp"
-            android:layerType="software"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
+            <ImageView
+                android:id="@+id/carTypeIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view4"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_car" />
 
             <TextView
-                android:id="@+id/carTypeTV"
+                android:id="@+id/txt5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_view4"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/carTypeIv"
+                android:text="Car Type"
+                android:textColor="@android:color/black"
+                android:textSize="21sp" />
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@drawable/stroke"
-                android:layout_toEndOf="@id/txt5"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+                android:layout_below="@+id/txt5"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/card_view6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card_view5"
-            android:layout_centerHorizontal="true"
-            android:layerType="software"
-            android:layout_marginTop="-5dp"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
+                <TextView
+                    android:id="@+id/carTypeTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/txt5"
+                    android:background="@drawable/stroke"
+                    android:padding="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/card_view6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/card_view5"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
 
 
                 <TextView
                     android:id="@+id/receiptTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/stroke"
                     android:padding="10dp"
                     android:text="Receipt"
-                    android:background="@drawable/stroke"
-                    android:layout_centerVertical="true"
                     android:textColor="@android:color/black"
                     android:textSize="21sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
-        <RelativeLayout
-            android:id="@+id/relative"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/card_view6"
-            android:layout_marginTop="0dp">
-            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                android:id="@+id/confirmNFL"
+            <RelativeLayout
+                android:id="@+id/relative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/card_view6"
+                android:layout_marginTop="0dp">
+
+                <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                    android:id="@+id/confirmNFL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:neomorph_background_color="@color/neomorph_background_color"
+                    app:neomorph_corner_radius="10dp"
+                    app:neomorph_elevation="8dp"
+                    app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                    app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                    app:neomorph_shadow_type="outer"
+                    app:neomorph_view_type="rectangular">
+
+                    <Button
+                        android:id="@+id/confirmBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/details_btn_design"
+                        android:text="Confirm"
+                        android:textAllCaps="false"
+                        android:textSize="18sp" />
+                </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+                <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                    android:id="@+id/detailsNFL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:neomorph_background_color="@color/neomorph_background_color"
+                    app:neomorph_corner_radius="10dp"
+                    app:neomorph_elevation="8dp"
+                    app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                    app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                    app:neomorph_shadow_type="outer"
+                    app:neomorph_view_type="rectangular">
+
+                    <Button
+                        android:id="@+id/customerDetailsBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/details_btn_design"
+                        android:text="Customer Details"
+                        android:textAllCaps="false"
+                        android:textSize="18sp" />
+
+                </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+            </RelativeLayout>
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/startTripNFL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relative"
+                android:layout_marginTop="-3dp"
+                android:visibility="gone"
                 app:neomorph_background_color="@color/neomorph_background_color"
                 app:neomorph_corner_radius="10dp"
                 app:neomorph_elevation="8dp"
@@ -341,20 +412,26 @@
                 app:neomorph_shadow_color="@color/neomorph_shadow_color"
                 app:neomorph_shadow_type="outer"
                 app:neomorph_view_type="rectangular">
+
                 <Button
-                    android:id="@+id/confirmBtn"
+                    android:id="@+id/startTripBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/details_btn_design"
-                    android:text="Confirm"
+                    android:text="Start Trip"
                     android:textAllCaps="false"
-                    android:textSize="18sp" />
+                    android:textColor="#1A59C5"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
             </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
             <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-                android:id="@+id/detailsNFL"
+                android:id="@+id/endTripNFL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/relative"
+                android:layout_marginTop="-3dp"
+                android:visibility="gone"
                 app:neomorph_background_color="@color/neomorph_background_color"
                 app:neomorph_corner_radius="10dp"
                 app:neomorph_elevation="8dp"
@@ -362,127 +439,77 @@
                 app:neomorph_shadow_color="@color/neomorph_shadow_color"
                 app:neomorph_shadow_type="outer"
                 app:neomorph_view_type="rectangular">
+
                 <Button
-                    android:id="@+id/customerDetailsBtn"
+                    android:id="@+id/endTripBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/details_btn_design"
-                    android:text="Customer Details"
+                    android:text="End Trip"
+                    android:textAllCaps="false"
+                    android:textColor="#1A59C5"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/cancelNFL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/startTripNFL"
+                android:layout_marginTop="-3dp"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="8dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="rectangular">
+
+                <Button
+                    android:id="@+id/cancelBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/details_btn_design"
+                    android:text="Cancel"
                     android:textAllCaps="false"
                     android:textSize="18sp" />
 
+
             </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
-        </RelativeLayout>
 
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/startTripNFL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relative"
-            android:visibility="gone"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            android:layout_marginTop="-3dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
-            <Button
-                android:id="@+id/startTripBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@drawable/details_btn_design"
-                android:text="Start Trip"
-                android:textColor="#1A59C5"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/endTripNFL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relative"
-            android:visibility="gone"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            android:layout_marginTop="-3dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
-            <Button
-                android:id="@+id/endTripBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/details_btn_design"
-                android:text="End Trip"
-                android:visibility="gone"
-                android:textColor="#1A59C5"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
-
-        <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
-            android:id="@+id/cancelNFL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/startTripNFL"
-            app:neomorph_background_color="@color/neomorph_background_color"
-            app:neomorph_corner_radius="10dp"
-            app:neomorph_elevation="8dp"
-            android:layout_marginTop="-3dp"
-            app:neomorph_highlight_color="@color/neomorph_highlight_color"
-            app:neomorph_shadow_color="@color/neomorph_shadow_color"
-            app:neomorph_shadow_type="outer"
-            app:neomorph_view_type="rectangular">
-            <Button
-                android:id="@+id/cancelBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/details_btn_design"
-                android:text="Cancel"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
-
-
-        </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
-
-        <RelativeLayout
-            android:id="@+id/loadingLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_centerInParent="true">
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/progrssbar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="30dp"
-                app:lottie_loop="true"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="loading2.json" />
-            <TextView
-                android:layout_below="@+id/progrssbar"
+            <RelativeLayout
+                android:id="@+id/loadingLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="Calculating your fare..."
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/progrssbar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="30dp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="loading2.json"
+                    app:lottie_loop="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/progrssbar"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:text="Calculating your fare..."
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
+    </ScrollView>
 
 
-    </RelativeLayout>
-
-
-
-
-</ScrollView>
+</RelativeLayout>

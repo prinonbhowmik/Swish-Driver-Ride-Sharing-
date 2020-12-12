@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:id="@+id/appBarLayout"
         android:background="@color/themColor">
         <ImageView
@@ -24,8 +24,7 @@
             android:id="@+id/tabLayout"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_centerVertical="true"
             android:background="@drawable/tab_layout_background"
             app:tabMode="scrollable"
             app:tabBackground="@drawable/tab_layout_selector"

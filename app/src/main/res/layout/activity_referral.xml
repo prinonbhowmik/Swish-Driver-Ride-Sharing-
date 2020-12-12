@@ -7,88 +7,79 @@
     android:background="@color/neomorph_background_color"
     tools:context=".Activity.ReferralActivity">
 
-
-    <com.google.android.material.appbar.AppBarLayout
+    <RelativeLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/themColor"
-        app:elevation="0dp">
+        android:layout_height="56dp"
+        android:background="@color/themColor">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/referralBackBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="referralBack"
-                    android:src="@drawable/ic_baseline_arrow_back_24"
-                    android:layout_centerVertical="true"/>
-                <TextView
-                    android:id="@+id/titleName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Referral"
-                    android:layout_marginStart="50dp"
-                    android:textColor="@android:color/white"
-                    android:layout_centerVertical="true"
-                    android:textSize="21sp"/>
-            </RelativeLayout>
+        <ImageView
+            android:id="@+id/emergencyBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:onClick="referralBack"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
 
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+        <TextView
+            android:id="@+id/titleName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="55dp"
+            android:text="Referral"
+            android:textColor="@android:color/white"
+            android:textSize="21sp" />
+
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/referralIV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="210dp"
         android:layout_below="@+id/appBarLayout"
-        android:layout_marginTop="-55dp"
-        android:src="@drawable/referral"/>
+        android:src="@drawable/referral" />
 
     <TextView
         android:id="@+id/textReferral"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:textAlignment="center"
-        android:justificationMode="inter_word"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/referralIV"
-        android:layout_marginTop="-20dp"
-        android:textSize="15sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:justificationMode="inter_word"
         android:text="Do you have friends who wants to drive and earn as well ?
-Why not refer them with your personal referral id ?"/>
+Why not refer them with your personal referral id ?"
+        android:textAlignment="center"
+        android:textSize="15sp" />
+
     <TextView
         android:id="@+id/referralTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"
-        android:background="@drawable/referral_bg_design"
-        android:textSize="24sp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:layout_below="@+id/textReferral"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:textColor="@color/black"/>
-
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/referral_bg_design"
+        android:gravity="center"
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
 
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
         android:id="@+id/NFL1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/referralTV"
         android:layerType="software"
         app:neomorph_background_color="@color/neomorph_background_color"
         app:neomorph_corner_radius="10dp"
@@ -96,8 +87,7 @@ Why not refer them with your personal referral id ?"/>
         app:neomorph_highlight_color="@color/neomorph_highlight_color"
         app:neomorph_shadow_color="@color/neomorph_shadow_color"
         app:neomorph_shadow_type="outer"
-        app:neomorph_view_type="rectangular"
-        android:layout_below="@id/referralTV">
+        app:neomorph_view_type="rectangular">
 
         <RelativeLayout
             android:id="@+id/todayEarnRelative"
@@ -135,14 +125,14 @@ Why not refer them with your personal referral id ?"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:textAlignment="center"
-        android:justificationMode="inter_word"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/NFL1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:textSize="15sp"
-        android:text="Receive exclusive gifts in forms of cash/balance/bonus when  someone signs up using your referral id"/>
+        android:layout_marginEnd="10dp"
+        android:justificationMode="inter_word"
+        android:text="Receive exclusive gifts in forms of cash/balance/bonus when  someone signs up using your referral id"
+        android:textAlignment="center"
+        android:textSize="15sp" />
 
 </RelativeLayout>

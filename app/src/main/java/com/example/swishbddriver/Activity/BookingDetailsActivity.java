@@ -1264,4 +1264,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     }
 
+    public void bookingDetailsBack(View view) {
+        finish();
+    }
 }
