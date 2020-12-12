@@ -90,7 +90,8 @@
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
-            <RatingBar
+
+            <!--<RatingBar
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
@@ -102,8 +103,7 @@
                 android:numStars="5"
                 android:rating="0"
                 android:stepSize=".5"
-                android:theme="@style/RatingBarBlack" />
-
+                android:theme="@style/RatingBarBlack" />-->
 
         </RelativeLayout>
 

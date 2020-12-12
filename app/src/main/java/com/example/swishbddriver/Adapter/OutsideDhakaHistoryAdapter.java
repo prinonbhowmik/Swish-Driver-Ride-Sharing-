@@ -41,7 +41,7 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
         holder.pickupLocationTV.setText(book.getPickUpPlace());
-        holder.ratingBar.setRating(book.getRating());
+       // holder.ratingBar.setRating(book.getRating());
         car_type=book.getCarType();
         switch (car_type) {
             case "Sedan":
@@ -91,10 +91,10 @@ public class OutsideDhakaHistoryAdapter extends RecyclerView.Adapter<OutsideDhak
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate;
-        private RatingBar ratingBar;
+       // private RatingBar ratingBar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ratingBar=itemView.findViewById(R.id.ratingBar);
+           // ratingBar=itemView.findViewById(R.id.ratingBar);
             pickupLocationTV=itemView.findViewById(R.id.pickup_TV);
             destinationTV=itemView.findViewById(R.id.destination_TV);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);

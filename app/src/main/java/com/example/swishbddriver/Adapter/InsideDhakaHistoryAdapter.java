@@ -40,7 +40,7 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
         holder.pickupLocationTV.setText(book.getPickUpPlace());
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
-        holder.ratingBar.setRating(book.getRating());
+        //holder.ratingBar.setRating(book.getRating());
         car_type=book.getCarType();
         switch (car_type) {
             case "Sedan":
@@ -88,10 +88,10 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView pickupLocationTV,pickupTimeTV,pickupDate;
-        private RatingBar ratingBar;
+        //private RatingBar ratingBar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ratingBar=itemView.findViewById(R.id.ratingBar);
+           // ratingBar=itemView.findViewById(R.id.ratingBar);
             pickupLocationTV=itemView.findViewById(R.id.pickup_TV1);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
