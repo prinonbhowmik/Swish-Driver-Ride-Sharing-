@@ -110,17 +110,17 @@
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
-
-            <View
-                android:background="@color/green1"
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/runningView"
                 android:layout_width="match_parent"
-                android:layout_height="3dp"
+                android:layout_height="5dp"
                 android:layout_marginStart="35dp"
                 android:layout_marginEnd="35dp"
-                android:visibility="gone"
-                android:layout_below="@id/pickup_timeTv"/>
-
+                android:layout_below="@+id/pickup_timeTv"
+                android:layout_centerHorizontal="true"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="loading3.json"
+                app:lottie_loop="true" />
 
 
         </RelativeLayout>

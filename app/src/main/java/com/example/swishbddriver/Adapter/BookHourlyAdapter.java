@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Activity.HourlyDetailsActivity;
 import com.example.swishbddriver.Model.HourlyRideModel;
 import com.example.swishbddriver.R;
@@ -70,7 +71,7 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView pickupLocationTV,pickupTimeTV,pickupDate;
-        private View view;
+        private LottieAnimationView view;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             view=itemView.findViewById(R.id.runningHourView);

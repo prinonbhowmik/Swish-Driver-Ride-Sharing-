@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Activity.BookingDetailsActivity;
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.R;
@@ -75,7 +76,7 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout parentLayout;
-        private View view;
+        private LottieAnimationView view;
         private TextView pickupLocationTV,destinationTV,pickupTimeTV,pickupDate;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
