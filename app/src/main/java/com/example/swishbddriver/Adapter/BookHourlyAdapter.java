@@ -53,13 +53,15 @@ public class BookHourlyAdapter extends RecyclerView.Adapter<BookHourlyAdapter.Vi
         });
 
         String rideStatus=book.getRideStatus();
-        if(rideStatus.equals("Start")){
-            holder.view.setVisibility(View.VISIBLE);
-        }else if(rideStatus.equals("Pending")){
-            holder.view.setVisibility(View.GONE);
-        }
-        else if(rideStatus.equals("End")){
-            holder.view.setVisibility(View.GONE);
+        switch (rideStatus) {
+            case "Start":
+                holder.view.setVisibility(View.VISIBLE);
+                break;
+            case "Pending":
+            case "End":
+            case "Cancel":
+                holder.view.setVisibility(View.GONE);
+                break;
         }
     }
 

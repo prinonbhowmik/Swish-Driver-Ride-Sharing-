@@ -57,14 +57,16 @@ public class BookRegularAdapter extends RecyclerView.Adapter<BookRegularAdapter.
             }
         });
         String rideStatus=book.getRideStatus();
-        if(rideStatus.equals("Start")){
-            holder.view.setVisibility(View.VISIBLE);
-            //holder.view.setBackgroundColor(ContextCompat.getColor(context,R.color.green1));
-        }else if(rideStatus.equals("Pending")){
-            holder.view.setVisibility(View.GONE);
-        }
-        else if(rideStatus.equals("End")){
-            holder.view.setVisibility(View.GONE);
+        switch (rideStatus) {
+            case "Start":
+                holder.view.setVisibility(View.VISIBLE);
+                //holder.view.setBackgroundColor(ContextCompat.getColor(context,R.color.green1));
+                break;
+            case "Pending":
+            case "End":
+            case "Cancel":
+                holder.view.setVisibility(View.GONE);
+                break;
         }
 
     }
