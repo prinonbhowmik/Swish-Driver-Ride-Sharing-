@@ -104,24 +104,6 @@ public class OutsideDhaka extends Fragment {
                         String rideStatus = data.child("rideStatus").getValue().toString();
 
                         if (driver_id.equals(driverId)) {
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-
-                            try {
-                                d1 = dateFormat.parse(date1);
-                                d2 = dateFormat.parse(currentDate);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                            if (!rideStatus.equals("Start") || !rideStatus.equals("End")){
-                                if (d2.compareTo(d1) > 0){
-                                    DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID);
-                                    delRef.child(tripId).removeValue();
-                                    DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
-                                    del1Ref.child(tripId).removeValue();
-                                }
-                            }
                             if (!rideStatus.equals("End")) {
                                 progressBar.setVisibility(View.GONE);
                                 BookRegularModel book = data.getValue(BookRegularModel.class);
