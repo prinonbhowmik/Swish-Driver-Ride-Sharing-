@@ -21,10 +21,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/stroke">
+            <RelativeLayout
+                android:id="@+id/relative1"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/my_ride_status_gray"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
             <ImageView
                 android:id="@+id/fromTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/relative1"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="13dp"
                 android:src="@drawable/ic_map"
@@ -35,6 +53,7 @@
                 android:id="@+id/pickup_TV1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/relative1"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="10dp"

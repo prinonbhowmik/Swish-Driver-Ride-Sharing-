@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swishbddriver.Activity.HourlyDetailsActivity;
@@ -40,6 +42,7 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
         holder.pickupLocationTV.setText(book.getPickUpPlace());
         holder.pickupTimeTV.setText(book.getPickUpTime());
         holder.pickupDate.setText(book.getPickUpDate());
+        holder.bookingStatus.setText(book.getBookingStatus());
         //holder.ratingBar.setRating(book.getRating());
         car_type=book.getCarType();
         switch (car_type) {
@@ -59,6 +62,22 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
                 carType="Micro 11";
                 break;
         }
+        if (book.getRideStatus().equals("End")) {
+            holder.bookingStatus.setText("Ride Finished");
+            //holder.relativeLayout1.setBackgroundColor(ContextCompat.getColor(context,R.color.colorTextSecondary));
+            holder.relativeLayout1.setBackground(ContextCompat.getDrawable(context, R.drawable.my_ride_status_blue));
+        }
+        else if(book.getRideStatus().equals("Cancel")){
+            holder.bookingStatus.setText("Ride Cancelled");
+            //holder.relativeLayout1.setBackgroundColor(ContextCompat.getColor(context,R.color.colorTextSecondary));
+            holder.relativeLayout1.setBackground(ContextCompat.getDrawable(context, R.drawable.my_ride_status_red));
+        }
+        else {
+            holder.bookingStatus.setText("Ride Expire");
+            //holder.relativeLayout1.setBackgroundColor(ContextCompat.getColor(context,R.color.colorTextSecondary));
+            holder.relativeLayout1.setBackground(ContextCompat.getDrawable(context, R.drawable.my_ride_status_gray));
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +106,8 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView pickupLocationTV,pickupTimeTV,pickupDate;
+        private RelativeLayout relativeLayout1;
+        private TextView pickupLocationTV,pickupTimeTV,pickupDate,bookingStatus;
         //private RatingBar ratingBar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,6 +115,8 @@ public class InsideDhakaHistoryAdapter extends RecyclerView.Adapter<InsideDhakaH
             pickupLocationTV=itemView.findViewById(R.id.pickup_TV1);
             pickupTimeTV=itemView.findViewById(R.id.pickup_timeTv);
             pickupDate=itemView.findViewById(R.id.pick_dateTv);
+            bookingStatus = itemView.findViewById(R.id.status);
+            relativeLayout1 = itemView.findViewById(R.id.relative1);
         }
     }
 }
