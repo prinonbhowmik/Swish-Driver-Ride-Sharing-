@@ -234,6 +234,7 @@ public class SignUp extends AppCompatActivity {
                         editor.putString("id", driver_id);
                         editor.putBoolean("loggedIn", true);
                         editor.commit();
+                        logIn.setEnabled(false);
 
                         Toasty.success(SignUp.this,"Sign Up Successful!",Toasty.LENGTH_LONG).show();
                         startActivity(new Intent(SignUp.this, PhoneNoActivity.class).putExtra("phone", phone));

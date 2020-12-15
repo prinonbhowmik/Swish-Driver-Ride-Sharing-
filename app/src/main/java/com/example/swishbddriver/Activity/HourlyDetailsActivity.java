@@ -264,7 +264,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     }
 
     private void checkHasOngoing() {
-        DatabaseReference ref = databaseReference.child("BookForLater").child(carType);
+        DatabaseReference ref = databaseReference.child("BookHourly").child(carType);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -279,7 +279,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         }
                     }
                     if (!hasOngoing) {
-                        DatabaseReference ref1 = databaseReference.child("BookHourly").child(carType);
+                        DatabaseReference ref1 = databaseReference.child("BookForLater").child(carType);
                         ref1.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
