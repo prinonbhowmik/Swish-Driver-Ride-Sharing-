@@ -88,7 +88,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         dialog.dismiss();
                     }
                 });
-                dialog.setCancelable(false);
+                dialog.setCancelable(true);
 
                 dialog.show();
                 Window window = dialog.getWindow();

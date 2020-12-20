@@ -844,7 +844,13 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             totalDistance=intent.getStringExtra("distance");
             totalTime=intent.getStringExtra("time");
             bookingId=intent.getStringExtra("bookingId");
-            takaTV.setText(SPrice);
+            rideStatus=intent.getStringExtra("rideStatus");
+            if(rideStatus.equals("End")){
+                takaTV.setText(SFinalPrice);
+                receiptNFLE.setVisibility(View.VISIBLE);
+            }else {
+                takaTV.setText(SPrice);
+            }
             details.setVisibility(View.VISIBLE);
             confirmBtn.setVisibility(View.GONE);
             cancelBtn.setVisibility(View.GONE);
