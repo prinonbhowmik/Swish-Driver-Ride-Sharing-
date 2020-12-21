@@ -410,22 +410,22 @@ public class BookingDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+        String endTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
         rideRef.child("destinationLat").setValue(destinationLat);
         rideRef.child("destinationLon").setValue(destinationLon);
         rideRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
-        rideRef.child("endTime").setValue(currentTime);
+        rideRef.child("endTime").setValue(endTime);
 
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
         userRef.child("rideStatus").setValue("End");
         userRef.child("destinationLat").setValue(destinationLat);
         userRef.child("destinationLon").setValue(destinationLon);
         userRef.child("destinationPlace").setValue(String.valueOf(destinationPlace));
-        userRef.child("endTime").setValue(currentTime);
+        userRef.child("endTime").setValue(endTime);
 
-        Call<List<BookRegularModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, currentTime);
+        Call<List<BookRegularModel>> call = api.endTripData(id, "End", destinationLat, destinationLon, destinationPlace, endTime);
         call.enqueue(new Callback<List<BookRegularModel>>() {
             @Override
             public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -438,7 +438,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace, currentTime);
+        calculate(pickUpLat, pickUpLon, destinationLat, destinationLon, pickupPlace, destinationPlace, endTime);
 
     }
 
@@ -518,22 +518,25 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+                    String startTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
+                    String startDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
                     DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
                     rideRef.child("rideStatus").setValue("Start");
                     rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
                     rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
                     rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                    rideRef.child("pickUpTime").setValue(currentTime);
+                    rideRef.child("pickUpTime").setValue(startTime);
+                    rideRef.child("pickUpDate").setValue(startDate);
 
                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(id);
                     userRef.child("rideStatus").setValue("Start");
                     userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
                     userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
                     userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                    userRef.child("pickUpTime").setValue(currentTime);
+                    userRef.child("pickUpTime").setValue(startTime);
+                    userRef.child("pickUpDate").setValue(startDate);
 
-                    Call<List<BookRegularModel>> call = api.startTripData(id, currentTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<BookRegularModel>> call = api.startTripData(id, startTime, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<BookRegularModel>>() {
                         @Override
                         public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -572,7 +575,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace, String currentTime) {
+    private void calculate(String pickUpLat, String pickUpLon, String destinationLat, String destinationLon, String pickupPlace, String destinationPlace, String endTime) {
 
 
         Log.d("checkLat", pickUpLat + "," + pickUpLon);
@@ -610,18 +613,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     distance = element.getDistance().getValue();
 
                     Log.d("getPrice", String.valueOf(distance));
-                    Log.d("getPrice", String.valueOf(currentTime));
-                    SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+                    Log.d("getPrice", String.valueOf(endTime));
+                    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
                     try {
-                        date1 = myFormat.parse(pickupTime);
-                        date2 = myFormat.parse(currentTime);
+                        date1 = myFormat.parse(pickupDate+" "+pickupTime);
+                        date2 = myFormat.parse(endTime);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                     long difference = date2.getTime() - date1.getTime();
 
-                    float hours = (float) difference / (1000 * 60 * 60);
-                    trduration = Math.abs(hours);
+                    float min = (float)  (difference/ (1000 * 60)) ;;
+                    trduration = Math.abs(min);
 
                     travelduration = (int) (trduration * 60);
 
