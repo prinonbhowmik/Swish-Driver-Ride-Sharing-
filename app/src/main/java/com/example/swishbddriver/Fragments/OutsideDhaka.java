@@ -162,6 +162,7 @@ public class OutsideDhaka extends Fragment {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         bookingStatus = data.child("bookingStatus").getValue().toString();
                         String date1 = data.child("pickUpDate").getValue().toString();
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
                         String tripId = data.child("bookingId").getValue().toString();
                         String customerID = data.child("customerId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {
@@ -169,23 +170,24 @@ public class OutsideDhaka extends Fragment {
                             progressBar.setVisibility(View.GONE);
                             BookRegularModel book = data.getValue(BookRegularModel.class);
                             bookRegularModelList.add(book);
-                        }
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-                        try {
-                            d1 = dateFormat.parse(date1);
-                            d2 = dateFormat.parse(currentDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                            try {
+                                d1 = dateFormat.parse(date1);
+                                d2 = dateFormat.parse(currentDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (d2.compareTo(d1) > 0){
+                                DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID);
+                                delRef.child(tripId).removeValue();
+                                DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+                                del1Ref.child(tripId).removeValue();
+                            }
                         }
 
-                        if (d2.compareTo(d1) > 0){
-                            DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID);
-                            delRef.child(tripId).removeValue();
-                            DatabaseReference del1Ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
-                            del1Ref.child(tripId).removeValue();
-                        }
 
                     }
 
