@@ -410,7 +410,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String endTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
+        String endTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
         rideRef.child("rideStatus").setValue("End");
         rideRef.child("destinationLat").setValue(destinationLat);
@@ -518,7 +518,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String startTime = new SimpleDateFormat("HH:mm:ss aa").format(Calendar.getInstance().getTime());
+                    String startTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
                     String startDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
                     DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(id);
                     rideRef.child("rideStatus").setValue("Start");
@@ -536,7 +536,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     userRef.child("pickUpTime").setValue(startTime);
                     userRef.child("pickUpDate").setValue(startDate);
 
-                    Call<List<BookRegularModel>> call = api.startTripData(id, startTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<BookRegularModel>> call = api.startTripData(id, startTime,startDate, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<BookRegularModel>>() {
                         @Override
                         public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -621,9 +621,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    long difference = date2.getTime() - date1.getTime();
+                    long differenceInMilliSecond = date2.getTime() - date1.getTime();
 
-                    float min = (float)  (difference/ (1000 * 60)) ;;
+                    float min = (float)  (differenceInMilliSecond/ (1000 * 60)) ;;
                     trduration = Math.abs(min);
 
                     travelduration = (int) (trduration * 60);

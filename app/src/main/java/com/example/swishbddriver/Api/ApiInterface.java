@@ -127,6 +127,7 @@ public interface ApiInterface {
     @PUT("bookingtripstart/{bookingId}")
     Call<List<BookRegularModel>> startTripData(@Path("bookingId") String bookingId,
                                                @Field("pickUpTime") String pickupTime,
+                                               @Field("pickUpDate") String pickupDate,
                                                @Field("pickUpLat") String pickupLat,
                                                @Field("pickUpLon") String pickupLon,
                                                @Field("pickUpPlace") String pickupPlace,
@@ -136,6 +137,7 @@ public interface ApiInterface {
     @PUT("hourlyridestart/{bookingId}")
     Call<List<HourlyRideModel>> startHourTripData(@Path("bookingId") String bookingId,
                                                   @Field("pickUpTime") String pickupTime,
+                                                  @Field("pickUpDate") String pickupDate,
                                                   @Field("pickUpLat") String pickupLat,
                                                   @Field("pickUpLon") String pickupLon,
                                                   @Field("pickUpPlace") String pickupPlace,

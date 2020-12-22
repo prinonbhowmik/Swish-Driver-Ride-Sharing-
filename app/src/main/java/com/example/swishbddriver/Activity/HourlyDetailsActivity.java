@@ -20,6 +20,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -62,6 +63,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,7 +100,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     private int actualIntPrice;
     private int setCoupon;
     private int discount = 0;
-    private Date date1, date2;
+    private Date date1, date2,d1,d2;
     private int carTypeRate, actualPrice;
     private String priceRate;
     private boolean endTripClicked = false;
@@ -431,21 +433,24 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+        String currentTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa").format(Calendar.getInstance().getTime());
 
-        SimpleDateFormat myFormat = new SimpleDateFormat("hh:mm:ss aa");
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
         try {
-            date1 = myFormat.parse(pickupTime);
+            date1 = myFormat.parse(pickupDate+" "+pickupTime);
             date2 = myFormat.parse(currentTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        long difference = date2.getTime() - date1.getTime();
+        long differenceInMilliSecond = date2.getTime() - date1.getTime();
+        long min =  (differenceInMilliSecond/ (1000 * 60)) ;;
+        long divisor=min/60;
+        long reminder=min%60;
+        String hour=divisor+"."+reminder;
 
-        float hours = (float) difference / (1000 * 60 * 60);
+        float hours=Float.parseFloat(hour);
+        //float hours =  (float) ((differenceInMilliSecond/ (1000 * 60*60))/24) ;;
         totalHours = Math.abs(hours);
-
-
         carTypeRate = Integer.parseInt(priceRate);
 
         if (totalHours <= 2.00) {
@@ -458,7 +463,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void showPrice(int actualIntPrice, float totalHours, String currentTime, String destinationPlace) {
+    private void showPrice(int actualIntPrice, float totalHours, final String currentTime, String destinationPlace) {
 
         if (payment.equals("cash")) {
             float totalHour = totalHours;
@@ -513,7 +518,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                 }
             });*/
 
-        } else if (payment.equals("wallet")) {
+        }
+        else if (payment.equals("wallet")) {
             float totalHour = totalHours;
             Log.d("showHour", "" + totalHour);
             Log.d("showHour", "" + customerID);
@@ -706,22 +712,25 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String currentTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+                    String startTime = new SimpleDateFormat("hh:mm:ss aa").format(Calendar.getInstance().getTime());
+                    String startDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
                     DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(id);
                     rideRef.child("rideStatus").setValue("Start");
                     rideRef.child("pickUpLat").setValue(String.valueOf(currentLat));
                     rideRef.child("pickUpLon").setValue(String.valueOf(currentLon));
                     rideRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                    rideRef.child("pickUpTime").setValue(currentTime);
+                    rideRef.child("pickUpTime").setValue(startTime);
+                    rideRef.child("pickUpDate").setValue(startDate);
 
                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(id);
                     userRef.child("rideStatus").setValue("Start");
                     userRef.child("pickUpLat").setValue(String.valueOf(currentLat));
                     userRef.child("pickUpLon").setValue(String.valueOf(currentLon));
                     userRef.child("pickUpPlace").setValue(String.valueOf(pickupPlace));
-                    userRef.child("pickUpTime").setValue(currentTime);
+                    userRef.child("pickUpTime").setValue(startTime);
+                    userRef.child("pickUpDate").setValue(startDate);
 
-                    Call<List<HourlyRideModel>> call = api.startHourTripData(id, currentTime, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<HourlyRideModel>> call = api.startHourTripData(id,startTime, startDate, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<HourlyRideModel>>() {
                         @Override
                         public void onResponse(Call<List<HourlyRideModel>> call, Response<List<HourlyRideModel>> response) {
@@ -868,9 +877,18 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
-            String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-            if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
+            try {
+                d1 = dateFormat.parse(pickupDate);
+                d2 = dateFormat.parse(todayDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            if ( d2.compareTo(d1)>=0 && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
                 startTripBtn.setVisibility(View.VISIBLE);
                 endTripBtn.setVisibility(View.GONE);
