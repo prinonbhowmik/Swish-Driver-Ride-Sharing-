@@ -614,19 +614,20 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     Log.d("getPrice", String.valueOf(distance));
                     Log.d("getPrice", String.valueOf(endTime));
-                    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
+                    SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
                     try {
                         date1 = myFormat.parse(pickupDate+" "+pickupTime);
                         date2 = myFormat.parse(endTime);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+                    Log.d("getPrice", String.valueOf(date1));
                     long differenceInMilliSecond = date2.getTime() - date1.getTime();
 
                     float min = (float)  (differenceInMilliSecond/ (1000 * 60)) ;;
                     trduration = Math.abs(min);
 
-                    travelduration = (int) (trduration * 60);
+                    travelduration = (int) (trduration);
 
                     Locale locale2 = new Locale("bn","BN");
                     Geocoder geocoder2 = new Geocoder(BookingDetailsActivity.this, locale2);

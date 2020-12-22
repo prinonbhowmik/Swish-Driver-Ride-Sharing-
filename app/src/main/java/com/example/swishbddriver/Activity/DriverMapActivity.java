@@ -882,8 +882,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         }
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000); // 5 seconds
-        locationRequest.setFastestInterval(5000); // 2 seconds
+        locationRequest.setInterval(500); // 5 seconds
+        locationRequest.setFastestInterval(500); // 2 seconds
 
         mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
