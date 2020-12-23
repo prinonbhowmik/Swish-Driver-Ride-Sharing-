@@ -77,9 +77,9 @@ import retrofit2.Response;
 
 public class BookingDetailsActivity extends AppCompatActivity {
 
-    private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV,receiptTv;
+    private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV, receiptTv;
     private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
-            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,bookingId,
+            driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon, SPrice, SFinalPrice, SDiscount, totalDistance, totalTime, bookingId,
             rideStatus, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
     private int travelduration;
@@ -91,7 +91,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private ScrollView scrollLayout;
     private double currentLat = 0.0, currentLon = 0.0;
     private NeomorphFrameLayout neomorphFrameLayoutStart, details, coNFL;
-    private NeomorphFrameLayout neomorphFrameLayoutEnd,receiptNFLE;
+    private NeomorphFrameLayout neomorphFrameLayoutEnd, receiptNFLE;
     private RelativeLayout loadingLayout;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -108,6 +108,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private int days, hour;
     private String driverID2;
     private String destinationDivision;
+    private Date d1, d2;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -121,7 +122,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("bookingId");
         check = intent.getIntExtra("check", 0);
-        if(check==1){
+        if (check == 1) {
             receiptNFLE.setVisibility(View.GONE);
         }
         customerID = intent.getStringExtra("userId");
@@ -131,15 +132,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
         receiptTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(BookingDetailsActivity.this,ReceiptActivity.class)
-                        .putExtra("price",SPrice)
-                        .putExtra("carType",car_type)
-                        .putExtra("finalPrice",SFinalPrice)
-                        .putExtra("distance",totalDistance)
-                        .putExtra("time",totalTime)
-                        .putExtra("discount",SDiscount)
-                        .putExtra("bookingId",bookingId)
-                        .putExtra("check",1));
+                startActivity(new Intent(BookingDetailsActivity.this, ReceiptActivity.class)
+                        .putExtra("price", SPrice)
+                        .putExtra("carType", car_type)
+                        .putExtra("finalPrice", SFinalPrice)
+                        .putExtra("distance", totalDistance)
+                        .putExtra("time", totalTime)
+                        .putExtra("discount", SDiscount)
+                        .putExtra("bookingId", bookingId)
+                        .putExtra("check", 1));
             }
         });
         confirmBtn.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +252,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             currentLat = location.getLatitude();
             currentLon = location.getLongitude();
         } catch (Exception e) {
-            Log.d("checkError",e.getMessage());
+            Log.d("checkError", e.getMessage());
         }
 
     }
@@ -536,7 +537,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     userRef.child("pickUpTime").setValue(startTime);
                     userRef.child("pickUpDate").setValue(startDate);
 
-                    Call<List<BookRegularModel>> call = api.startTripData(id, startTime,startDate, pickUpLat, pickUpLon, pickupPlace, "Start");
+                    Call<List<BookRegularModel>> call = api.startTripData(id, startTime, startDate, pickUpLat, pickUpLon, pickupPlace, "Start");
                     call.enqueue(new Callback<List<BookRegularModel>>() {
                         @Override
                         public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -616,7 +617,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Log.d("getPrice", String.valueOf(endTime));
                     SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
                     try {
-                        date1 = myFormat.parse(pickupDate+" "+pickupTime);
+                        date1 = myFormat.parse(pickupDate + " " + pickupTime);
                         date2 = myFormat.parse(endTime);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -624,12 +625,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Log.d("getPrice", String.valueOf(date1));
                     long differenceInMilliSecond = date2.getTime() - date1.getTime();
 
-                    float min = (float)  (differenceInMilliSecond/ (1000 * 60)) ;;
+                    float min = (float) (differenceInMilliSecond / (1000 * 60));
+                    ;
                     trduration = Math.abs(min);
 
                     travelduration = (int) (trduration);
 
-                    Locale locale2 = new Locale("bn","BN");
+                    Locale locale2 = new Locale("bn", "BN");
                     Geocoder geocoder2 = new Geocoder(BookingDetailsActivity.this, locale2);
 
                     List<Address> addresses2 = null;
@@ -640,9 +642,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     }
                     Address location1 = addresses2.get(0);
                     destinationDivision = location1.getAdminArea();
-                    Log.d("division",location1.getAdminArea());
+                    Log.d("division", location1.getAdminArea());
 
-                    showPrice(distance, travelduration,destinationDivision);
+                    showPrice(distance, travelduration, destinationDivision);
 
                 }
             }
@@ -678,7 +680,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     reference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(snapshot.exists()) {
+                            if (snapshot.exists()) {
                                 int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
                                 int estprice = kmPrice + minPrice + minimumRate;
                                 int divisionPercent = (estprice * farePercent) / 100;
@@ -692,8 +694,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                         }
                     });
-
-
 
 
                 }
@@ -818,7 +818,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
 
     }
-    private void loadingAnimation(){
+
+    private void loadingAnimation() {
         loadingLayout.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -923,17 +924,17 @@ public class BookingDetailsActivity extends AppCompatActivity {
             pickupDateTV.setText(intent.getStringExtra("pickUpDate"));
             pickupTimeTV.setText(intent.getStringExtra("pickUpTime"));
             carTypeTV.setText(intent.getStringExtra("carType"));
-            SPrice=intent.getStringExtra("price");
-            SFinalPrice=intent.getStringExtra("finalPrice");
-            SDiscount=intent.getStringExtra("discount");
-            totalDistance=intent.getStringExtra("distance");
-            totalTime=intent.getStringExtra("time");
-            bookingId=intent.getStringExtra("bookingId");
-            rideStatus=intent.getStringExtra("rideStatus");
-            if(rideStatus.equals("End")){
+            SPrice = intent.getStringExtra("price");
+            SFinalPrice = intent.getStringExtra("finalPrice");
+            SDiscount = intent.getStringExtra("discount");
+            totalDistance = intent.getStringExtra("distance");
+            totalTime = intent.getStringExtra("time");
+            bookingId = intent.getStringExtra("bookingId");
+            rideStatus = intent.getStringExtra("rideStatus");
+            if (rideStatus.equals("End")) {
                 takaTV.setText(SFinalPrice);
                 receiptNFLE.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 takaTV.setText(SPrice);
             }
             details.setVisibility(View.VISIBLE);
@@ -952,9 +953,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
             cancelBtn.setVisibility(View.VISIBLE);
             customerDetailsBtn.setVisibility(View.VISIBLE);
 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-            if (todayDate.matches(pickupDate) && rideStatus.equals("Pending")) {
+            try {
+                d1 = dateFormat.parse(pickupDate);
+                d2 = dateFormat.parse(todayDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            if (d2.compareTo(d1) >= 0 && rideStatus.equals("Pending")) {
                 neomorphFrameLayoutStart.setVisibility(View.VISIBLE);
                 startTripBtn.setVisibility(View.VISIBLE);
                 endTripBtn.setVisibility(View.GONE);
@@ -986,8 +996,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         loadingLayout = findViewById(R.id.loadingLayout);
         list = new ArrayList<>();
         api = ApiUtils.getUserService();
-        receiptTv=findViewById(R.id.receiptTv);
-        receiptNFLE=findViewById(R.id.card_view6);
+        receiptTv = findViewById(R.id.receiptTv);
+        receiptNFLE = findViewById(R.id.card_view6);
 
         getDriverRat();
     }
