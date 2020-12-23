@@ -446,8 +446,13 @@ public class HourlyDetailsActivity extends AppCompatActivity {
         long min =  (differenceInMilliSecond/ (1000 * 60)) ;;
         long divisor=min/60;
         long reminder=min%60;
-        String hour=divisor+"."+reminder;
-
+        String hour;
+        if (reminder<10){
+            String SReminder="0"+String.valueOf(reminder);
+            hour=divisor+"."+SReminder;
+        }else {
+            hour = divisor + "." + reminder;
+        }
         float hours=Float.parseFloat(hour);
         //float hours =  (float) ((differenceInMilliSecond/ (1000 * 60*60))/24) ;;
         totalHours = Math.abs(hours);

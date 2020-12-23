@@ -162,7 +162,6 @@ public class OutsideDhaka extends Fragment {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         bookingStatus = data.child("bookingStatus").getValue().toString();
                         String date1 = data.child("pickUpDate").getValue().toString();
-                        String driver_id = String.valueOf(data.child("driverId").getValue());
                         String tripId = data.child("bookingId").getValue().toString();
                         String customerID = data.child("customerId").getValue().toString();
                         if (bookingStatus.equals("Pending")) {

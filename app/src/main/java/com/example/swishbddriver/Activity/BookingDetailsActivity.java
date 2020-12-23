@@ -626,7 +626,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     long differenceInMilliSecond = date2.getTime() - date1.getTime();
 
                     float min = (float) (differenceInMilliSecond / (1000 * 60));
-                    ;
                     trduration = Math.abs(min);
 
                     travelduration = (int) (trduration);
