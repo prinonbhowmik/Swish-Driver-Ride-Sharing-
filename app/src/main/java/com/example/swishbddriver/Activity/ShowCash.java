@@ -37,7 +37,7 @@ public class ShowCash extends AppCompatActivity {
     private Button collectBtn;
     private TextView pickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv, hourTv;
     private int price1, check, commission,finalCommission,finalPrice1, discount1, addWalletBalance;
-    private String price,finalPrice, discount,rideType;
+    private String price,finalPrice, discount,rideType,coupon;
     private Integer setCoupon;
     private double distance, duration;
     private float hourPrice;
@@ -96,7 +96,9 @@ public class ShowCash extends AppCompatActivity {
                 });
 
                 if (payment.equals("cash")) {
-                    Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
+                    addWalletBalance = (price1 * Integer.parseInt(coupon)) / 100;
+                    newWalletBalance(addWalletBalance);
+                    /*Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
                     call1.enqueue(new Callback<List<CouponShow>>() {
                         @Override
                         public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
@@ -115,7 +117,7 @@ public class ShowCash extends AppCompatActivity {
                         public void onFailure(Call<List<CouponShow>> call, Throwable t) {
 
                         }
-                    });
+                    });*/
                     if (check == 1) {
                         //BookForLater
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(tripId);
@@ -319,6 +321,7 @@ public class ShowCash extends AppCompatActivity {
                     discount=snapshot.child("discount").getValue().toString();
                     discountTv.setText(discount);
                     discount1=Integer.parseInt(discount);
+                    coupon=snapshot.child("coupon").getValue().toString();
                     finalPrice=snapshot.child("finalPrice").getValue().toString();
                     final_Txt.setText(finalPrice);
                     finalPrice1=Integer.parseInt(finalPrice);
@@ -353,6 +356,7 @@ public class ShowCash extends AppCompatActivity {
                     discount1=Integer.parseInt(discount);
                     finalPrice=snapshot.child("finalPrice").getValue().toString();
                     final_Txt.setText(finalPrice);
+                    coupon=snapshot.child("coupon").getValue().toString();
                     finalPrice1=Integer.parseInt(finalPrice);
                     payment=snapshot.child("payment").getValue().toString();
                     distanceTv.setText("Distance : " + snapshot.child("totalDistance").getValue().toString() + " km");
