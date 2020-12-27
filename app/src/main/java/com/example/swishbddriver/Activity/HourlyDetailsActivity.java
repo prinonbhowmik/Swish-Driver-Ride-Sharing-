@@ -72,7 +72,7 @@ import retrofit2.Response;
 public class HourlyDetailsActivity extends AppCompatActivity {
     private TextView pickupPlaceTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV,receiptTv;
 
-    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, endTime, carType,
+    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, endTime, carType,e_wallet,swish_wallet,
             driverId, bookingStatus, d_name, d_phone, destinationLat, destinationLon, pickUpLat, pickUpLon,SPrice,SFinalPrice,SDiscount,totalDistance,totalTime,bookingId,
             currentDate, rideStatus, pickUpCity, destinationCity, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
     private RelativeLayout loadingLayout;
@@ -109,7 +109,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
     RelativeLayout hourLayout, kmLayout;
     TextView cashpickupPlaceTV, destinationPlaceTV, cashTxt, distanceTv, durationTv, final_Txt, discountTv, hourTv;
     private String hourPrice;
-    private int walletBalance, halfPrice, finalPrice, updatewallet;
+    private int walletBalance, discountAmount, finalPrice,swishDefaultDiscount, updatewallet,eWallet,updateE_wallet;
     private float totalHours;
     private String driverID2;
 
@@ -529,6 +529,40 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             Log.d("showHour", "" + totalHour);
             Log.d("showHour", "" + customerID);
 
+            /*DatabaseReference checkE_Wallet = databaseReference.child("BookForLater").child(car_type).child(id);
+            checkE_Wallet.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()) {
+                        e_wallet = snapshot.child("e_wallet").getValue().toString();
+                        eWallet = Integer.parseInt(e_wallet);
+                        Log.d("ewallet",e_wallet);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });*/
+
+            DatabaseReference swishWallet = databaseReference.child("Wallet");
+            swishWallet.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()) {
+                        swish_wallet = snapshot.child("swishWallet").getValue().toString();
+                        swishDefaultDiscount = Integer.parseInt(swish_wallet);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
             Call<List<CustomerProfile>> getWalletData = api.getCustomerData(customerID);
             getWalletData.enqueue(new Callback<List<CustomerProfile>>() {
                 @Override
@@ -537,17 +571,32 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         List<CustomerProfile> list = response.body();
                         Log.d("showHour", "" + list.get(0).getWallet());
                         walletBalance = list.get(0).getWallet();
-                        halfPrice = actualIntPrice / 2;
+                        if(eWallet<=0){
+                            discountAmount = (actualIntPrice * swishDefaultDiscount)/100;
 
-                        if (walletBalance < halfPrice) {
+                            if (walletBalance < discountAmount) {
 
-                            finalPrice = actualIntPrice - walletBalance;
-                            discount = walletBalance;
-                            updatewallet = 0;
-                        } else if (walletBalance >= halfPrice) {
-                            finalPrice = halfPrice;
-                            discount = halfPrice;
-                            updatewallet = walletBalance - halfPrice;
+                                finalPrice = actualIntPrice - walletBalance;
+                                discount = walletBalance;
+                                updatewallet = 0;
+                            } else if (walletBalance >= discountAmount) {
+                                finalPrice = actualIntPrice-discountAmount;
+                                discount = discountAmount;
+                                updatewallet = walletBalance - discountAmount;
+                            }
+                        }
+                        else if(eWallet>0) {
+                            if(eWallet>=actualIntPrice){
+                                finalPrice=0;
+                                discountAmount=actualIntPrice;
+                                discount=actualIntPrice;
+                                updateE_wallet=eWallet-actualIntPrice;
+                            }else {
+                                finalPrice=actualIntPrice-eWallet;
+                                discountAmount=eWallet;
+                                discount=eWallet;
+                                updateE_wallet=0;
+                            }
                         }
 
                         Log.d("finalPrice", String.valueOf(finalPrice));
@@ -599,7 +648,7 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                             }
                         });*/
 
-                        Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                        Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet,updateE_wallet);
                         listCall.enqueue(new Callback<List<CustomerProfile>>() {
                             @Override
                             public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
@@ -788,10 +837,13 @@ public class HourlyDetailsActivity extends AppCompatActivity {
                         price = book.getPrice();
                         driverID2 = book.getDriverId();
                         payment = book.getPayment();
+                        e_wallet=book.getE_wallet();
+                        eWallet=Integer.parseInt(e_wallet);
                         pickupPlaceTV.setText(pickupPlace);
                         pickupDateTV.setText(pickupDate);
                         pickupTimeTV.setText(pickupTime);
                         takaTV.setText(price);
+
 
                         switch (carType) {
                             case "Sedan":
@@ -860,11 +912,10 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             bookingId=intent.getStringExtra("bookingId");
             rideStatus=intent.getStringExtra("rideStatus");
             if(rideStatus.equals("End")){
-                takaTV.setText(SFinalPrice);
                 receiptNFLE.setVisibility(View.VISIBLE);
-            }else {
-                takaTV.setText(SPrice);
             }
+                takaTV.setText(SPrice);
+
             details.setVisibility(View.VISIBLE);
             confirmBtn.setVisibility(View.GONE);
             cancelBtn.setVisibility(View.GONE);

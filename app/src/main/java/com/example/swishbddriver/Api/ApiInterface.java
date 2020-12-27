@@ -290,6 +290,12 @@ public interface ApiInterface {
     @FormUrlEncoded
     @PUT("walletupdate/{id}")
     Call<List<CustomerProfile>> walletValue(@Path("id") String customer_id,
+                                            @Field("wallet") int wallet,
+                                            @Field("e_wallet") int e_wallet);
+
+    @FormUrlEncoded
+    @PUT("walletupdate/{id}")
+    Call<List<CustomerProfile>> updatewalletValue(@Path("id") String customer_id,
                                             @Field("wallet") int wallet);
 
     @FormUrlEncoded
@@ -313,6 +319,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<List<ApiDeviceToken>> updateToken(@Field("driver_id") String driver_id,
                                            @Field("device_token") String token);
+
     @POST("driver_remove_token")
     @FormUrlEncoded
     Call<List<ApiDeviceToken>> deleteToken(@Field("driver_id") String driver_id);

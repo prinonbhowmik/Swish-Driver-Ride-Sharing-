@@ -78,7 +78,7 @@ import retrofit2.Response;
 public class BookingDetailsActivity extends AppCompatActivity {
 
     private TextView pickupPlaceTV, destinationTV, pickupDateTV, pickupTimeTV, carTypeTV, takaTV, receiptTv;
-    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,
+    private String id, customerID, car_type, pickupPlace, destinationPlace, pickupDate, pickupTime, carType, taka,e_wallet,swish_wallet,
             driverId, bookingStatus, destinationLat, destinationLon, pickUpLat, pickUpLon, SPrice, SFinalPrice, SDiscount, totalDistance, totalTime, bookingId,
             rideStatus, apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI";
     private Button confirmBtn, cancelBtn, customerDetailsBtn, startTripBtn, endTripBtn;
@@ -102,7 +102,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance, addWalletBalance, halfPrice, discount, updatewallet, finalPrice;
+    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance, addWalletBalance, discountAmount, discount, updatewallet,updateE_wallet, finalPrice, eWallet,swishDefaultDiscount;
     private boolean couponActive = false, walletHigh = false;
     private Date date1, date2;
     private int days, hour;
@@ -365,14 +365,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void confirmEndTrip() {
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        currentLat = location.getLatitude();
-        currentLon = location.getLongitude();
-
         Call<List<ProfileModel>> call2 = api.getData(driverId);
         call2.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -399,6 +391,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
             }
         });
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLat = location.getLatitude();
+        currentLon = location.getLongitude();
+
         destinationLat = String.valueOf(currentLat);
         destinationLon = String.valueOf(currentLon);
 
@@ -738,7 +739,24 @@ public class BookingDetailsActivity extends AppCompatActivity {
             });
             loadingAnimation();
 
-        } else if (payment.equals("wallet")) {
+        }
+        else if (payment.equals("wallet")) {
+
+            DatabaseReference swishWallet = databaseReference.child("Wallet");
+            swishWallet.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()) {
+                        swish_wallet = snapshot.child("swishWallet").getValue().toString();
+                        swishDefaultDiscount = Integer.parseInt(swish_wallet);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
             Call<List<CustomerProfile>> getwalletCall = api.getCustomerData(customerID);
             getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
@@ -747,17 +765,32 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         List<CustomerProfile> list = response.body();
                         walletBalance = list.get(0).getWallet();
-                        halfPrice = price / 2;
+                        if(eWallet<=0){
+                            discountAmount = (price * swishDefaultDiscount)/100;
 
-                        if (walletBalance < halfPrice) {
+                        if (walletBalance < discountAmount) {
 
                             finalPrice = price - walletBalance;
                             discount = walletBalance;
                             updatewallet = 0;
-                        } else if (walletBalance >= halfPrice) {
-                            finalPrice = halfPrice;
-                            discount = halfPrice;
-                            updatewallet = walletBalance - halfPrice;
+                        } else if (walletBalance >= discountAmount) {
+                            finalPrice = price-discountAmount;
+                            discount = discountAmount;
+                            updatewallet = walletBalance - discountAmount;
+                            }
+                        }
+                        else if(eWallet>0){
+                            if(eWallet>=price){
+                                finalPrice=0;
+                                discountAmount=price;
+                                discount=price;
+                                updateE_wallet=eWallet-price;
+                            }else {
+                                finalPrice=price-eWallet;
+                                discountAmount=eWallet;
+                                discount=eWallet;
+                                updateE_wallet=0;
+                            }
                         }
 
                         Log.d("finalPrice", String.valueOf(finalPrice));
@@ -790,7 +823,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             }
                         });
 
-                        Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                        Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet,updateE_wallet);
                         listCall.enqueue(new Callback<List<CustomerProfile>>() {
                             @Override
                             public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
@@ -856,7 +889,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         bookingStatus = book.getBookingStatus();
                         rideStatus = book.getRideStatus();
                         payment = book.getPayment();
-
+                        e_wallet = book.getE_wallet();
+                        eWallet = Integer.parseInt(e_wallet);
                         price = Integer.parseInt(taka);
                         pickupPlaceTV.setText(pickupPlace);
                         destinationTV.setText(destinationPlace);
@@ -931,11 +965,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
             bookingId = intent.getStringExtra("bookingId");
             rideStatus = intent.getStringExtra("rideStatus");
             if (rideStatus.equals("End")) {
-                takaTV.setText(SFinalPrice);
                 receiptNFLE.setVisibility(View.VISIBLE);
-            } else {
-                takaTV.setText(SPrice);
             }
+                takaTV.setText(SPrice);
+
             details.setVisibility(View.VISIBLE);
             confirmBtn.setVisibility(View.GONE);
             cancelBtn.setVisibility(View.GONE);

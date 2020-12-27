@@ -98,26 +98,6 @@ public class ShowCash extends AppCompatActivity {
                 if (payment.equals("cash")) {
                     addWalletBalance = (price1 * Integer.parseInt(coupon)) / 100;
                     newWalletBalance(addWalletBalance);
-                    /*Call<List<CouponShow>> call1 = ApiUtils.getUserService().getValidCoupon(customerID);
-                    call1.enqueue(new Callback<List<CouponShow>>() {
-                        @Override
-                        public void onResponse(Call<List<CouponShow>> call, Response<List<CouponShow>> response) {
-                            if (response.body() != null) {
-                                List<CouponShow> list = response.body();
-                                setCoupon = list.get(0).getSetCoupons();
-                                couponActive = true;
-                                if (setCoupon == 1) {
-                                    amountPer = list.get(0).getAmount();
-                                    addWalletBalance = (price1 * amountPer) / 100;
-                                    newWalletBalance(addWalletBalance);
-                                }
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<List<CouponShow>> call, Throwable t) {
-
-                        }
-                    });*/
                     if (check == 1) {
                         //BookForLater
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerID).child(tripId);
@@ -252,7 +232,8 @@ public class ShowCash extends AppCompatActivity {
                     List<CustomerProfile> list = response.body();
                     walletBalance = list.get(0).getWallet();
                     updatewallet = addWalletBalance + walletBalance;
-                    Call<List<CustomerProfile>> listCall = api.walletValue(customerID, updatewallet);
+                    int abc;
+                    Call<List<CustomerProfile>> listCall = api.updatewalletValue(customerID, updatewallet);
                     listCall.enqueue(new Callback<List<CustomerProfile>>() {
                         @Override
                         public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {

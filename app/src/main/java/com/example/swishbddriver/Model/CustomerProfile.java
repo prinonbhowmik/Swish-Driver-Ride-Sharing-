@@ -24,6 +24,8 @@ public class CustomerProfile {
     private String token;
     @SerializedName("wallet")
     private int wallet;
+    @SerializedName("e_wallet")
+    private int e_wallet;
     @SerializedName("referral")
     private String referral;
     @SerializedName("referral_status")
@@ -36,7 +38,7 @@ public class CustomerProfile {
     public CustomerProfile() {
     }
 
-    public CustomerProfile(String customer_id, String email, String image, String name, String password, String phone, String gender, String remember_token, String token, int wallet, String referral, String referral_status, String set_coupons, String register_date) {
+    public CustomerProfile(String customer_id, String email, String image, String name, String password, String phone, String gender, String remember_token, String token, int wallet, int e_wallet, String referral, String referral_status, String set_coupons, String register_date) {
         this.customer_id = customer_id;
         this.email = email;
         this.image = image;
@@ -47,6 +49,7 @@ public class CustomerProfile {
         this.remember_token = remember_token;
         this.token = token;
         this.wallet = wallet;
+        this.e_wallet = e_wallet;
         this.referral = referral;
         this.referral_status = referral_status;
         this.set_coupons = set_coupons;
@@ -91,6 +94,10 @@ public class CustomerProfile {
 
     public int getWallet() {
         return wallet;
+    }
+
+    public int getE_wallet() {
+        return e_wallet;
     }
 
     public String getReferral() {
