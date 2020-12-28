@@ -51,6 +51,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -98,6 +99,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private APIService apiService;
     private int distance;
     private float rating, rat, trduration;
+    private FloatingActionButton navigateBtn;
     private int ratingCount;
     private int ride;
     private List<ProfileModel> list;
@@ -164,6 +166,16 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     }
                 }
 
+            }
+        });
+
+        navigateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri navigation = Uri.parse("google.navigation:q=" + destinationLat + "," + destinationLon + "&mode=d");
+                Intent navigationIntent = new Intent(Intent.ACTION_VIEW, navigation);
+                navigationIntent.setPackage("com.google.android.apps.maps");
+                startActivity(navigationIntent);
             }
         });
 
@@ -932,6 +944,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             startTripBtn.setVisibility(View.GONE);
                             neomorphFrameLayoutStart.setVisibility(View.GONE);
                             neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
+                            navigateBtn.setVisibility(View.VISIBLE);
                             endTripBtn.setVisibility(View.VISIBLE);
                             cancelBtn.setVisibility(View.GONE);
                         } else if (rideStatus.equals("End")) {
@@ -1030,6 +1043,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         api = ApiUtils.getUserService();
         receiptTv = findViewById(R.id.receiptTv);
         receiptNFLE = findViewById(R.id.card_view6);
+        navigateBtn = findViewById(R.id.navigateBtn);
 
         getDriverRat();
     }

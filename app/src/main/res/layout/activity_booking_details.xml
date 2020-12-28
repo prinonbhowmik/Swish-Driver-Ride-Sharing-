@@ -34,6 +34,19 @@
 
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/navigateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:visibility="gone"
+        android:elevation="10dp"
+        android:layout_below="@+id/tool"
+        android:backgroundTint="#fff"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_navigation"/>
+
     <ScrollView
         android:id="@+id/scrollLayout"
         android:layout_width="match_parent"
