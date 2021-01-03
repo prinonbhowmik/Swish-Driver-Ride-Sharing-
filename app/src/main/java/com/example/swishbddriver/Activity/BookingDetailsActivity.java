@@ -944,7 +944,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             startTripBtn.setVisibility(View.GONE);
                             neomorphFrameLayoutStart.setVisibility(View.GONE);
                             neomorphFrameLayoutEnd.setVisibility(View.VISIBLE);
-                            navigateBtn.setVisibility(View.VISIBLE);
+                            navigateBtn.show();
                             endTripBtn.setVisibility(View.VISIBLE);
                             cancelBtn.setVisibility(View.GONE);
                         } else if (rideStatus.equals("End")) {
