@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.swishbddriver">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -146,6 +147,14 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".Internet.ConnectivityReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI" />

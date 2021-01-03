@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Internet.ConnectivityReceiver;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -43,7 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUp extends AppCompatActivity {
+public class SignUp extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
     private TextInputEditText nameEt, emailEt, dobEt, addressEt,passwordEt,referralEt;
     private Button logIn;
     private RadioGroup radioGroup;
@@ -308,6 +309,12 @@ public class SignUp extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if(!isConnected){
+            Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public void hideKeyBoard(Context context) {
         InputMethodManager manager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);

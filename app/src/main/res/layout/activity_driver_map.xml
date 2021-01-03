@@ -60,14 +60,41 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="100dp"
             android:backgroundTint="@color/themColor"
             android:clickable="true"
             app:fabSize="mini"
             android:src="@drawable/ic_location_searching_24" />
 
+        <RelativeLayout
+            android:id="@+id/ongoingRl"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:layout_alignParentBottom="true">
+            <TextView
+                android:id="@+id/t_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:text="You have a one going trip"
+                android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/nestedSV"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:visibility="visible"
+            android:text="View Details"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/t_1"
+            android:background="@color/themColor"
+            android:textColor="@android:color/white"
+            android:layout_centerInParent="true" />
+        </RelativeLayout>
 
     </RelativeLayout>
 
@@ -76,7 +103,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-
         android:background="@color/transparent">
 
         <!-- TODO: Update blank fragment layout -->
@@ -294,7 +320,8 @@
         app:headerLayout="@layout/navigation_drawer_header"
         app:itemIconTint="@color/themColor"
         app:itemTextColor="@color/themColor2"
-        app:menu="@menu/nav_options">
+        app:menu="@menu/nav_options"
+        android:visibility="gone">
 
         <!--<LinearLayout
             android:layout_width="match_parent"

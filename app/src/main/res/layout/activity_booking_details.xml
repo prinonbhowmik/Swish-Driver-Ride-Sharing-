@@ -384,6 +384,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/details_btn_design"
                         android:text="Confirm"
+                        android:visibility="gone"
                         android:textAllCaps="false"
                         android:textSize="18sp" />
                 </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
@@ -404,6 +405,7 @@
                         android:id="@+id/customerDetailsBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:background="@drawable/details_btn_design"
                         android:text="Customer Details"
                         android:textAllCaps="false"
@@ -486,6 +488,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/details_btn_design"
                     android:text="Cancel"
+                    android:visibility="gone"
                     android:textAllCaps="false"
                     android:textSize="18sp" />
 

@@ -226,13 +226,13 @@ public class AllVerificationActivity extends AppCompatActivity {
                     list2 = response.body();
 
                     checkRegistered=list2.get(0).getStatus();
-                    if(checkRegistered.equals("Active")){
+                    if(!checkRegistered.equals("Deactive")){
+                        relativeLayout1.setVisibility(View.VISIBLE);
+                        relativeLayout2.setVisibility(View.GONE);
+                    }else{
                         relativeLayout1.setVisibility(View.GONE);
                         relativeLayout2.setVisibility(View.VISIBLE);
                         registrationNumber.setText(driverId);
-                    }else{
-                        relativeLayout1.setVisibility(View.VISIBLE);
-                        relativeLayout2.setVisibility(View.GONE);
                     }
 
 

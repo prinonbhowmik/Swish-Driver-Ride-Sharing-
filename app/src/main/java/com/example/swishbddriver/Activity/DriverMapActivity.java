@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
@@ -34,12 +35,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.Internet.ConnectivityReceiver;
 import com.example.swishbddriver.Model.ApiDeviceToken;
 import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
@@ -91,7 +94,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCallback,
+        NavigationView.OnNavigationItemSelectedListener {
     private ImageButton menuImageBtn;
     private DrawerLayout drawerLayout;
     private GoogleMap map;
@@ -110,7 +114,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private TextView UserName, userPhone;
     private static int time = 5000;
     private boolean isGPS = false;
-    private boolean isContinue = false;
+    private boolean isContinue = false,hasOnGoing=false;
     private boolean dark;
     private ArrayList<String> rID;
     private double latitude, longitude, getdestinationLat, getDestinationLon;
@@ -130,6 +134,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private List<DriverInfo> list;
     private int locationPermissionCheckMsg;
     private Dialog dialog;
+    private Button nestedSV;
+    private RelativeLayout ongoingRl;
+    private ConnectivityReceiver connectivityReceiver;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -285,17 +292,23 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         String cashReceived = data.child("cashReceived").getValue().toString();
                         String rideStatus = data.child("rideStatus").getValue().toString();
                         String dId = data.child("driverId").getValue().toString();
-                        if (dId.equals(driverId) && cashReceived.equals("no") && rideStatus.equals("End")) {
-                            String id = data.child("bookingId").getValue().toString();
-                            String customerID = data.child("customerId").getValue().toString();
+                        if(rideStatus.equals("Start")){
+                            ongoingRl.setVisibility(View.VISIBLE);
+                            hasOnGoing=true;
+                        }
+                        else if (rideStatus.equals("End")) {
+                            if(dId.equals(driverId) && cashReceived.equals("no")) {
+                                String id = data.child("bookingId").getValue().toString();
+                                String customerID = data.child("customerId").getValue().toString();
 
-                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
-                            intent.putExtra("tripId", id);
-                            intent.putExtra("customerId", customerID);
-                            intent.putExtra("check", 2);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            finish();
-                            startActivity(intent);
+                                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                                intent.putExtra("tripId", id);
+                                intent.putExtra("customerId", customerID);
+                                intent.putExtra("check", 2);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                finish();
+                                startActivity(intent);
+                            }
                         }
 
                     }
@@ -320,17 +333,22 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         String cashReceived = data.child("cashReceived").getValue().toString();
                         String rideStatus = data.child("rideStatus").getValue().toString();
                         String dId = data.child("driverId").getValue().toString();
-                        if (dId.equals(driverId) && cashReceived.equals("no") && rideStatus.equals("End")) {
-                            String id = data.child("bookingId").getValue().toString();
-                            String customerID = data.child("customerId").getValue().toString();
+                        if(rideStatus.equals("Start")){
+                            ongoingRl.setVisibility(View.VISIBLE);
+                        }
+                        else if ( rideStatus.equals("End")) {
+                            if(dId.equals(driverId) && cashReceived.equals("no")) {
+                                String id = data.child("bookingId").getValue().toString();
+                                String customerID = data.child("customerId").getValue().toString();
 
-                            Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
-                            intent.putExtra("tripId", id);
-                            intent.putExtra("customerId", customerID);
-                            intent.putExtra("check", 1);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            finish();
-                            startActivity(intent);
+                                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                                intent.putExtra("tripId", id);
+                                intent.putExtra("customerId", customerID);
+                                intent.putExtra("check", 1);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                finish();
+                                startActivity(intent);
+                            }
                         }
 
 
@@ -622,7 +640,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressBar.setVisibility(View.GONE);
                 if (snapshot.hasChild(driverId)) {
-                    buttonOn.setVisibility(View.VISIBLE);
+                    if(hasOnGoing){
+                        buttonOn.setVisibility(View.GONE);
+                    }else {
+                        buttonOn.setVisibility(View.VISIBLE);
+                    }
                     buttonOff.setVisibility(View.GONE);
                 } else {
                     buttonOff.setVisibility(View.VISIBLE);
@@ -756,9 +778,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void init() {
+        checkConnection();
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         supportMapFragment.getMapAsync(this);
-
+        nestedSV=findViewById(R.id.nestedSV);
+        ongoingRl=findViewById(R.id.ongoingRl);
+        connectivityReceiver=new ConnectivityReceiver();
         menuImageBtn = findViewById(R.id.navMenu);
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
@@ -926,7 +951,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             alertDialog.show();
                             break;
                         }
-                        case "Payment Lock": {
+                        case "Payment_Lock": {
                             AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                             dialog.setTitle("Alert..!!");
                             dialog.setIcon(R.drawable.ic_leave_24);
@@ -942,7 +967,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             alertDialog.show();
                             break;
                         }
-                        case "Report Lock": {
+                        case "Report_Lock": {
                             AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
                             dialog.setTitle("Lock..!!");
                             dialog.setIcon(R.drawable.ic_leave_24);
@@ -1142,4 +1167,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         }
         doublePressToExit = System.currentTimeMillis();
     }
+    private void checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+
+        if (!isConnected){
+            Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 }
