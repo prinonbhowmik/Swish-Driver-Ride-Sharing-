@@ -198,9 +198,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 if (snapshot.exists()) {
                                     DatabaseReference updtRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType)
                                             .child(driverId).child("l");
-
                                     updtRef.child("0").setValue(latitude);
                                     updtRef.child("1").setValue(longitude);
+
+                                    DatabaseReference updtRef2 = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType)
+                                            .child(driverId).child("l");
+                                    updtRef2.child("0").setValue(latitude);
+                                    updtRef2.child("1").setValue(longitude);
 
                                 } else {
                                     return;
@@ -262,7 +266,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
+                        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+
                         dRef.removeValue();
+                        availableRef.removeValue();
                         buttonOff.setVisibility(View.VISIBLE);
                         buttonOn.setVisibility(View.GONE);
                     }
@@ -632,9 +639,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
+
+                            DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+
                             GeoFire geoFire = new GeoFire(onlineRef);
+                            GeoFire geoFire2 = new GeoFire(availableRef);
 
                             geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
+                            geoFire2.setLocation(driverId, new GeoLocation(latitude, longitude));
                             buttonOff.setVisibility(View.GONE);
                             buttonOn.setVisibility(View.VISIBLE);
                             dialog.dismiss();

@@ -489,6 +489,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 DatabaseReference onlineRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType);
+
                 GeoFire geoFire = new GeoFire(onlineRef);
 
                 geoFire.setLocation(driverId, new GeoLocation(currentLat, currentLon));
@@ -516,6 +517,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (currentLat != 0.0 && currentLon != 0.0) {
+                    DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+                    availableRef.removeValue();
                     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
@@ -864,6 +867,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
     }
 
     private void loadingAnimation() {
+        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+        GeoFire geoFire = new GeoFire(availableRef);
+        geoFire.setLocation(driverId, new GeoLocation(currentLat, currentLon));
         loadingLayout.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
