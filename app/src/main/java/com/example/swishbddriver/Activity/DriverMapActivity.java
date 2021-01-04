@@ -201,13 +201,25 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     updtRef.child("0").setValue(latitude);
                                     updtRef.child("1").setValue(longitude);
 
-                                    DatabaseReference updtRef2 = FirebaseDatabase.getInstance().getReference("OnLineDrivers").child(carType)
+                                } else {
+                                    return;
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType).child(driverId);
+                        availableRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    DatabaseReference updtRef2 = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType)
                                             .child(driverId).child("l");
                                     updtRef2.child("0").setValue(latitude);
                                     updtRef2.child("1").setValue(longitude);
-
-                                } else {
-                                    return;
                                 }
                             }
 
