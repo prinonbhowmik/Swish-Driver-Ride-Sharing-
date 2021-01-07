@@ -239,7 +239,6 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
                 android:padding="15dp"
                 app:civ_border_color="@android:color/black"
                 app:civ_border_width="1dp" />
@@ -248,7 +247,7 @@
                 android:id="@+id/customerNameTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -257,7 +256,7 @@
                 android:id="@+id/pickPlaceTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -266,7 +265,9 @@
                 android:id="@+id/callCustomerBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 android:background="@drawable/btn_background"
                 android:drawableStart="@drawable/ic_baseline_call_24"
                 android:text="Call Passenger"
@@ -287,6 +288,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/btn_background"
                     android:text="Cancel"
+                    android:textAllCaps="false"
                     android:textColor="#fff"
                     android:textSize="18sp" />
 
@@ -296,6 +298,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:textAllCaps="false"
                     android:background="@drawable/btn_background"
                     android:text="Start Trip"
                     android:textColor="#fff"
@@ -310,6 +313,7 @@
     </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
+
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -323,19 +327,6 @@
         app:menu="@menu/nav_options"
         android:visibility="visible">
 
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="10dp"
-            android:orientation="vertical"
-            android:padding="5dp">
-            <TextView
-                android:id="@+id/eamil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="support@swish.com.bd" />
-        </LinearLayout>-->
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
