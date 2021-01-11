@@ -715,6 +715,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         startTripBtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
+                                                if (hasOngoing) {
+                                                    alreadyOngoingAlert();
+                                                    Toast.makeText(DriverMapActivity.this, "You are already ongoing with other trip", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    checkDriverOnLine();
+                                                }
 
                                             }
                                         });
@@ -746,6 +752,22 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
+    }
+
+    private void alreadyOngoingAlert() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Already on a trip!");
+        dialog.setIcon(R.drawable.logo_circle);
+        dialog.setMessage("You are already in a trip. You can not start this trip until you end that trip. ");
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
     }
 
     private void showPickUpRoute(String getPickUpLat, String getPickUpLon, String place, double driverLat, double driverLon) {
