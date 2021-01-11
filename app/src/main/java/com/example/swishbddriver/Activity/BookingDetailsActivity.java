@@ -315,6 +315,30 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
+                                    if (!hasOngoing) {
+                                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType);
+                                        ref2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                                if (dataSnapshot1.exists()) {
+                                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                                        if (driver_id.equals(driverId)) {
+                                                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                                            if (rStatus.equals("Start")) {
+                                                                hasOngoing = true;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
                                 }
                             }
 

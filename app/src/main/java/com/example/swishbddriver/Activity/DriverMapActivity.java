@@ -130,7 +130,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private CircleImageView profileImage, passengerIV;
     private TextView UserName, userPhone;
     private static int time = 5000;
-    private boolean isGPS = false;
+    private boolean isGPS = false,hasOngoing = false;
     private boolean isContinue = false, hasOnGoing = false, firstTime = true;
     private boolean dark;
     private ArrayList<String> rID;
@@ -145,7 +145,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI", place, bookingId, tripStatus, customerId, accptDriverId,
             getPickUpLat, getPickUpLon;
     private ApiInterface apiInterface;
-    private LinearLayout rideRequestLayout, customerDetailsLayout;
+    private LinearLayout rideRequestLayout;
     private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
     private Button rejectBtn, accptBtn, callCustomerBtn, cancelbtn, startTripBtn;
     private double pickUpLat, pickUpLon;
@@ -153,7 +153,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private int locationPermissionCheckMsg;
     private Dialog dialog;
     private Button nestedSV;
-    private RelativeLayout ongoingRl;
+    private RelativeLayout ongoingRl,customerDetailsLayout;
     private ConnectivityReceiver connectivityReceiver;
     private Polyline currentPolyline;
     private MarkerOptions place1, place2;
@@ -176,7 +176,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         checkLocationPermission();
         checkCashReceived();
         checkHourlyCashReceived();
-
+        checkOngoing();
 
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
@@ -326,6 +326,80 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 alertDialog.show();
             }
         });
+    }
+
+    private void checkOngoing() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    for (DataSnapshot data : snapshot.getChildren()){
+                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                        if (driver_id.equals(driverId)) {
+                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                            if (rStatus.equals("Start")) {
+                                hasOngoing = true;
+                            }
+                        }
+                    }
+                    if (!hasOngoing) {
+                        DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType);
+                        ref1.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                if (dataSnapshot1.exists()) {
+                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                        if (driver_id.equals(driverId)) {
+                                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                            if (rStatus.equals("Start")) {
+                                                hasOngoing = true;
+                                            }
+                                        }
+                                    }
+                                    if (!hasOngoing) {
+                                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType);
+                                        ref2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                                if (dataSnapshot1.exists()) {
+                                                    for (DataSnapshot data : dataSnapshot1.getChildren()) {
+                                                        String driver_id = String.valueOf(data.child("driverId").getValue());
+                                                        if (driver_id.equals(driverId)) {
+                                                            String rStatus = String.valueOf(data.child("rideStatus").getValue());
+                                                            if (rStatus.equals("Start")) {
+                                                                hasOngoing = true;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void checkHourlyCashReceived() {
@@ -581,7 +655,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             place = data.child("pickUpPlace").getValue().toString();
                             getPickUpLat = data.child("pickUpLat").getValue().toString();
                             getPickUpLon = data.child("pickUpLon").getValue().toString();
-                            Log.d("checkDataVai", getPickUpLat + "," + getPickUpLon);
 
                             DatabaseReference mapRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers")
                                     .child(carType).child(driverId).child("l");
@@ -642,15 +715,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         startTripBtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                               /* Intent intent = new Intent(DriverMapActivity.this, BookLaterMapActivity.class);
-                                                intent.putExtra("pLat", String.valueOf(pickUpLat));
-                                                intent.putExtra("pLon", String.valueOf(pickUpLon));
-                                                intent.putExtra("pPlace", place);
-                                                intent.putExtra("check", 1);
-                                                intent.putExtra("id", bookingId);
-                                                intent.putExtra("carType", carType);
-                                                intent.putExtra("rideStatus", "instant");
-                                                startActivity(intent);*/
+
                                             }
                                         });
                                         cancelbtn.setOnClickListener(new View.OnClickListener() {
