@@ -22,11 +22,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="27dp"
         android:layout_toEndOf="@id/personIV"
         android:text="Customer Name"
+        android:fontFamily="@font/comfortaa_light"
         android:textColor="@android:color/black"
-        android:textSize="21sp" />
+        android:textSize="18sp" />
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
         android:id="@+id/card_view1"
@@ -48,9 +49,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:fontFamily="@font/comfortaa_light"
             android:background="@drawable/stroke"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
     </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
     <ImageView
@@ -59,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/card_view1"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:src="@drawable/ic_phone2"
         android:textColor="@android:color/black" />
 
@@ -71,8 +73,9 @@
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/phoneIV"
         android:text="Phone Number"
+        android:fontFamily="@font/comfortaa_light"
         android:textColor="@android:color/black"
-        android:textSize="21sp" />
+        android:textSize="18sp" />
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
         android:id="@+id/card_view2"
@@ -94,9 +97,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:fontFamily="@font/comfortaa_light"
             android:background="@drawable/stroke"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
     </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
@@ -117,6 +121,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/details_btn_design"
             android:text="Call"
+            android:fontFamily="@font/comfortaa_light"
             android:textColor="@color/green1"
             android:textAllCaps="false"
             android:textSize="18sp" />

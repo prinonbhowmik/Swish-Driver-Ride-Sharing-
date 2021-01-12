@@ -758,6 +758,8 @@ public class HourlyDetailsActivity extends AppCompatActivity {
             dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+                    availableRef.child(driverId).removeValue();
                     Locale locale = new Locale("en");
                     Geocoder geocoder = new Geocoder(HourlyDetailsActivity.this, locale);
                     try {

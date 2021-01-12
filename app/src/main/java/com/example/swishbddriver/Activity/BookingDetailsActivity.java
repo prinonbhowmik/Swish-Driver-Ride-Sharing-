@@ -542,7 +542,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (currentLat != 0.0 && currentLon != 0.0) {
                     DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
-                    availableRef.removeValue();
+                    availableRef.child(driverId).removeValue();
                     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     if (ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;

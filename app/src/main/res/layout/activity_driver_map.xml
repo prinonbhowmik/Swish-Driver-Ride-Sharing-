@@ -60,40 +60,42 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
             android:layout_marginTop="100dp"
+            android:layout_marginEnd="10dp"
             android:backgroundTint="@color/themColor"
             android:clickable="true"
-            app:fabSize="mini"
-            android:src="@drawable/ic_location_searching_24" />
+            android:src="@drawable/ic_location_searching_24"
+            app:fabSize="mini" />
 
         <RelativeLayout
             android:id="@+id/ongoingRl"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:background="@android:color/white"
-            android:layout_alignParentBottom="true">
+            android:visibility="gone">
+
             <TextView
                 android:id="@+id/t_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:text="You have an one going trip"
-                android:layout_marginTop="10dp"/>
-        <Button
-            android:id="@+id/viewOngoingTrip"
-            android:layout_width="150dp"
-            android:layout_height="55dp"
-            android:visibility="visible"
-            android:text="View Details"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_below="@+id/t_1"
-            android:background="@drawable/btn_background"
-            android:textColor="@android:color/white"
-            android:layout_centerInParent="true" />
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/viewOngoingTrip"
+                android:layout_width="150dp"
+                android:layout_height="55dp"
+                android:layout_below="@+id/t_1"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/btn_background"
+                android:text="View Details"
+                android:textColor="@android:color/white"
+                android:visibility="visible" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -119,6 +121,7 @@
                 android:id="@+id/rl1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="visible"
                 android:background="@color/transparent">
 
 
@@ -157,6 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:fontFamily="@font/comfortaa_light"
                 android:text="New Ride Request!"
                 android:textAlignment="center"
                 android:textColor="#000"
@@ -185,6 +189,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/userpickup"
+                android:fontFamily="@font/comfortaa_light"
                 android:text="Ride Request!"
                 android:textAlignment="center"
                 android:textColor="#000"
@@ -203,6 +208,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:background="@drawable/reject_btn_background"
+                    android:fontFamily="@font/comfortaa_light"
                     android:text="Reject"
                     android:textAllCaps="false"
                     android:textColor="#000" />
@@ -214,6 +220,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:background="@drawable/btn_background"
+                    android:fontFamily="@font/comfortaa_light"
                     android:text="Accept"
                     android:textAllCaps="false"
                     android:textColor="#fff" />
@@ -229,24 +236,25 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
-            android:visibility="gone"
             android:background="@drawable/rounded_corner_layout"
+            android:visibility="gone"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
                 android:id="@+id/profileNFL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:neomorph_view_type="circular"
-                app:neomorph_shadow_type="outer"
-                app:neomorph_elevation="5dp"
-                app:neomorph_corner_radius="10dp"
                 android:layout_marginStart="15dp"
+                android:layout_marginBottom="5dp"
                 android:layerType="software"
                 app:neomorph_background_color="@color/neomorph_background_color"
-                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="5dp"
                 app:neomorph_highlight_color="@color/neomorph_highlight_color"
-                android:layout_marginBottom="5dp">
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="circular">
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/passengerIV"
                     android:layout_width="70dp"
@@ -260,18 +268,21 @@
                 android:id="@+id/customerNameTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:textColor="#000"
                 android:layout_toEndOf="@+id/profileNFL"
+                android:fontFamily="@font/comfortaa_light"
+                android:textColor="#000"
                 android:textSize="18sp" />
+
+
 
             <TextView
                 android:id="@+id/pickPlaceTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:textAlignment="center"
                 android:layout_below="@+id/profileNFL"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/comfortaa_light"
+                android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="18sp" />
 
@@ -279,12 +290,13 @@
                 android:id="@+id/callCustomerBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/pickPlaceTv"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_below="@+id/pickPlaceTv"
                 android:background="@drawable/btn_background"
                 android:drawableStart="@drawable/ic_baseline_call_24"
+                android:fontFamily="@font/comfortaa_light"
                 android:text="Call Passenger"
                 android:textColor="#fff"
                 android:textSize="18sp" />
@@ -292,8 +304,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@+id/callCustomerBtn"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <Button
@@ -303,6 +315,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/btn_background"
+                    android:fontFamily="@font/comfortaa_light"
                     android:text="Cancel"
                     android:textAllCaps="false"
                     android:textColor="#fff"
@@ -314,17 +327,196 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:textAllCaps="false"
                     android:background="@drawable/btn_background"
+                    android:fontFamily="@font/comfortaa_light"
                     android:text="Start Trip"
+                    android:textAllCaps="false"
                     android:textColor="#fff"
                     android:textSize="18sp" />
 
             </LinearLayout>
 
 
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/onGoingTripData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/rounded_corner_layout"
+            android:visibility="gone"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+                android:id="@+id/profileNFL2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layerType="software"
+                app:neomorph_background_color="@color/neomorph_background_color"
+                app:neomorph_corner_radius="10dp"
+                app:neomorph_elevation="5dp"
+                app:neomorph_highlight_color="@color/neomorph_highlight_color"
+                app:neomorph_shadow_color="@color/neomorph_shadow_color"
+                app:neomorph_shadow_type="outer"
+                app:neomorph_view_type="circular">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/passengerIV2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="start"
+                    app:civ_border_color="@android:color/black"
+                    app:civ_border_width="1dp" />
+            </com.chinodev.androidneomorphframelayout.NeomorphFrameLayout>
+
+            <ImageView
+                android:id="@+id/navigation"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="start"
+                android:src="@drawable/ic_navigation"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                />
+
+            <TextView
+                android:id="@+id/customerNameTv2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/profileNFL2"
+                android:fontFamily="@font/comfortaa_light"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/priceTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/comfortaa_light"
+                android:layout_below="@+id/customerNameTv2"
+                android:layout_toEndOf="@+id/profileNFL2"
+                android:drawableLeft="@drawable/ic_taka"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="12sp" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/profileNFL2"
+                android:background="#BFBDBD" />
+
+            <LinearLayout
+                android:id="@+id/layoutplace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/view"
+                android:orientation="horizontal"
+                android:weightSum="8">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/ic_map" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/ic_flags"
+                        android:layout_marginBottom="7dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/onGoingPickUp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="@font/comfortaa_light"
+                        android:maxLines="1"
+                        android:textColor="#000" />
+
+                    <TextView
+                        android:id="@+id/onGoingDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/comfortaa_light"
+                        android:maxLines="1"
+                        android:textColor="#000" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/layoutplace"
+                android:background="#BFBDBD" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/view2"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/onGoingCustDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/comfortaa_light"
+                    android:maxLines="1"
+                    android:text="Details"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="#03A9F4" />
+
+                <TextView
+                    android:id="@+id/onGoingEndTrip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/comfortaa_light"
+                    android:maxLines="1"
+                    android:text="End Trip"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="#FF0000" />
+            </LinearLayout>
+
 
         </RelativeLayout>
+
 
     </FrameLayout>
 
@@ -334,14 +526,14 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:visibility="gone"
         app:headerLayout="@layout/navigation_drawer_header"
         app:itemIconTint="@color/themColor"
         app:itemTextColor="@color/themColor2"
-        app:menu="@menu/nav_options"
-        android:visibility="visible">
+        app:menu="@menu/nav_options">
 
     </com.google.android.material.navigation.NavigationView>
 
