@@ -316,7 +316,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child("OnLineDrivers").child(carType).child(driverId);
-                        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+                        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType).child(driverId);
 
                         dRef.removeValue();
                         availableRef.removeValue();
