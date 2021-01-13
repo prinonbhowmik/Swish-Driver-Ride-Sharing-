@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -971,6 +972,32 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             }
                         });
 
+                        onGoingEndTrip.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                                dialog.setTitle("End Trip!!");
+                                dialog.setIcon(R.drawable.logo_circle);
+                                dialog.setMessage("Do you want to end this trip ?");
+                                dialog.setCancelable(false);
+                                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        confirmEndTrip(customerId,tripId,getPickUpLat,getPickUpLon);
+                                       // sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
+                                    }
+                                });
+                                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                AlertDialog alertDialog = dialog.create();
+                                alertDialog.show();
+                            }
+                        });
+
                     }
                 }
             }
@@ -980,6 +1007,74 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
+
+    }
+
+    private void confirmEndTrip(String customerId, String tripId, String pickUpLat, String pickUpLon) {
+        Call<List<ProfileModel>> call2 = apiInterface.getData(driverId);
+        call2.enqueue(new Callback<List<ProfileModel>>() {
+            @Override
+            public void onResponse(Call<List<ProfileModel>> call2, Response<List<ProfileModel>> response) {
+                List<ProfileModel> list = response.body();
+                int rideCount = list.get(0).getRideCount();
+                int totalRide = rideCount + 1;
+                Call<List<ProfileModel>> call1 = apiInterface.rideCountUpdate(driverId, totalRide);
+                call1.enqueue(new Callback<List<ProfileModel>>() {
+                    @Override
+                    public void onResponse(Call<List<ProfileModel>> call, Response<List<ProfileModel>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ProfileModel>> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<ProfileModel>> call2, Throwable t) {
+
+            }
+        });
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(DriverMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverMapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        getDesLat = String.valueOf(latitude);
+        getDesLon = String.valueOf(longitude);
+
+        Locale locale = new Locale("bn","BN");
+        Geocoder geocoder = new Geocoder(DriverMapActivity.this, locale);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            getDestinationPlace = addresses.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String endTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa").format(Calendar.getInstance().getTime());
+        DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
+        rideRef.child("rideStatus").setValue("End");
+        rideRef.child("destinationLat").setValue(getDesLat);
+        rideRef.child("destinationLon").setValue(getDesLon);
+        rideRef.child("destinationPlace").setValue(String.valueOf(getDestinationPlace));
+        rideRef.child("endTime").setValue(endTime);
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerId).child(tripId);
+        userRef.child("rideStatus").setValue("End");
+        userRef.child("destinationLat").setValue(getDesLat);
+        userRef.child("destinationLon").setValue(getDesLon);
+        userRef.child("destinationPlace").setValue(String.valueOf(getDestinationPlace));
+        userRef.child("endTime").setValue(endTime);
+
+        String origins = pickUpLat + "," + pickUpLon;
+        String destination = latitude + "," + longitude;
 
     }
 
@@ -997,12 +1092,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
         BitmapDescriptor markerIcon = vectorToBitmap(R.drawable.car_top_view);
-
+        BitmapDescriptor markerIcon2 = vectorToBitmap(R.drawable.ic_destination);
         float bearing = CalculateBearingAngle(driverLat,driverLon,Double.parseDouble(getDesLat),Double.parseDouble(getDesLon));
 
         place1 = new MarkerOptions().icon(markerIcon).flat(true)
                 .position(new LatLng(driverLat, driverLon)).rotation(bearing).anchor(0.5f,0.5f).flat(true);
-        BitmapDescriptor markerIcon2 = vectorToBitmap(R.drawable.destination);
+
         place2 = new MarkerOptions().icon(markerIcon2)
                 .position(new LatLng(Double.parseDouble(getDesLat), Double.parseDouble(getDesLon))).title(getDestinationPlace);
 

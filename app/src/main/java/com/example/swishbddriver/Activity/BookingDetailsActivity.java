@@ -439,7 +439,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         destinationLat = String.valueOf(currentLat);
         destinationLon = String.valueOf(currentLon);
 
-        Locale locale = new Locale("en");
+        Locale locale = new Locale("bn","BN");
         Geocoder geocoder = new Geocoder(BookingDetailsActivity.this, locale);
         try {
             List<Address> addresses = geocoder.getFromLocation(currentLat, currentLon, 1);
