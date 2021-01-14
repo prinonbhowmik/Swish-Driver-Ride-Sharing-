@@ -104,7 +104,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
     private int ride;
     private List<ProfileModel> list;
     private ApiInterface api;
-    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance, addWalletBalance, discountAmount, discount, updatewallet,updateE_wallet, finalPrice, eWallet,swishDefaultDiscount;
+    private int price, check, realprice = 0, amountPer, setCoupon, walletBalance,
+            addWalletBalance, discountAmount, discount, updatewallet,updateE_wallet,
+            finalPrice, eWallet,swishDefaultDiscount;
     private boolean couponActive = false, walletHigh = false;
     private Date date1, date2;
     private int days, hour;

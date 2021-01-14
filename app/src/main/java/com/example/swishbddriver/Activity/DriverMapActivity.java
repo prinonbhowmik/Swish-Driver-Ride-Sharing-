@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,8 +33,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,14 +50,18 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.swishbddriver.Api.ApiInterface;
 import com.example.swishbddriver.Api.ApiUtils;
+import com.example.swishbddriver.ForApi.DistanceApiClient;
+import com.example.swishbddriver.ForApi.DistanceResponse;
+import com.example.swishbddriver.ForApi.Element;
+import com.example.swishbddriver.ForApi.RestUtil;
 import com.example.swishbddriver.ForMap.FetchURL;
 import com.example.swishbddriver.ForMap.TaskLoadedCallback;
 import com.example.swishbddriver.Internet.ConnectivityReceiver;
 import com.example.swishbddriver.Model.ApiDeviceToken;
-import com.example.swishbddriver.Model.BookRegularModel;
 import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.ProfileModel;
+import com.example.swishbddriver.Model.RidingRate;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Remote.LatLngInterpolator;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -101,8 +106,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
@@ -110,12 +117,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static java.lang.Math.asin;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
-import static java.lang.Math.pow;
 import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
 
 public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         NavigationView.OnNavigationItemSelectedListener, TaskLoadedCallback {
@@ -158,13 +162,17 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
     private double pickUpLat, pickUpLon;
     private List<DriverInfo> list;
-    private int locationPermissionCheckMsg;
+    private int kmdistance,travelduration,estprice,swishDefaultDiscount,walletBalance,discountAmount,finalPrice,
+            discount,updatewallet,updateE_wallet;
     private Dialog dialog;
     private Button nestedSV;
     private RelativeLayout ongoingRl,customerDetailsLayout,rl1,onGoingTripData;
     private ConnectivityReceiver connectivityReceiver;
     private Polyline currentPolyline;
     private MarkerOptions place1, place2;
+    private String pickUpCity,destinationCity,destinationDivision;
+    private String paymentType,swish_wallet;
+    private int eWallet;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -899,6 +907,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         getPickUpLon = data.child("pickUpLon").getValue().toString();
                         getDesLat = data.child("destinationLat").getValue().toString();
                         getDesLon = data.child("destinationLon").getValue().toString();
+                        paymentType = data.child("payment").getValue().toString();
                         String price = data.child("price").getValue().toString();
 
                         Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
@@ -963,38 +972,39 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             bottom_sheet.show(getSupportFragmentManager(), "bottomSheet");
                                         }
                                     });
+
+
+                                    onGoingEndTrip.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
+                                            dialog.setTitle("End Trip!!");
+                                            dialog.setIcon(R.drawable.logo_circle);
+                                            dialog.setMessage("Do you want to end this trip ?");
+                                            dialog.setCancelable(false);
+                                            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    confirmEndTrip(customerId,tripId,getPickUpLat,getPickUpLon,paymentType);
+                                                    // sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
+                                                }
+                                            });
+                                            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+                                            AlertDialog alertDialog = dialog.create();
+                                            alertDialog.show();
+                                        }
+                                    });
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
 
-                            }
-                        });
-
-                        onGoingEndTrip.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                AlertDialog.Builder dialog = new AlertDialog.Builder(DriverMapActivity.this);
-                                dialog.setTitle("End Trip!!");
-                                dialog.setIcon(R.drawable.logo_circle);
-                                dialog.setMessage("Do you want to end this trip ?");
-                                dialog.setCancelable(false);
-                                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        confirmEndTrip(customerId,tripId,getPickUpLat,getPickUpLon);
-                                       // sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
-                                    }
-                                });
-                                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                    }
-                                });
-                                AlertDialog alertDialog = dialog.create();
-                                alertDialog.show();
                             }
                         });
 
@@ -1010,7 +1020,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    private void confirmEndTrip(String customerId, String tripId, String pickUpLat, String pickUpLon) {
+    private void confirmEndTrip(String customerId, String tripId, String pickUpLat, String pickUpLon, String paymentType) {
         Call<List<ProfileModel>> call2 = apiInterface.getData(driverId);
         call2.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -1049,7 +1059,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         getDesLat = String.valueOf(latitude);
         getDesLon = String.valueOf(longitude);
 
-        Locale locale = new Locale("bn","BN");
+        Locale locale = new Locale("en");
         Geocoder geocoder = new Geocoder(DriverMapActivity.this, locale);
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -1075,7 +1085,263 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         String origins = pickUpLat + "," + pickUpLon;
         String destination = latitude + "," + longitude;
+        Map<String, String> mapQuery = new HashMap<>();
+        mapQuery.put("units", "driving");
+        mapQuery.put("origins", origins);
+        mapQuery.put("destinations", destination);
+        mapQuery.put("key", apiKey);
 
+        DistanceApiClient client = RestUtil.getInstance().getRetrofit().create(DistanceApiClient.class);
+        Call<DistanceResponse> call = client.getDistanceInfo(mapQuery);
+        call.enqueue(new Callback<DistanceResponse>() {
+            @Override
+            public void onResponse(Call<DistanceResponse> call, Response<DistanceResponse> response) {
+                if (response.body() != null &&
+                        response.body().getRows() != null &&
+                        response.body().getRows().size() > 0 &&
+                        response.body().getRows().get(0) != null &&
+                        response.body().getRows().get(0).getElements() != null &&
+                        response.body().getRows().get(0).getElements().size() > 0 &&
+                        response.body().getRows().get(0).getElements().get(0) != null &&
+                        response.body().getRows().get(0).getElements().get(0).getDistance() != null &&
+                        response.body().getRows().get(0).getElements().get(0).getDuration() != null) {
+
+                    Element element = response.body().getRows().get(0).getElements().get(0);
+                    int distance = element.getDistance().getValue();
+                    int trduration = element.getDuration().getValue();
+
+                    kmdistance = distance / 1000;
+                    travelduration = trduration / 60;
+
+                    Call<List<RidingRate>> rideCall = apiInterface.getPrice(carType);
+                    rideCall.enqueue(new Callback<List<RidingRate>>() {
+                        @Override
+                        public void onResponse(Call<List<RidingRate>> call, Response<List<RidingRate>> response) {
+                            if (response.isSuccessful()) {
+                                List<RidingRate> rate = new ArrayList<>();
+                                rate = response.body();
+                                int kmRate = rate.get(0).getKm_charge();
+                                int minRate = rate.get(0).getMin_charge();
+                                int minimumRateOutside = rate.get(0).getBase_fare_outside_dhaka();
+                                int minimumRateInside = rate.get(0).getBase_fare_inside_dhaka();
+
+                                int kmPrice = kmRate * kmdistance;
+                                int minPrice = minRate * travelduration;
+
+                                Locale locale2 = new Locale("bn","BN");
+                                Geocoder geocoder = new Geocoder(DriverMapActivity.this, locale2);
+                                try {
+                                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                                    destinationCity = addresses.get(0).getLocality();
+                                    destinationDivision = addresses.get(0).getAdminArea();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Geocoder geocoder2 = new Geocoder(DriverMapActivity.this, locale2);
+                                try {
+                                    List<Address> addresses = geocoder2.getFromLocation(Double.parseDouble(pickUpLat), Double.parseDouble(pickUpLon), 1);
+                                    pickUpCity = addresses.get(0).getLocality();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Division").child(destinationDivision);
+                                reference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        if (!pickUpCity.equals(destinationCity)){
+                                            int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
+                                            estprice = kmPrice + minPrice + minimumRateOutside;
+                                            int divisionPercent = (estprice*farePercent)/100;
+                                            int finalPrice = estprice+divisionPercent;
+                                            updatePrice(customerId,tripId,finalPrice,paymentType);
+                                        }else{
+                                            int finalPrice = kmPrice + minPrice + minimumRateInside;
+                                            updatePrice(customerId,tripId,finalPrice,paymentType);
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<RidingRate>> call, Throwable t) {
+
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DistanceResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void updatePrice(String customerId, String tripId, int actualPrice, String paymentType) {
+        if (paymentType.equals("cash")) {
+
+            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerId).child(tripId);
+            updateRef.child("price").setValue(String.valueOf(actualPrice));
+            updateRef.child("discount").setValue("0");
+            updateRef.child("finalPrice").setValue(String.valueOf(actualPrice));
+            updateRef.child("totalDistance").setValue(String.valueOf(kmdistance));
+            updateRef.child("totalTime").setValue(String.valueOf(travelduration));
+
+            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
+            newRef.child("price").setValue(String.valueOf(actualPrice));
+            newRef.child("discount").setValue("0");
+            newRef.child("finalPrice").setValue(String.valueOf(actualPrice));
+            newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
+            newRef.child("totalTime").setValue(String.valueOf(travelduration));
+
+
+            loadingAnimation(tripId,customerId);
+
+        }
+        else if (paymentType.equals("wallet")) {
+
+            DatabaseReference swishWallet = FirebaseDatabase.getInstance().getReference().child("Wallet");
+            swishWallet.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()) {
+                        swish_wallet = snapshot.child("swishWallet").getValue().toString();
+                        swishDefaultDiscount = Integer.parseInt(swish_wallet);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            DatabaseReference eWalletRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
+            eWalletRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    eWallet = Integer.parseInt(snapshot.child("e_wallet").getValue().toString());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            Call<List<CustomerProfile>> getwalletCall = apiInterface.getCustomerData(customerId);
+            getwalletCall.enqueue(new Callback<List<CustomerProfile>>() {
+                @Override
+                public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+                    if (response.isSuccessful()) {
+                        List<CustomerProfile> list = response.body();
+                        walletBalance = list.get(0).getWallet();
+                        if(eWallet<=0){
+                            discountAmount = (actualPrice * swishDefaultDiscount)/100;
+
+                            if (walletBalance < discountAmount) {
+
+                                finalPrice = actualPrice - walletBalance;
+                                discount = walletBalance;
+                                updatewallet = 0;
+                            } else if (walletBalance >= discountAmount) {
+                                finalPrice = actualPrice-discountAmount;
+                                discount = discountAmount;
+                                updatewallet = walletBalance - discountAmount;
+                            }
+                        }
+                        else if(eWallet>0){
+                            if(eWallet>=actualPrice){
+                                finalPrice=0;
+                                discountAmount=actualPrice;
+                                discount=actualPrice;
+                                updateE_wallet=eWallet-actualPrice;
+                            }else {
+                                finalPrice=actualPrice-eWallet;
+                                discountAmount=eWallet;
+                                discount=eWallet;
+                                updateE_wallet=0;
+                            }
+                        }
+
+                        Log.d("finalPrice", String.valueOf(finalPrice));
+                        Log.d("discount", String.valueOf(discount));
+
+                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerId).child(tripId);
+                        updateRef.child("price").setValue(String.valueOf(actualPrice));
+                        updateRef.child("discount").setValue(String.valueOf(discount));
+                        updateRef.child("finalPrice").setValue(String.valueOf(finalPrice));
+                        updateRef.child("totalDistance").setValue(String.valueOf(kmdistance));
+                        updateRef.child("totalTime").setValue(String.valueOf(travelduration));
+
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(tripId);
+                        newRef.child("price").setValue(String.valueOf(actualPrice));
+                        newRef.child("discount").setValue(String.valueOf(discount));
+                        newRef.child("finalPrice").setValue(String.valueOf(finalPrice));
+                        newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
+                        newRef.child("totalTime").setValue(String.valueOf(travelduration));
+
+
+                        Call<List<CustomerProfile>> listCall = apiInterface.walletValue(customerId, updatewallet,updateE_wallet);
+                        listCall.enqueue(new Callback<List<CustomerProfile>>() {
+                            @Override
+                            public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerProfile>> call, Throwable t) {
+                    Log.d("walletError", "" + t.getMessage());
+                }
+            });
+            loadingAnimation(tripId,customerId);
+
+        }
+
+    }
+
+    private void loadingAnimation(String tripId, String customerId) {
+        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+        GeoFire geoFire = new GeoFire(availableRef);
+        geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
+        ProgressDialog progressDialog=new ProgressDialog(DriverMapActivity.this);
+        progressDialog.setMessage("Calculating Fare!!");
+        if (!isFinishing()) {
+            progressDialog.show();
+
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                intent.putExtra("tripId", tripId);
+                intent.putExtra("customerId", DriverMapActivity.this.customerId);
+                intent.putExtra("check", 1);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                finish();
+                startActivity(intent);
+            }
+        }, 3000);
     }
 
     private void showDestinationRoute(Double driverLat, Double driverLon, String getDestinationPlace, String getDesLat,
