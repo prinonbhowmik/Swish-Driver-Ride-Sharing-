@@ -78,6 +78,9 @@ public class ShowCash extends AppCompatActivity {
         if (check == 2) {
             getHourlyData();
         }
+        if (check==3){
+            getInstantRideData();
+        }
         collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,6 +136,13 @@ public class ShowCash extends AppCompatActivity {
 
                             }
                         });
+                    } else if (check == 3) {
+                        //BookForLater
+                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerID).child(tripId);
+                        updateRef.child("cashReceived").setValue("yes");
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstatnRides").child(carType).child(tripId);
+                        newRef.child("cashReceived").setValue("yes");
+
                     }
                 } else if (payment.equals("wallet")) {
 
@@ -156,6 +166,23 @@ public class ShowCash extends AppCompatActivity {
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerHourRides").child(customerID).child(tripId);
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookHourly").child(carType).child(tripId);
+                        newRef.child("cashReceived").setValue("yes");
+                        Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
+                        call2.enqueue(new Callback<List<BookRegularModel>>() {
+                            @Override
+                            public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
+
+                            }
+                            @Override
+                            public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
+
+                            }
+                        });
+                    }else if (check == 3) {
+                        //Hourly Ride
+                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerID).child(tripId);
+                        updateRef.child("cashReceived").setValue("yes");
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
                         Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
                         call2.enqueue(new Callback<List<BookRegularModel>>() {
@@ -196,11 +223,46 @@ public class ShowCash extends AppCompatActivity {
         });
     }
 
+    private void getInstantRideData() {
+        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
+        newRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    pickupPlaceTV.setText(snapshot.child("pickUpPlace").getValue().toString());
+                    destinationPlaceTV.setText(snapshot.child("destinationPlace").getValue().toString());
+                    price=snapshot.child("price").getValue().toString();
+                    customerID = snapshot.child("customerId").getValue().toString();
+                    cashTxt.setText(price);
+                    price1=Integer.parseInt(price);
+                    discount=snapshot.child("discount").getValue().toString();
+                    discountTv.setText(discount);
+                    discount1=Integer.parseInt(discount);
+                    finalPrice=snapshot.child("finalPrice").getValue().toString();
+                    final_Txt.setText(finalPrice);
+                    coupon=snapshot.child("coupon").getValue().toString();
+                    finalPrice1=Integer.parseInt(finalPrice);
+                    payment=snapshot.child("payment").getValue().toString();
+                    distanceTv.setText("Distance : " + snapshot.child("totalDistance").getValue().toString() + " km");
+                    durationTv.setText("Duration : " + snapshot.child("totalTime").getValue().toString()+ "min");
+                    kmLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void setDriverEarnings() {
         if(check==1){
             rideType="BookForLater";
         }else if(check==2){
             rideType="BookHourly";
+        }else if(check==3){
+            rideType="InstantRides";
         }
         commission=(price1*15)/100;
         finalCommission=commission-discount1;

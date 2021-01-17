@@ -102,10 +102,12 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -138,41 +140,43 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private FusedLocationProviderClient mFusedLocationClient;
     private Geocoder geocoder;
     private FloatingActionButton currentLocationFButton;
-    private CircleImageView profileImage, passengerIV,passengerIV2;
+    private CircleImageView profileImage, passengerIV, passengerIV2;
     private CardView event_searchCV;
     private ImageView navigation;
     private TextView UserName, userPhone;
     private static int time = 5000;
-    private boolean isGPS = false,hasOngoing = false;
+    private boolean isGPS = false, hasOngoing = false;
     private boolean isContinue = false, hasOnGoing = false, firstTime = true;
     private boolean dark;
     private ArrayList<String> rID;
     private double latitude, longitude, getdestinationLat, getDestinationLon;
     private Boolean driverChecked = false, pickignMode = false;
-    private Button buttonOn, buttonOff,rejectBtn, accptBtn, callCustomerBtn, cancelbtn, startTripBtn;
+    private Button buttonOn, buttonOff, rejectBtn, accptBtn, callCustomerBtn, cancelbtn, startTripBtn;
     private SharedPreferences sharedPreferences;
     private LottieAnimationView progressBar, profileImageLoading;
     private float rating;
     private int ratingCount;
-    private TextView ratingBar,customerNameTv2,onGoingPickUp,onGoingDestination,onGoingCustDetails,onGoingEndTrip,priceTxt;
+    private TextView ratingBar, customerNameTv2, onGoingPickUp, onGoingDestination, onGoingCustDetails, onGoingEndTrip, priceTxt;
     private String apiKey = "AIzaSyCCqD0ogQ8adzJp_z2Y2W2ybSFItXYwFfI", place, bookingId, tripStatus, customerId, accptDriverId,
-            getPickUpLat, getPickUpLon,pickUpPlace,getDesLat,getDesLon;
+            getPickUpLat, getPickUpLon, pickUpPlace, getDesLat, getDesLon;
     private ApiInterface apiInterface;
     private LinearLayout rideRequestLayout;
     private TextView pickupPlaceTV, pickplaceTv, customerNameTv;
     private double pickUpLat, pickUpLon;
     private List<DriverInfo> list;
-    private int kmdistance,travelduration,estprice,swishDefaultDiscount,walletBalance,discountAmount,finalPrice,
-            discount,updatewallet,updateE_wallet;
+    private int kmdistance, travelduration, estprice, swishDefaultDiscount, walletBalance, discountAmount, finalPrice,
+            discount, updatewallet, updateE_wallet;
     private Dialog dialog;
     private Button nestedSV;
-    private RelativeLayout ongoingRl,customerDetailsLayout,rl1,onGoingTripData;
+    private RelativeLayout ongoingRl, customerDetailsLayout, rl1, onGoingTripData;
     private ConnectivityReceiver connectivityReceiver;
     private Polyline currentPolyline;
     private MarkerOptions place1, place2;
-    private String pickUpCity,destinationCity,destinationDivision;
-    private String paymentType,swish_wallet;
+    private String pickUpCity, destinationCity, destinationDivision;
+    private String paymentType, swish_wallet;
     private int eWallet;
+    private Date date1, date2;
+    private String pickupTime, pickupDate;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -191,6 +195,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         checkDriverOnLine();
         checkLocationPermission();
         checkCashReceived();
+        checkInstantCashReceived();
         checkHourlyCashReceived();
         checkOngoing();
 
@@ -345,13 +350,51 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    private void checkInstantCashReceived() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference tripRef = reference.child("IsntantRides").child(carType);
+        tripRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        String cashReceived = data.child("cashReceived").getValue().toString();
+                        String rideStatus = data.child("rideStatus").getValue().toString();
+                        String dId = data.child("driverId").getValue().toString();
+                        if (rideStatus.equals("End")) {
+                            if (dId.equals(driverId) && cashReceived.equals("no")) {
+                                String id = data.child("bookingId").getValue().toString();
+                                String customerID = data.child("customerId").getValue().toString();
+
+                                Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
+                                intent.putExtra("tripId", id);
+                                intent.putExtra("customerId", customerID);
+                                intent.putExtra("check", 3);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                finish();
+                                startActivity(intent);
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void checkOngoing() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    for (DataSnapshot data : snapshot.getChildren()){
+                if (snapshot.exists()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
                         String driver_id = String.valueOf(data.child("driverId").getValue());
                         if (driver_id.equals(driverId)) {
                             String rStatus = String.valueOf(data.child("rideStatus").getValue());
@@ -679,10 +722,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             mapRef.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                   double driverLat = (double) snapshot.child("0").getValue();
-                                   double driverLon = (double) snapshot.child("1").getValue();
+                                    double driverLat = (double) snapshot.child("0").getValue();
+                                    double driverLon = (double) snapshot.child("1").getValue();
 
-                                    showPickUpRoute(getPickUpLat, getPickUpLon, place,driverLat,driverLon);
+                                    showPickUpRoute(getPickUpLat, getPickUpLon, place, driverLat, driverLon);
 
                                 }
 
@@ -691,7 +734,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                                 }
                             });
-
 
 
                             customerDetailsLayout.setVisibility(View.VISIBLE);
@@ -737,7 +779,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                                     alreadyOngoingAlert();
                                                     Toast.makeText(DriverMapActivity.this, "You are already ongoing with other trip", Toast.LENGTH_SHORT).show();
                                                 } else {
-                                                    checkOnlineStatus(tripId,customerId);
+                                                    checkOnlineStatus(tripId, customerId);
                                                 }
 
                                             }
@@ -779,9 +821,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     if (!snapshot.child(carType).hasChild(driverId)) {
-                        onlineAlert(tripId,customerId);
+                        onlineAlert(tripId, customerId);
                     } else {
-                        startTripAlert(tripId,customerId);
+                        startTripAlert(tripId, customerId);
                     }
                 }
 
@@ -808,7 +850,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 GeoFire geoFire = new GeoFire(onlineRef);
 
                 geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
-                startTripAlert(tripId,customerId);
+                startTripAlert(tripId, customerId);
 
             }
         });
@@ -895,14 +937,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         onGoingTrip.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()){
+                for (DataSnapshot data : snapshot.getChildren()) {
                     accptDriverId = data.child("driverId").getValue().toString();
                     String rideStatus = data.child("rideStatus").getValue().toString();
-                    if (accptDriverId.equals(driverId) && rideStatus.equals("Start")){
+                    if (accptDriverId.equals(driverId) && rideStatus.equals("Start")) {
                         customerId = data.child("customerId").getValue().toString();
                         String tripId = data.child("bookingId").getValue().toString();
                         pickUpPlace = data.child("pickUpPlace").getValue().toString();
                         getDestinationPlace = data.child("destinationPlace").getValue().toString();
+                        pickupDate = data.child("pickUpDate").getValue().toString();
+                        pickupTime = data.child("pickUpTime").getValue().toString();
                         getPickUpLat = data.child("pickUpLat").getValue().toString();
                         getPickUpLon = data.child("pickUpLon").getValue().toString();
                         getDesLat = data.child("destinationLat").getValue().toString();
@@ -932,7 +976,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     customerNameTv2.setText(list.get(0).getName());
                                     onGoingPickUp.setText(pickUpPlace);
                                     onGoingDestination.setText(getDestinationPlace);
-                                    priceTxt.setText(" "+price);
+                                    priceTxt.setText(" " + price);
 
                                     DatabaseReference mapRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers")
                                             .child(carType).child(driverId).child("l");
@@ -942,7 +986,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             double driverLat = (double) snapshot.child("0").getValue();
                                             double driverLon = (double) snapshot.child("1").getValue();
                                             currentLocationFButton.hide();
-                                            showDestinationRoute(driverLat,driverLon,getDestinationPlace,getDesLat,getDesLon);
+                                            showDestinationRoute(driverLat, driverLon, getDestinationPlace, getDesLat, getDesLon);
                                         }
 
                                         @Override
@@ -985,7 +1029,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    confirmEndTrip(customerId,tripId,getPickUpLat,getPickUpLon,paymentType);
+                                                    confirmEndTrip(customerId, tripId, getPickUpLat, getPickUpLon
+                                                            , paymentType, pickupDate, pickupTime);
                                                     // sendNotification(id, customerID, "End Trip", "Your trip has Ended, Press to see details!", "show_cash");
                                                 }
                                             });
@@ -1020,7 +1065,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    private void confirmEndTrip(String customerId, String tripId, String pickUpLat, String pickUpLon, String paymentType) {
+    private void confirmEndTrip(String customerId, String tripId, String pickUpLat, String pickUpLon,
+                                String paymentType, String pickupDate, String pickupTime) {
         Call<List<ProfileModel>> call2 = apiInterface.getData(driverId);
         call2.enqueue(new Callback<List<ProfileModel>>() {
             @Override
@@ -1067,6 +1113,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Toast.makeText(this, getDesLon, Toast.LENGTH_SHORT).show();
 
         String endTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
@@ -1096,10 +1143,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         call.enqueue(new Callback<DistanceResponse>() {
             @Override
             public void onResponse(Call<DistanceResponse> call, Response<DistanceResponse> response) {
-                if (response.body() != null &&
-                        response.body().getRows() != null &&
-                        response.body().getRows().size() > 0 &&
-                        response.body().getRows().get(0) != null &&
+                if (response.body() != null && response.body().getRows() != null &&
+                        response.body().getRows().size() > 0 && response.body().getRows().get(0) != null &&
                         response.body().getRows().get(0).getElements() != null &&
                         response.body().getRows().get(0).getElements().size() > 0 &&
                         response.body().getRows().get(0).getElements().get(0) != null &&
@@ -1111,7 +1156,21 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     int trduration = element.getDuration().getValue();
 
                     kmdistance = distance / 1000;
-                    travelduration = trduration / 60;
+                    //travelduration = trduration / 60;
+                    SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
+                    try {
+                        date1 = myFormat.parse(pickupDate + " " + pickupTime);
+                        date2 = myFormat.parse(endTime);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("getPrice", String.valueOf(date1));
+                    long differenceInMilliSecond = date2.getTime() - date1.getTime();
+
+                    float min = (float) (differenceInMilliSecond / (1000 * 60));
+                    trduration = (int) Math.abs(min);
+
+                    travelduration = (int) (trduration);
 
                     Call<List<RidingRate>> rideCall = apiInterface.getPrice(carType);
                     rideCall.enqueue(new Callback<List<RidingRate>>() {
@@ -1128,7 +1187,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 int kmPrice = kmRate * kmdistance;
                                 int minPrice = minRate * travelduration;
 
-                                Locale locale2 = new Locale("bn","BN");
+                                Locale locale2 = new Locale("bn", "BN");
                                 Geocoder geocoder = new Geocoder(DriverMapActivity.this, locale2);
                                 try {
                                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -1151,15 +1210,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                        if (!pickUpCity.equals(destinationCity)){
+                                        if (!pickUpCity.equals(destinationCity)) {
                                             int farePercent = Integer.parseInt(snapshot.child("Fare").getValue().toString());
                                             estprice = kmPrice + minPrice + minimumRateOutside;
-                                            int divisionPercent = (estprice*farePercent)/100;
-                                            int finalPrice = estprice+divisionPercent;
-                                            updatePrice(customerId,tripId,finalPrice,paymentType);
-                                        }else{
+                                            int divisionPercent = (estprice * farePercent) / 100;
+                                            int finalPrice = estprice + divisionPercent;
+                                            updatePrice(customerId, tripId, finalPrice, paymentType, kmdistance, travelduration);
+                                        } else {
                                             int finalPrice = kmPrice + minPrice + minimumRateInside;
-                                            updatePrice(customerId,tripId,finalPrice,paymentType);
+                                            updatePrice(customerId, tripId, finalPrice, paymentType, kmdistance, travelduration);
                                         }
 
                                     }
@@ -1188,34 +1247,36 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void updatePrice(String customerId, String tripId, int actualPrice, String paymentType) {
+    private void updatePrice(String customerId, String tripId, int actualPrice, String paymentType, int kmDistance, int travelDuration) {
+
         if (paymentType.equals("cash")) {
 
-            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerId).child(tripId);
+            DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides")
+                    .child(customerId).child(tripId);
             updateRef.child("price").setValue(String.valueOf(actualPrice));
             updateRef.child("discount").setValue("0");
             updateRef.child("finalPrice").setValue(String.valueOf(actualPrice));
-            updateRef.child("totalDistance").setValue(String.valueOf(kmdistance));
-            updateRef.child("totalTime").setValue(String.valueOf(travelduration));
+            updateRef.child("totalDistance").setValue(String.valueOf(kmDistance));
+            updateRef.child("totalTime").setValue(String.valueOf(travelDuration));
 
-            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
+            DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides")
+                    .child(carType).child(tripId);
             newRef.child("price").setValue(String.valueOf(actualPrice));
             newRef.child("discount").setValue("0");
             newRef.child("finalPrice").setValue(String.valueOf(actualPrice));
-            newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
-            newRef.child("totalTime").setValue(String.valueOf(travelduration));
+            newRef.child("totalDistance").setValue(String.valueOf(kmDistance));
+            newRef.child("totalTime").setValue(String.valueOf(travelDuration));
 
 
-            loadingAnimation(tripId,customerId);
+            loadingAnimation(tripId, customerId);
 
-        }
-        else if (paymentType.equals("wallet")) {
+        } else if (paymentType.equals("wallet")) {
 
             DatabaseReference swishWallet = FirebaseDatabase.getInstance().getReference().child("Wallet");
             swishWallet.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.exists()) {
+                    if (snapshot.exists()) {
                         swish_wallet = snapshot.child("swishWallet").getValue().toString();
                         swishDefaultDiscount = Integer.parseInt(swish_wallet);
                     }
@@ -1247,8 +1308,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     if (response.isSuccessful()) {
                         List<CustomerProfile> list = response.body();
                         walletBalance = list.get(0).getWallet();
-                        if(eWallet<=0){
-                            discountAmount = (actualPrice * swishDefaultDiscount)/100;
+                        if (eWallet <= 0) {
+                            discountAmount = (actualPrice * swishDefaultDiscount) / 100;
 
                             if (walletBalance < discountAmount) {
 
@@ -1256,44 +1317,43 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 discount = walletBalance;
                                 updatewallet = 0;
                             } else if (walletBalance >= discountAmount) {
-                                finalPrice = actualPrice-discountAmount;
+                                finalPrice = actualPrice - discountAmount;
                                 discount = discountAmount;
                                 updatewallet = walletBalance - discountAmount;
                             }
-                        }
-                        else if(eWallet>0){
-                            if(eWallet>=actualPrice){
-                                finalPrice=0;
-                                discountAmount=actualPrice;
-                                discount=actualPrice;
-                                updateE_wallet=eWallet-actualPrice;
-                            }else {
-                                finalPrice=actualPrice-eWallet;
-                                discountAmount=eWallet;
-                                discount=eWallet;
-                                updateE_wallet=0;
+                        } else if (eWallet > 0) {
+                            if (eWallet >= actualPrice) {
+                                finalPrice = 0;
+                                discountAmount = actualPrice;
+                                discount = actualPrice;
+                                updateE_wallet = eWallet - actualPrice;
+                            } else {
+                                finalPrice = actualPrice - eWallet;
+                                discountAmount = eWallet;
+                                discount = eWallet;
+                                updateE_wallet = 0;
                             }
                         }
 
                         Log.d("finalPrice", String.valueOf(finalPrice));
                         Log.d("discount", String.valueOf(discount));
 
-                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerRides").child(customerId).child(tripId);
+                        DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerId).child(tripId);
                         updateRef.child("price").setValue(String.valueOf(actualPrice));
                         updateRef.child("discount").setValue(String.valueOf(discount));
                         updateRef.child("finalPrice").setValue(String.valueOf(finalPrice));
-                        updateRef.child("totalDistance").setValue(String.valueOf(kmdistance));
-                        updateRef.child("totalTime").setValue(String.valueOf(travelduration));
+                        updateRef.child("totalDistance").setValue(String.valueOf(kmDistance));
+                        updateRef.child("totalTime").setValue(String.valueOf(travelDuration));
 
-                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("BookForLater").child(carType).child(tripId);
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
                         newRef.child("price").setValue(String.valueOf(actualPrice));
                         newRef.child("discount").setValue(String.valueOf(discount));
                         newRef.child("finalPrice").setValue(String.valueOf(finalPrice));
-                        newRef.child("totalDistance").setValue(String.valueOf(kmdistance));
-                        newRef.child("totalTime").setValue(String.valueOf(travelduration));
+                        newRef.child("totalDistance").setValue(String.valueOf(kmDistance));
+                        newRef.child("totalTime").setValue(String.valueOf(travelDuration));
 
 
-                        Call<List<CustomerProfile>> listCall = apiInterface.walletValue(customerId, updatewallet,updateE_wallet);
+                        Call<List<CustomerProfile>> listCall = apiInterface.walletValue(customerId, updatewallet, updateE_wallet);
                         listCall.enqueue(new Callback<List<CustomerProfile>>() {
                             @Override
                             public void onResponse(Call<List<CustomerProfile>> call, Response<List<CustomerProfile>> response) {
@@ -1314,7 +1374,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     Log.d("walletError", "" + t.getMessage());
                 }
             });
-            loadingAnimation(tripId,customerId);
+
+            loadingAnimation(tripId, customerId);
 
         }
 
@@ -1324,19 +1385,19 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
         GeoFire geoFire = new GeoFire(availableRef);
         geoFire.setLocation(driverId, new GeoLocation(latitude, longitude));
-        ProgressDialog progressDialog=new ProgressDialog(DriverMapActivity.this);
+        ProgressDialog progressDialog = new ProgressDialog(DriverMapActivity.this);
         progressDialog.setMessage("Calculating Fare!!");
         if (!isFinishing()) {
             progressDialog.show();
-
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressDialog.dismiss();
                 Intent intent = new Intent(DriverMapActivity.this, ShowCash.class);
                 intent.putExtra("tripId", tripId);
-                intent.putExtra("customerId", DriverMapActivity.this.customerId);
-                intent.putExtra("check", 1);
+                intent.putExtra("customerId", customerId);
+                intent.putExtra("check", 3);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 finish();
                 startActivity(intent);
@@ -1359,10 +1420,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         BitmapDescriptor markerIcon = vectorToBitmap(R.drawable.car_top_view);
         BitmapDescriptor markerIcon2 = vectorToBitmap(R.drawable.ic_destination);
-        float bearing = CalculateBearingAngle(driverLat,driverLon,Double.parseDouble(getDesLat),Double.parseDouble(getDesLon));
+        float bearing = CalculateBearingAngle(driverLat, driverLon, Double.parseDouble(getDesLat), Double.parseDouble(getDesLon));
 
         place1 = new MarkerOptions().icon(markerIcon).flat(true)
-                .position(new LatLng(driverLat, driverLon)).rotation(bearing).anchor(0.5f,0.5f).flat(true);
+                .position(new LatLng(driverLat, driverLon)).rotation(bearing).anchor(0.5f, 0.5f).flat(true);
 
         place2 = new MarkerOptions().icon(markerIcon2)
                 .position(new LatLng(Double.parseDouble(getDesLat), Double.parseDouble(getDesLon))).title(getDestinationPlace);
@@ -1410,10 +1471,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         BitmapDescriptor markerIcon = vectorToBitmap(R.drawable.car_top_view);
 
-        float bearing = CalculateBearingAngle(driverLat,driverLon,Double.parseDouble(getPickUpLat),Double.parseDouble(getPickUpLon));
+        float bearing = CalculateBearingAngle(driverLat, driverLon, Double.parseDouble(getPickUpLat), Double.parseDouble(getPickUpLon));
 
         place1 = new MarkerOptions().icon(markerIcon).flat(true)
-                .position(new LatLng(driverLat, driverLon)).rotation(bearing).anchor(0.5f,0.5f).flat(true);
+                .position(new LatLng(driverLat, driverLon)).rotation(bearing).anchor(0.5f, 0.5f).flat(true);
         BitmapDescriptor markerIcon2 = vectorToBitmap(R.drawable.userpickup);
         place2 = new MarkerOptions().icon(markerIcon2)
                 .position(new LatLng(Double.parseDouble(getPickUpLat), Double.parseDouble(getPickUpLon))).title(place);
@@ -1430,13 +1491,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    public float CalculateBearingAngle(double startLatitude,double startLongitude, double endLatitude, double endLongitude){
+    public float CalculateBearingAngle(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
         double Phi1 = Math.toRadians(startLatitude);
         double Phi2 = Math.toRadians(endLatitude);
         double DeltaLambda = Math.toRadians(endLongitude - startLongitude);
 
-        double Theta = atan2((sin(DeltaLambda)*cos(Phi2)) , (cos(Phi1)*sin(Phi2) - sin(Phi1)*cos(Phi2)*cos(DeltaLambda)));
-        return (float)Math.toDegrees(Theta);
+        double Theta = atan2((sin(DeltaLambda) * cos(Phi2)), (cos(Phi1) * sin(Phi2) - sin(Phi1) * cos(Phi2) * cos(DeltaLambda)));
+        return (float) Math.toDegrees(Theta);
     }
 
     private void RegistrationCheck() {
