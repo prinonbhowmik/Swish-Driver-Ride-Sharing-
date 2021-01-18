@@ -140,7 +140,7 @@ public class ShowCash extends AppCompatActivity {
                         //BookForLater
                         DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerID).child(tripId);
                         updateRef.child("cashReceived").setValue("yes");
-                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstatnRides").child(carType).child(tripId);
+                        DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
 
                     }
@@ -184,7 +184,7 @@ public class ShowCash extends AppCompatActivity {
                         updateRef.child("cashReceived").setValue("yes");
                         DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
                         newRef.child("cashReceived").setValue("yes");
-                        Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
+                       /* Call<List<BookRegularModel>> call2 = api.hourlyCashReceived(tripId, "yes");
                         call2.enqueue(new Callback<List<BookRegularModel>>() {
                             @Override
                             public void onResponse(Call<List<BookRegularModel>> call, Response<List<BookRegularModel>> response) {
@@ -194,7 +194,7 @@ public class ShowCash extends AppCompatActivity {
                             public void onFailure(Call<List<BookRegularModel>> call, Throwable t) {
 
                             }
-                        });
+                        });*/
                     }
                 }
                 setDriverEarnings();
