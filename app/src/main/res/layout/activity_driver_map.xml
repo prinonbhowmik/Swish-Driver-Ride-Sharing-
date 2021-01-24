@@ -527,7 +527,7 @@
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
         android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:visibility="gone"
+        android:visibility="visible"
         app:headerLayout="@layout/navigation_drawer_header"
         app:itemIconTint="@color/themColor"
         app:itemTextColor="@color/themColor2"
