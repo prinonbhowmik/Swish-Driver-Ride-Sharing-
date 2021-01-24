@@ -69,6 +69,8 @@ import com.example.swishbddriver.Utils.Config;
 import com.example.swishbddriver.Utils.GpsUtils;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -150,7 +152,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private boolean dark;
     private ArrayList<String> rID;
     private double latitude, longitude, getdestinationLat, getDestinationLon;
-    private Boolean driverChecked = false, pickignMode = false;
+    private Boolean driverChecked = false, pickignMode = false,getTripCall = false;
     private Button buttonOn, buttonOff, rejectBtn, accptBtn, callCustomerBtn, cancelbtn, startTripBtn;
     private SharedPreferences sharedPreferences;
     private LottieAnimationView progressBar, profileImageLoading;
@@ -177,6 +179,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private int eWallet;
     private Date date1, date2;
     private String pickupTime, pickupDate;
+    private int radius=1;
+    private boolean driverFound = false;
+    private String newDriverId;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -201,7 +206,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         sharedPreferences = getSharedPreferences("MyRef", Context.MODE_PRIVATE);
         dark = sharedPreferences.getBoolean("dark", false);
-
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -307,7 +311,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        getRequestCall();
+        if (getTripCall==false){
+            getRequestCall();
+        }
         getAcceptedCustomerData();
         showOnGoingTripData();
 
@@ -633,10 +639,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         accptDriverId = data.child("driverId").getValue().toString();
                         if (accptDriverId.equals(driverId) && tripStatus.equals("Pending")) {
 
+                            getTripCall = true;
                             place = data.child("pickUpPlace").getValue().toString();
                             bookingId = data.child("bookingId").getValue().toString();
                             customerId = data.child("customerId").getValue().toString();
-                            customerId = data.child("customerId").getValue().toString();
+                            pickUpLat = Double.parseDouble(data.child("pickUpLat").getValue().toString());
+                            pickUpLon = Double.parseDouble(data.child("pickUpLon").getValue().toString());
                             pickupPlaceTV.setText(place);
 
                             final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
@@ -649,6 +657,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     public void onClick(View view) {
                                         mp.stop();
                                         rideRequestLayout.setVisibility(View.GONE);
+                                        DatabaseReference availRef = FirebaseDatabase.getInstance().
+                                                getReference("AvailableDrivers").child(carType).child(driverId);
+                                        availRef.removeValue();
+                                        findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+
                                     }
                                 });
 
@@ -694,6 +707,66 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void findNewDriver(String bookingId, String customerId, double pickUpLat, double pickUpLon) {
+        DatabaseReference drivers = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+        GeoFire gfDrivers = new GeoFire(drivers);
+
+        GeoQuery geoQuery = gfDrivers.queryAtLocation(new GeoLocation(pickUpLat,pickUpLon),radius);
+        geoQuery.removeAllListeners();
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if (!driverFound){
+                    if(radius>=5){
+                        driverFound = true;
+                        newDriverId = key;
+                        Toast.makeText(DriverMapActivity.this, newDriverId, Toast.LENGTH_SHORT).show();
+                        if (driverId.equals(newDriverId)){
+                            findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+                        }else{
+                            DatabaseReference rideLaterRef = FirebaseDatabase.getInstance().getReference()
+                                    .child("InstantRides").child(carType).child(bookingId);
+                            rideLaterRef.child("driverId").setValue(newDriverId);
+                            DatabaseReference rideLaterRef2 = FirebaseDatabase.getInstance().getReference()
+                                    .child("CustomerInstantRides").child(customerId).child(bookingId);
+                            rideLaterRef2.child("driverId").setValue(newDriverId);
+                            // sendNotificationDriver(bookingId,driverId,carType,"New Request","New Trip Available","main_activity");
+
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if (!driverFound){
+                    if (radius<=5){
+                        radius++;
+                        findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
 
             }
         });
@@ -941,6 +1014,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     accptDriverId = data.child("driverId").getValue().toString();
                     String rideStatus = data.child("rideStatus").getValue().toString();
                     if (accptDriverId.equals(driverId) && rideStatus.equals("Start")) {
+                        onGoingTripData.setVisibility(View.VISIBLE);
                         customerId = data.child("customerId").getValue().toString();
                         String tripId = data.child("bookingId").getValue().toString();
                         pickUpPlace = data.child("pickUpPlace").getValue().toString();
@@ -971,7 +1045,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         }
                                     });
 
-                                    onGoingTripData.setVisibility(View.VISIBLE);
+
                                     event_searchCV.setVisibility(View.GONE);
                                     customerNameTv2.setText(list.get(0).getName());
                                     onGoingPickUp.setText(pickUpPlace);
@@ -1113,7 +1187,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(this, getDesLon, Toast.LENGTH_SHORT).show();
 
         String endTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa").format(Calendar.getInstance().getTime());
         DatabaseReference rideRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType).child(tripId);
@@ -2159,5 +2232,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         currentPolyline = map.addPolyline((PolylineOptions) values[0]);
 
     }
+
 
 }
