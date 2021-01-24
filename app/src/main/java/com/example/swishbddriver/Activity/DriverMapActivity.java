@@ -737,6 +737,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     .child("CustomerInstantRides").child(customerId).child(bookingId);
                             rideLaterRef2.child("driverId").setValue(newDriverId);
                             // sendNotificationDriver(bookingId,driverId,carType,"New Request","New Trip Available","main_activity");
+                            DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+
+                            GeoFire geoFire2 = new GeoFire(availableRef);
+
+                            geoFire2.setLocation(driverId, new GeoLocation(latitude, longitude));
 
                         }
                     }
