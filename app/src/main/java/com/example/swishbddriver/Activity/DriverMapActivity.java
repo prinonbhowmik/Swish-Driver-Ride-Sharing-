@@ -1336,6 +1336,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             updateRef.child("finalPrice").setValue(String.valueOf(actualPrice));
             updateRef.child("totalDistance").setValue(String.valueOf(kmDistance));
             updateRef.child("totalTime").setValue(String.valueOf(travelDuration));
+            updateRef.child("TAG").setValue("Ride Finished");
 
             DatabaseReference newRef = FirebaseDatabase.getInstance().getReference("InstantRides")
                     .child(carType).child(tripId);
@@ -1344,6 +1345,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             newRef.child("finalPrice").setValue(String.valueOf(actualPrice));
             newRef.child("totalDistance").setValue(String.valueOf(kmDistance));
             newRef.child("totalTime").setValue(String.valueOf(travelDuration));
+            newRef.child("TAG").setValue("Ride Finished");
 
 
             loadingAnimation(tripId, customerId);
