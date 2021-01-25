@@ -55,7 +55,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Base Fare :"
+                    android:text="Base Fare Inside City :"
                     android:textColor="#000"
                     android:textSize="18sp" />
 
@@ -69,12 +69,38 @@
                     android:textSize="18sp" />
 
             </RelativeLayout>
-
             <RelativeLayout
                 android:id="@+id/layout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
                 android:layout_below="@+id/layout2"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Base Fare Outside City :"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/baseOutsideTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="00 TK"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout3"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginRight="20dp">
@@ -98,10 +124,10 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/layout4"
+                android:id="@+id/layout5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layout3"
+                android:layout_below="@+id/layout4"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginRight="20dp">
@@ -133,7 +159,7 @@
             android:visibility="gone">
 
             <RelativeLayout
-                android:id="@+id/layout5"
+                android:id="@+id/layout6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -158,10 +184,10 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/layout6"
+                android:id="@+id/layout7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layout5"
+                android:layout_below="@+id/layout6"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginRight="20dp">

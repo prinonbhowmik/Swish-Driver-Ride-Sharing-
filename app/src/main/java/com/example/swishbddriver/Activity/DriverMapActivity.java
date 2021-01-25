@@ -62,6 +62,12 @@ import com.example.swishbddriver.Model.CustomerProfile;
 import com.example.swishbddriver.Model.DriverInfo;
 import com.example.swishbddriver.Model.ProfileModel;
 import com.example.swishbddriver.Model.RidingRate;
+import com.example.swishbddriver.Notification.APIService;
+import com.example.swishbddriver.Notification.Client;
+import com.example.swishbddriver.Notification.Data;
+import com.example.swishbddriver.Notification.MyResponse;
+import com.example.swishbddriver.Notification.Sender;
+import com.example.swishbddriver.Notification.Token;
 import com.example.swishbddriver.R;
 import com.example.swishbddriver.Remote.LatLngInterpolator;
 import com.example.swishbddriver.Utils.AppConstants;
@@ -98,6 +104,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -182,6 +189,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private int radius=1;
     private boolean driverFound = false;
     private String newDriverId;
+    private APIService apiService;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -358,7 +366,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void checkInstantCashReceived() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference tripRef = reference.child("IsntantRides").child(carType);
+        DatabaseReference tripRef = reference.child("InstantRides").child(carType);
         tripRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -638,7 +646,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         tripStatus = data.child("bookingStatus").getValue().toString();
                         accptDriverId = data.child("driverId").getValue().toString();
                         if (accptDriverId.equals(driverId) && tripStatus.equals("Pending")) {
-
                             getTripCall = true;
                             place = data.child("pickUpPlace").getValue().toString();
                             bookingId = data.child("bookingId").getValue().toString();
@@ -660,6 +667,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         DatabaseReference availRef = FirebaseDatabase.getInstance().
                                                 getReference("AvailableDrivers").child(carType).child(driverId);
                                         availRef.removeValue();
+                                        DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantRides")
+                                                .child(carType).child(bookingId);
+                                        updtref.child("bookingStatus").setValue("Pending");
+                                        updtref.child("driverId").setValue("");
+                                        DatabaseReference updtref2 = FirebaseDatabase.getInstance().getReference("CustomerInstantRides")
+                                                .child(customerId).child(bookingId);
+                                        updtref2.child("bookingStatus").setValue("Pending");
+                                        updtref2.child("driverId").setValue("");
+
                                         findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
 
                                     }
@@ -682,6 +698,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             updtref2.child("driverId").setValue(driverId);
 
                                             rideRequestLayout.setVisibility(View.GONE);
+
+                                            sendNotification(bookingId,customerId,"Ride Accepted","Your Trip Request Accepted","main_activity");
 
                                             getAcceptedCustomerData();
 
@@ -765,6 +783,29 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     if (radius<=5){
                         radius++;
                         findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+                    }else if(radius>5){
+                        DatabaseReference drivRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType)
+                                .child(bookingId);
+                        drivRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                newDriverId = snapshot.child("driverId").getValue().toString();
+                                if (newDriverId.equals(driverId) || newDriverId.equals("")){
+                                    DatabaseReference tagRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType)
+                                            .child(bookingId);
+                                    tagRef.child("TAG").setValue("No Driver Found");
+                                    DatabaseReference tagRef2 = FirebaseDatabase.getInstance().getReference("CustomerInstantRides").child(customerId)
+                                            .child(bookingId);
+                                    tagRef2.child("TAG").setValue("No Driver Found");
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
 
                 }
@@ -992,7 +1033,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                     showOnGoingTripData();
 
-                    // sendNotification(tripId, customerId, "Start Trip", "Your trip has started.");
+                    sendNotification(tripId, customerId, "Start Trip", "Your trip has started.","main_activity");
                 } else {
                     Toast.makeText(DriverMapActivity.this, "Please Check Your Internet Connection!", Toast.LENGTH_SHORT).show();
                 }
@@ -1347,6 +1388,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             newRef.child("totalTime").setValue(String.valueOf(travelDuration));
             newRef.child("TAG").setValue("Ride Finished");
 
+            sendNotification(tripId,customerId,"Trip Ended","Pay "+actualPrice+"tk to your driver","main_activity");
 
             loadingAnimation(tripId, customerId);
 
@@ -1445,6 +1487,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                             }
                         });
+
+                        sendNotification(tripId,customerId,"Trip Ended","Pay "+finalPrice+"tk to your driver","main_activity");
 
                     }
                 }
@@ -1819,7 +1863,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         ratingBar = navigationView.getHeaderView(0).findViewById(R.id.headerRatingBar);
         sharedPreferences = getSharedPreferences("MyRef", MODE_PRIVATE);
         driverId = sharedPreferences.getString("id", "");
-
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         currentLocationFButton = findViewById(R.id.currentLocationBtn);
         menuImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2240,5 +2284,58 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
+    private void sendNotification(final String id, final String receiverId, final String title, final String message, final String toActivity) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference().child("CustomersToken");
+        Query query = tokens.orderByKey().equalTo(receiverId);
+        String receiverId1 = receiverId;
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(id, "1", message, title, receiverId1, toActivity);
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> my_response) {
+                                    if (my_response.code() == 200) {
+                                        if (my_response.body().success != 1) {
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (getTripCall==false){
+            getRequestCall();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (getTripCall==false){
+            getRequestCall();
+        }
+    }
 }

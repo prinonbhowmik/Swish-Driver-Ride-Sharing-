@@ -30,7 +30,7 @@ import retrofit2.Response;
 
 public class FareDetails extends AppCompatActivity {
     private RelativeLayout interRelative,hourlyRelative;
-    private TextView baseTv,kiloTv,minuteTv,baseHourTv,perHourTv;
+    private TextView baseTv,baseOutsideTv,kiloTv,minuteTv,baseHourTv,perHourTv;
     private String baseFare,kiloFare,minuteFare,baseHour,perHour,carType;
     private int check;
     private DatabaseReference databaseReference;
@@ -44,7 +44,7 @@ public class FareDetails extends AppCompatActivity {
         check=intent.getIntExtra("check",0);
         init();
 
-        if(check==1) {
+        if(check==1 || check==3) {
             interRelative.setVisibility(View.VISIBLE);
             Call<List<RidingRate>> call1 = ApiUtils.getUserService().getPrice(carType);
             call1.enqueue(new Callback<List<RidingRate>>() {
@@ -55,9 +55,11 @@ public class FareDetails extends AppCompatActivity {
                         rate = response.body();
                         int kmRate = rate.get(0).getKm_charge();
                         int minRate = rate.get(0).getMin_charge();
-                        int minimumRate = rate.get(0).getBase_fare_outside_dhaka();
+                        int minimumOutsideRate = rate.get(0).getBase_fare_outside_dhaka();
+                        int minimumInsideRate = rate.get(0).getBase_fare_inside_dhaka();
 
-                        baseTv.setText("" + minimumRate+" Tk");
+                        baseTv.setText("" + minimumInsideRate+" Tk");
+                        baseOutsideTv.setText("" + minimumOutsideRate+" Tk");
                         kiloTv.setText("" + kmRate+" Tk");
                         minuteTv.setText("" + minRate+" Tk");
                     }
@@ -92,6 +94,7 @@ public class FareDetails extends AppCompatActivity {
 
     private void init() {
         baseTv=findViewById(R.id.baseTv);
+        baseOutsideTv=findViewById(R.id.baseOutsideTv);
         kiloTv=findViewById(R.id.kiloTv);
         minuteTv=findViewById(R.id.minuteTv);
         databaseReference=FirebaseDatabase.getInstance().getReference();
