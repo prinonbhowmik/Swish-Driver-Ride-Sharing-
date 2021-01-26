@@ -697,6 +697,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                             updtref2.child("bookingStatus").setValue("Booked");
                                             updtref2.child("driverId").setValue(driverId);
 
+                                            DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
+                                            availableRef.child(driverId).removeValue();
+
                                             rideRequestLayout.setVisibility(View.GONE);
 
                                             sendNotification(bookingId,customerId,"Ride Accepted","Your Trip Request Accepted","main_activity");
@@ -833,6 +836,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             customerId = data.child("customerId").getValue().toString();
                             String tripId = data.child("bookingId").getValue().toString();
                             place = data.child("pickUpPlace").getValue().toString();
+                            bookingId = data.child("bookingId").getValue().toString();
                             getPickUpLat = data.child("pickUpLat").getValue().toString();
                             getPickUpLon = data.child("pickUpLon").getValue().toString();
 
@@ -906,10 +910,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         cancelbtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                DatabaseReference nullRef = FirebaseDatabase.getInstance().getReference("InstantRides")
-                                                        .child(carType).child(tripId);
-                                                nullRef.child("driverId").setValue("");
                                                 customerDetailsLayout.setVisibility(View.GONE);
+                                                DatabaseReference availRef = FirebaseDatabase.getInstance().
+                                                        getReference("AvailableDrivers").child(carType).child(driverId);
+                                                availRef.removeValue();
+                                                DatabaseReference updtref = FirebaseDatabase.getInstance().getReference("InstantRides")
+                                                        .child(carType).child(bookingId);
+                                                updtref.child("bookingStatus").setValue("Pending");
+                                                updtref.child("driverId").setValue("");
+                                                DatabaseReference updtref2 = FirebaseDatabase.getInstance().getReference("CustomerInstantRides")
+                                                        .child(customerId).child(bookingId);
+                                                updtref2.child("bookingStatus").setValue("Pending");
+                                                updtref2.child("driverId").setValue("");
+
+                                                findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
                                             }
                                         });
                                     }
@@ -993,8 +1007,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (latitude != 0.0 && longitude != 0.0) {
-                    DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
-                    availableRef.child(driverId).removeValue();
+
                     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     if (ActivityCompat.checkSelfPermission(DriverMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverMapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
