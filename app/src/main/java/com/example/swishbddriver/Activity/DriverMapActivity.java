@@ -159,7 +159,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private boolean dark;
     private ArrayList<String> rID;
     private double latitude, longitude, getdestinationLat, getDestinationLon;
-    private Boolean driverChecked = false, pickignMode = false,getTripCall = false;
+    private Boolean driverChecked = false, pickignMode = false, getTripCall = false;
     private Button buttonOn, buttonOff, rejectBtn, accptBtn, callCustomerBtn, cancelbtn, startTripBtn;
     private SharedPreferences sharedPreferences;
     private LottieAnimationView progressBar, profileImageLoading;
@@ -186,10 +186,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private int eWallet;
     private Date date1, date2;
     private String pickupTime, pickupDate;
-    private int radius=1;
+    private int radius = 1;
     private boolean driverFound = false;
     private String newDriverId;
     private APIService apiService;
+    private MediaPlayer mp;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -222,7 +223,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 isGPS = isGPSEnable;
             }
         });
-
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,7 +319,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        if (getTripCall==false){
+        if (getTripCall == false) {
             getRequestCall();
         }
         getAcceptedCustomerData();
@@ -654,11 +654,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             pickUpLon = Double.parseDouble(data.child("pickUpLon").getValue().toString());
                             pickupPlaceTV.setText(place);
 
-                            final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
-
                             if (tripStatus.equals("Pending")) {
                                 rideRequestLayout.setVisibility(View.VISIBLE);
+
                                 mp.start();
+
                                 rejectBtn.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -676,7 +676,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                         updtref2.child("bookingStatus").setValue("Pending");
                                         updtref2.child("driverId").setValue("");
 
-                                        findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+                                        findNewDriver(bookingId, customerId, pickUpLat, pickUpLon);
 
                                     }
                                 });
@@ -702,7 +702,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                                             rideRequestLayout.setVisibility(View.GONE);
 
-                                            sendNotification(bookingId,customerId,"Ride Accepted","Your Trip Request Accepted","main_activity");
+                                            sendNotification(bookingId, customerId, "Ride Accepted", "Your Trip Request Accepted", "main_activity");
 
                                             getAcceptedCustomerData();
 
@@ -737,20 +737,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         DatabaseReference drivers = FirebaseDatabase.getInstance().getReference("AvailableDrivers").child(carType);
         GeoFire gfDrivers = new GeoFire(drivers);
 
-        GeoQuery geoQuery = gfDrivers.queryAtLocation(new GeoLocation(pickUpLat,pickUpLon),radius);
+        GeoQuery geoQuery = gfDrivers.queryAtLocation(new GeoLocation(pickUpLat, pickUpLon), radius);
         geoQuery.removeAllListeners();
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if (!driverFound){
-                    if(radius>=5){
+                if (!driverFound) {
+                    if (radius >= 5) {
                         driverFound = true;
                         newDriverId = key;
                         Toast.makeText(DriverMapActivity.this, newDriverId, Toast.LENGTH_SHORT).show();
-                        if (driverId.equals(newDriverId)){
-                            findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
-                        }else{
+                        if (driverId.equals(newDriverId)) {
+                            findNewDriver(bookingId, customerId, pickUpLat, pickUpLon);
+                        } else {
                             DatabaseReference rideLaterRef = FirebaseDatabase.getInstance().getReference()
                                     .child("InstantRides").child(carType).child(bookingId);
                             rideLaterRef.child("driverId").setValue(newDriverId);
@@ -782,18 +782,18 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onGeoQueryReady() {
-                if (!driverFound){
-                    if (radius<=5){
+                if (!driverFound) {
+                    if (radius <= 5) {
                         radius++;
-                        findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
-                    }else if(radius>5){
+                        findNewDriver(bookingId, customerId, pickUpLat, pickUpLon);
+                    } else if (radius > 5) {
                         DatabaseReference drivRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType)
                                 .child(bookingId);
                         drivRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 newDriverId = snapshot.child("driverId").getValue().toString();
-                                if (newDriverId.equals(driverId) || newDriverId.equals("")){
+                                if (newDriverId.equals(driverId) || newDriverId.equals("")) {
                                     DatabaseReference tagRef = FirebaseDatabase.getInstance().getReference("InstantRides").child(carType)
                                             .child(bookingId);
                                     tagRef.child("TAG").setValue("No Driver Found");
@@ -840,6 +840,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             getPickUpLat = data.child("pickUpLat").getValue().toString();
                             getPickUpLon = data.child("pickUpLon").getValue().toString();
 
+                            customerDetailsLayout.setVisibility(View.VISIBLE);
+
                             DatabaseReference mapRef = FirebaseDatabase.getInstance().getReference("OnLineDrivers")
                                     .child(carType).child(driverId).child("l");
                             mapRef.addValueEventListener(new ValueEventListener() {
@@ -859,7 +861,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             });
 
 
-                            customerDetailsLayout.setVisibility(View.VISIBLE);
                             Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
                             call.enqueue(new Callback<List<CustomerProfile>>() {
                                 @Override
@@ -923,7 +924,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                                 updtref2.child("bookingStatus").setValue("Pending");
                                                 updtref2.child("driverId").setValue("");
 
-                                                findNewDriver(bookingId,customerId,pickUpLat,pickUpLon);
+                                                findNewDriver(bookingId, customerId, Double.parseDouble(getPickUpLat), Double.parseDouble(getPickUpLon));
                                             }
                                         });
                                     }
@@ -1046,7 +1047,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                     showOnGoingTripData();
 
-                    sendNotification(tripId, customerId, "Start Trip", "Your trip has started.","main_activity");
+                    sendNotification(tripId, customerId, "Start Trip", "Your trip has started.", "main_activity");
                 } else {
                     Toast.makeText(DriverMapActivity.this, "Please Check Your Internet Connection!", Toast.LENGTH_SHORT).show();
                 }
@@ -1401,7 +1402,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             newRef.child("totalTime").setValue(String.valueOf(travelDuration));
             newRef.child("TAG").setValue("Ride Finished");
 
-            sendNotification(tripId,customerId,"Trip Ended","Pay "+actualPrice+"tk to your driver","main_activity");
+            sendNotification(tripId, customerId, "Trip Ended", "Pay " + actualPrice + "tk to your driver", "main_activity");
 
             loadingAnimation(tripId, customerId);
 
@@ -1501,7 +1502,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             }
                         });
 
-                        sendNotification(tripId,customerId,"Trip Ended","Pay "+finalPrice+"tk to your driver","main_activity");
+                        sendNotification(tripId, customerId, "Trip Ended", "Pay " + finalPrice + "tk to your driver", "main_activity");
 
                     }
                 }
@@ -1907,6 +1908,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         startTripBtn = findViewById(R.id.startTripBtn);
         callCustomerBtn = findViewById(R.id.callCustomerBtn);
         cancelbtn = findViewById(R.id.cancelbtn);
+        mp = MediaPlayer.create(DriverMapActivity.this, R.raw.alarm_ring);
 
         Call<List<ProfileModel>> call = apiInterface.getData(driverId);
         call.enqueue(new Callback<List<ProfileModel>>() {
@@ -2339,7 +2341,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onStop() {
         super.onStop();
-        if (getTripCall==false){
+        if (getTripCall == false) {
             getRequestCall();
         }
     }
@@ -2347,7 +2349,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (getTripCall==false){
+        if (getTripCall == false) {
             getRequestCall();
         }
     }

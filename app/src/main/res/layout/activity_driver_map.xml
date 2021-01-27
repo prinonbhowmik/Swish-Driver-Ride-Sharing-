@@ -270,6 +270,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/profileNFL"
                 android:fontFamily="@font/comfortaa_light"
+                android:layout_marginTop="20dp"
                 android:textColor="#000"
                 android:textSize="18sp" />
 
