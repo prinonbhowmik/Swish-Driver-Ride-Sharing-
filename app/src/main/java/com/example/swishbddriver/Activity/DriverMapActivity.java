@@ -748,7 +748,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         driverFound = true;
                         newDriverId = key;
                         Toast.makeText(DriverMapActivity.this, newDriverId, Toast.LENGTH_SHORT).show();
-                        if (driverId.equals(newDriverId)) {
+                        if (driverId.equals(newDriverId) || newDriverId.equals("")) {
                             findNewDriver(bookingId, customerId, pickUpLat, pickUpLon);
                         } else {
                             DatabaseReference rideLaterRef = FirebaseDatabase.getInstance().getReference()
@@ -860,7 +860,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 }
                             });
 
-
                             Call<List<CustomerProfile>> call = apiInterface.getCustomerData(customerId);
                             call.enqueue(new Callback<List<CustomerProfile>>() {
                                 @Override
@@ -908,6 +907,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                                             }
                                         });
+
                                         cancelbtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -924,7 +924,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                                                 updtref2.child("bookingStatus").setValue("Pending");
                                                 updtref2.child("driverId").setValue("");
 
-                                                findNewDriver(bookingId, customerId, Double.parseDouble(getPickUpLat), Double.parseDouble(getPickUpLon));
+                                                Log.d("dekhiTo",getPickUpLat+","+getPickUpLon);
+
+                                                findNewDriver(bookingId, customerId, Double.parseDouble(getPickUpLat),
+                                                        Double.parseDouble(getPickUpLon));
                                             }
                                         });
                                     }
@@ -1402,11 +1405,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             newRef.child("totalTime").setValue(String.valueOf(travelDuration));
             newRef.child("TAG").setValue("Ride Finished");
 
-            sendNotification(tripId, customerId, "Trip Ended", "Pay " + actualPrice + "tk to your driver", "main_activity");
+            sendNotification(tripId, customerId, "Trip Ended", "Pay " + actualPrice + " tk to your driver", "main_activity");
 
             loadingAnimation(tripId, customerId);
 
-        } else if (paymentType.equals("wallet")) {
+        }
+        else if (paymentType.equals("wallet")) {
 
             DatabaseReference swishWallet = FirebaseDatabase.getInstance().getReference().child("Wallet");
             swishWallet.addValueEventListener(new ValueEventListener() {
@@ -1502,7 +1506,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                             }
                         });
 
-                        sendNotification(tripId, customerId, "Trip Ended", "Pay " + finalPrice + "tk to your driver", "main_activity");
+                        sendNotification(tripId, customerId, "Trip Ended", "Pay " + finalPrice + " tk to your driver", "main_activity");
 
                     }
                 }
